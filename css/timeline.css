@@ -108,7 +108,7 @@ body {
     margin-bottom: 10px;
 }
 
-.even .timeline-content {
+.client .timeline-content {
     background-color: #71c9ae;
     /* Fallback Color */
     background-image: -webkit-gradient(
@@ -132,24 +132,24 @@ body {
     text-align: left;
 }
 
-.even .timeline-content:after {
+.client .timeline-content:after {
     left: -39px;
     border-right: 18px solid #71c9ae;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
 }
 
-.even .timeline-content:before {
+.client .timeline-content:before {
     left: -50px;
     right: initial;
 }
 
-.odd {
+.external {
     padding-left: 0;
     padding-right: 50%;
 }
 
-.odd .timeline-time {
+.external .timeline-time {
     right: auto;
     left: 50%;
     text-align: left;
@@ -157,7 +157,7 @@ body {
     margin-left: 20px;
 }
 
-.odd .timeline-content {
+.external .timeline-content {
     background-color: #84aee6;
     /* Fallback Color */
     background-image: -webkit-gradient(
@@ -182,7 +182,7 @@ body {
     text-align: right;
 }
 
-.odd .timeline-content:after {
+.external .timeline-content:after {
     right: -39px;
     border-left: 18px solid #84aee6;
     border-top: 10px solid transparent;
@@ -227,10 +227,10 @@ body {
         left: -39px;
         top: 32px;
     }
-    .odd {
+    .external {
         padding-right: 0;
     }
-    .odd .timeline-time {
+    .external .timeline-time {
         position: relative;
         right: auto;
         left: auto;
@@ -238,21 +238,21 @@ body {
         text-align: left;
         margin: 0 0 6px 56px;
     }
-    .odd .timeline-content {
+    .external .timeline-content {
         margin-right: 0;
         margin-left: 55px;
     }
-    .odd .timeline-content:after {
+    .external .timeline-content:after {
         right: auto;
         left: -39px;
         top: 32px;
         border-right: 18px solid #5a99ee;
         border-left: inherit;
     }
-    .timeline.animated .odd .timeline-content {
+    .timeline.animated .external .timeline-content {
         left: 20px;
     }
-    .timeline.animated .odd .timeline-content {
+    .timeline.animated .external .timeline-content {
         left: 0;
     }
     .custom-modal-width {

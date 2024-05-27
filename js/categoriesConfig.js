@@ -12,7 +12,7 @@ import {
 } from "../src/graphql/queries.js";
 import { client } from "./amplifyConfig.js";
 
-(async function ($) {
+(async function($) {
     // USE STRICT
     "use strict";
     try {
@@ -36,28 +36,19 @@ import { client } from "./amplifyConfig.js";
             select.appendChild(option);
         });
 
+        let categorySelect,
+            isDefault = true;
         select.addEventListener("change", async (e) => {
             if (e.target.value !== "Selecciona") {
                 const categ = categories.find(
                     (c) => c.categoryName === e.target.value
-                ),
-                    props = [
-                        "autoRedirect",
-                        "autoRetargeting",
-                        "autoTrigger",
-                        "autoQuote",
-                        "autoResponse",
-                        "redirectTo",
-                        "quoteOption",
-                        "triggerOption",
-                        "retargetingOption",
-                        "retargetingTime",
-                    ];
-                let isDefault = true,
-                    { data } = await client.graphql({
-                        query: getDefaultCategories,
-                        variables: { id: categ.id },
-                    });
+                );
+
+                categorySelect = categ.id;
+                let { data } = await client.graphql({
+                    query: getDefaultCategories,
+                    variables: { id: categ.id },
+                });
                 !data.getDefaultCategories &&
                     ({ data } = await client.graphql({
                         query: getCategories,
@@ -67,16 +58,19 @@ import { client } from "./amplifyConfig.js";
                 const config = data?.getDefaultCategories
                     ? data?.getDefaultCategories.configuration
                     : data?.getCategories.configuration;
-                console.log(data);
                 for (const key in config) {
                     let value = config[key];
                     const element = document.getElementById(key);
-                    console.log("key", key, "value", value);
                     if (element && key !== "__typename") {
                         let valueParsed;
                         switch (element.type) {
                             case "checkbox":
                                 element.checked = value;
+                                var $checkbox = $(this).find(`id = ${key}`);
+                                $checkbox.bootstrapToggle("toggle");
+                                e.preventDefault();
+                                // $(key).bootstrapToggle();
+                                // $(key).bootstrapToggle("on");
                                 break;
                             case "select-one":
                                 valueParsed = JSON.parse(value);
@@ -89,86 +83,96 @@ import { client } from "./amplifyConfig.js";
                                 element.value = valueParsed?.value
                                     ? valueParsed.value
                                     : value === "{}"
-                                        ? ""
-                                        : value;
+                                    ? ""
+                                    : value;
                                 break;
                         }
                     }
                 }
-
-                const saveButton = document.getElementById("saveChange");
-                saveButton.addEventListener("click", async (e) => {
-                    let params = {};
-                    props.forEach((p) => {
-                        let elem = document.getElementById(p);
-                        console.log(p, elem.type);
-                        switch (elem.type) {
-                            case "checkbox":
-                                params[p] = elem.checked;
-                                break;
-                            case "select-one":
-                                console.log("hola", elem.value);
-                                params[p] = elem.value
-                                    ? `{\"option\":\"${elem.value}\"}`
-                                    : "{}";
-                                break;
-                            default:
-                                params[p] =
-                                    p === "redirectTo"
-                                        ? elem.value === ""
-                                            ? `{}`
-                                            : `{\"value\":[${elem.value
-                                                .split(",")
-                                                .map((e) => `\"${e}\"`)}]}`
-                                        : elem.value;
-                        }
-                    });
-                    console.log(params);
-                    isDefault
-                        ? await client.graphql({
-                            query: updateDefaultCategories,
-                            variables: {
-                                input: {
-                                    id: categ.id,
-                                    configuration: params,
-                                },
-                            },
-                        })
-                        : await client.graphql({
-                            query: updateCategories,
-                            variables: {
-                                input: {
-                                    id: categ.id,
-                                    configuration: params,
-                                },
-                            },
-                        });
-                    window.alert("Se guardo la configuracion");
-                });
-                const resetButton = document.getElementById("resetDefault");
-                resetButton.addEventListener("click", async (e) => {
-                    const a = await client.graphql({
-                        query: updateDefaultCategories,
-                        variables: {
-                            input: {
-                                id: categ.id,
-                                configuration: {
-                                    autoRedirect: false,
-                                    autoRetargeting: false,
-                                    autoTrigger: false,
-                                    autoQuote: false,
-                                    autoResponse: false,
-                                    redirectTo: {},
-                                    quoteOption: {},
-                                    triggerOption: {},
-                                    retargetingOption: {},
-                                    retargetingTime: "",
-                                },
-                            },
-                        },
-                    });
-                });
             }
+        });
+
+        const saveButton = document.getElementById("saveChange");
+        const resetButton = document.getElementById("resetDefault");
+        let props = [
+            "autoRedirect",
+            "autoRetargeting",
+            "autoTrigger",
+            "autoQuote",
+            "autoResponse",
+            "redirectTo",
+            "quoteOption",
+            "triggerOption",
+            "retargetingOption",
+            "retargetingTime",
+        ];
+        saveButton.addEventListener("click", async (e) => {
+            e.preventDefault();
+            let params = {};
+            props.forEach((p) => {
+                let elem = document.getElementById(p);
+                switch (elem.type) {
+                    case "checkbox":
+                        params[p] = elem.checked;
+                        break;
+                    case "select-one":
+                        params[p] = elem.value
+                            ? `{\"option\":\"${elem.value}\"}`
+                            : "{}";
+                        break;
+                    default:
+                        params[p] =
+                            p === "redirectTo"
+                                ? elem.value === ""
+                                    ? `{}`
+                                    : `{\"value\":[${elem.value
+                                          .split(",")
+                                          .map((e) => `\"${e}\"`)}]}`
+                                : elem.value;
+                }
+            });
+            isDefault
+                ? await client.graphql({
+                      query: updateDefaultCategories,
+                      variables: {
+                          input: {
+                              id: categorySelect,
+                              configuration: params,
+                          },
+                      },
+                  })
+                : await client.graphql({
+                      query: updateCategories,
+                      variables: {
+                          input: {
+                              id: categorySelect,
+                              configuration: params,
+                          },
+                      },
+                  });
+            window.alert("Se guardo la configuracion");
+        });
+        resetButton.addEventListener("click", async (e) => {
+            const a = await client.graphql({
+                query: updateDefaultCategories,
+                variables: {
+                    input: {
+                        id: categorySelect,
+                        configuration: {
+                            autoRedirect: false,
+                            autoRetargeting: false,
+                            autoTrigger: false,
+                            autoQuote: false,
+                            autoResponse: false,
+                            redirectTo: {},
+                            quoteOption: {},
+                            triggerOption: {},
+                            retargetingOption: {},
+                            retargetingTime: "",
+                        },
+                    },
+                },
+            });
         });
 
         const editCategoriesBtn = document.querySelector(".edit_categories");
@@ -195,12 +199,12 @@ import { client } from "./amplifyConfig.js";
         cancelBtn.className = "btn btn-secondary";
         cancelBtn.textContent = "Cancelar";
 
-        editCategoriesBtn.addEventListener("click", function () {
+        editCategoriesBtn.addEventListener("click", function() {
             $("#myModal").modal("show");
         });
 
         let count = 1;
-        addCategoryBtn.addEventListener("click", function () {
+        addCategoryBtn.addEventListener("click", function() {
             const newCategory = document.createElement("div");
             newCategory.className = "form-group row";
             newCategory.key = count;
@@ -217,7 +221,7 @@ import { client } from "./amplifyConfig.js";
             deleteBtn.className = "btn";
             deleteBtn.innerHTML =
                 '<i class="fa fa-times" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
-            deleteBtn.addEventListener("click", function () {
+            deleteBtn.addEventListener("click", function() {
                 categoryForm.removeChild(newCategory);
                 newCategories = newCategories.filter(
                     (e) => e.id !== newCategory.key
@@ -230,7 +234,7 @@ import { client } from "./amplifyConfig.js";
             categoryForm.appendChild(newCategory);
             count += 1;
         });
-        saveBtn.addEventListener("click", async function () {
+        saveBtn.addEventListener("click", async function() {
             let elementRepeted = [];
 
             for (let i = 0; i < newCategories.length; i++) {
@@ -294,7 +298,7 @@ import { client } from "./amplifyConfig.js";
 
             location.reload();
         });
-        cancelBtn.addEventListener("click", function () {
+        cancelBtn.addEventListener("click", function() {
             $("#myModal").modal("hide");
         });
 
@@ -326,7 +330,7 @@ import { client } from "./amplifyConfig.js";
         modalDialog.className = "modal-dialog";
         modalDialog.role = "document";
         modalDialog.appendChild(modalContent);
-        modalDialog.style = "max-width: 800px;"
+        modalDialog.style = "max-width: 800px;";
 
         const modal = document.createElement("div");
         modal.className = "modal fade";
@@ -339,7 +343,7 @@ import { client } from "./amplifyConfig.js";
 
         document.body.appendChild(modal);
 
-        customCategories.data.listCategories.items.forEach(function (category) {
+        customCategories.data.listCategories.items.forEach(function(category) {
             const newCategory = document.createElement("div");
             newCategory.className = "form-group row";
             newCategory.key = category.id;
@@ -357,7 +361,7 @@ import { client } from "./amplifyConfig.js";
             deleteBtn.className = "btn";
             deleteBtn.innerHTML =
                 '<i class="fa fa-times" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
-            deleteBtn.addEventListener("click", function () {
+            deleteBtn.addEventListener("click", function() {
                 categoryForm.removeChild(newCategory);
                 deletedCategories.push({
                     categoryName: category.categoryName,

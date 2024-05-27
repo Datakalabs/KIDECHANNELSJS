@@ -1216,11 +1216,9 @@ import { getUserInfo } from "./authentication";
             thread.forEach(function(item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
-                if (item.who === "external") {
-                    timelineRow.classList.add("odd"); // Aplica estilos como impar
-                } else {
-                    timelineRow.classList.add("even"); // Aplica estilos como par
-                }
+                item.who == "external"
+                    ? timelineRow.addClass(".odd")
+                    : timelineRow.addClass(".even");
                 console.log(timelineRow);
                 var timelineTime = document.createElement("div");
                 timelineTime.className = "timeline-time";

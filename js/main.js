@@ -1216,9 +1216,11 @@ import { getUserInfo } from "./authentication";
             thread.forEach(function(item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
-                item.who == "external"
-                    ? timelineRow.addClass(".odd")
-                    : timelineRow.addClass(".even");
+                if (item.who === "external") {
+                    timelineRow.classList.add("external");
+                } else {
+                    timelineRow.classList.add("client");
+                }
                 console.log(timelineRow);
                 var timelineTime = document.createElement("div");
                 timelineTime.className = "timeline-time";

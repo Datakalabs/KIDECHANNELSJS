@@ -27,20 +27,19 @@ const { logout, login, getUserInfo } = require("../authentication");
                 });
             }
             // }
+        }
+        if (logoutButton) {
+            logoutButton.addEventListener("click", async (e) => {
+                e.preventDefault();
+                console.log(e);
 
-            if (logoutButton) {
-                logoutButton.addEventListener("click", async (e) => {
-                    e.preventDefault();
-                    console.log(e);
-
-                    try {
-                        await logout();
-                        window.location.href = "/login.html";
-                    } catch (error) {
-                        console.error("Error during logout:", error);
-                    }
-                });
-            }
+                try {
+                    await logout();
+                    window.location.href = "/login.html";
+                } catch (error) {
+                    console.error("Error during logout:", error);
+                }
+            });
         }
     });
 })();

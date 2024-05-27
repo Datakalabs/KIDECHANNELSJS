@@ -1,11 +1,20 @@
-import { Amplify } from 'aws-amplify'
+import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
-import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery, executeQuery } from "../src/graphql/queries";
+import {
+    listCommunications,
+    listDefaultCategories,
+    listCategories,
+    messageDetails,
+    responseDetails,
+    actionsQuery,
+    threadQuery,
+    executeQuery,
+} from "../src/graphql/queries";
 import { updateCommunications } from "../src/graphql/mutations";
-import backendConfig from '../src/amplifyconfiguration.json'
+import backendConfig from "../src/amplifyconfiguration.json";
 import { getUserInfo } from "./authentication";
 
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -21,7 +30,20 @@ import { getUserInfo } from "./authentication";
             window.myChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                    labels: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Septiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre",
+                    ],
                     datasets: [],
                 },
                 options: {
@@ -87,7 +109,15 @@ import { getUserInfo } from "./authentication";
                 type: "bar",
                 defaultFontFamily: "Poppins",
                 data: {
-                    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio"],
+                    labels: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                    ],
                     datasets: [
                         {
                             label: "My First dataset",
@@ -137,60 +167,99 @@ import { getUserInfo } from "./authentication";
     } catch (error) {
         console.log(error);
     }
-
 })(jQuery);
-(async function ($) {
+(async function($) {
     // USE STRICT
     "use strict";
     try {
-
         // Config de Amplify con la config del backend como prop
-        Amplify.configure(backendConfig)
+        Amplify.configure(backendConfig);
 
         // Se genera el cliente para las llamadas
-        const client = generateClient()
+        const client = generateClient();
 
         let selectedCategoryName;
-        let categories
-        const select1 = document.createElement('select');
+        let categories;
+        const select1 = document.createElement("select");
 
         const colorObjects = [
-            { category_line: "rgba(0,181,233,0.9)", bg: "rgba(0,181,233,0.2)", class: "dot dot--blue" },
-            { category_line: "rgba(0,173,95,0.9)", bg: "rgba(0,173,95,0.2)", class: "dot dot--green" },
-            { category_line: "rgba(255,99,132,0.9)", bg: "rgba(255,99,132,0.2)", class: "dot dot--red" },
-            { category_line: "rgba(255,159,64,0.9)", bg: "rgba(255,159,64,0.2)", class: "dot dot--orange" },
-            { category_line: "rgba(75,192,192,0.9)", bg: "rgba(75,192,192,0.2)", class: "dot dot--turquoise" },
-            { category_line: "rgba(153,102,255,0.9)", bg: "rgba(153,102,255,0.2)", class: "dot dot--purple" },
-            { category_line: "rgba(255,205,86,0.9)", bg: "rgba(255,205,86,0.2)", class: "dot dot--yellow" }
-        ]
+            {
+                category_line: "rgba(0,181,233,0.9)",
+                bg: "rgba(0,181,233,0.2)",
+                class: "dot dot--blue",
+            },
+            {
+                category_line: "rgba(0,173,95,0.9)",
+                bg: "rgba(0,173,95,0.2)",
+                class: "dot dot--green",
+            },
+            {
+                category_line: "rgba(255,99,132,0.9)",
+                bg: "rgba(255,99,132,0.2)",
+                class: "dot dot--red",
+            },
+            {
+                category_line: "rgba(255,159,64,0.9)",
+                bg: "rgba(255,159,64,0.2)",
+                class: "dot dot--orange",
+            },
+            {
+                category_line: "rgba(75,192,192,0.9)",
+                bg: "rgba(75,192,192,0.2)",
+                class: "dot dot--turquoise",
+            },
+            {
+                category_line: "rgba(153,102,255,0.9)",
+                bg: "rgba(153,102,255,0.2)",
+                class: "dot dot--purple",
+            },
+            {
+                category_line: "rgba(255,205,86,0.9)",
+                bg: "rgba(255,205,86,0.2)",
+                class: "dot dot--yellow",
+            },
+        ];
 
         // Función para normalizar la fecha
         const normalizeDate = (dateString) => {
-            const date = new Date(dateString)
-            const year = date.getFullYear()
-            const month = (date.getMonth() + 1).toString().padStart(2, "0")
-            const day = date.getDate().toString().padStart(2, "0")
-            const hour = date.getHours().toString().padStart(2, "0")
-            const minutes = date.getMinutes().toString().padStart(2, "0")
-            const formattedDateTime = `${year}-${month}-${day} ${hour}:${minutes}`
-            return formattedDateTime
-        }
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date
+                .getDate()
+                .toString()
+                .padStart(2, "0");
+            const hour = date
+                .getHours()
+                .toString()
+                .padStart(2, "0");
+            const minutes = date
+                .getMinutes()
+                .toString()
+                .padStart(2, "0");
+            const formattedDateTime = `${year}-${month}-${day} ${hour}:${minutes}`;
+            return formattedDateTime;
+        };
 
         // Función para obtener comunicaciones
         async function fetchCommunications(selectedCategoryName) {
             let allCommunications;
-            const variables = selectedCategoryName ? { filter: { category: { eq: selectedCategoryName } } } : {};
+            const variables = selectedCategoryName
+                ? { filter: { category: { eq: selectedCategoryName } } }
+                : {};
 
             try {
                 const response = await client.graphql({
                     query: listCommunications,
-                    variables
+                    variables,
                 });
 
-                allCommunications = response.data.listCommunications.items.map(comm => ({
-                    ...comm,
-                    dateTime: normalizeDate(comm.dateTime)
-                }));
+                allCommunications = response.data.listCommunications.items.map(
+                    (comm) => ({
+                        ...comm,
+                        dateTime: normalizeDate(comm.dateTime),
+                    })
+                );
                 return allCommunications;
             } catch (error) {
                 console.error("Error fetching communications:", error);
@@ -200,74 +269,90 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                let allCommunications = await fetchCommunications(selectedCategoryName);
+                let allCommunications = await fetchCommunications(
+                    selectedCategoryName
+                );
                 let allCommsCount = allCommunications.length;
 
                 const [defaultCateg, customCateg] = await Promise.all([
                     client.graphql({ query: listDefaultCategories }),
-                    client.graphql({ query: listCategories })
+                    client.graphql({ query: listCategories }),
                 ]);
 
-                categories = [...defaultCateg.data.listDefaultCategories.items, ...customCateg.data.listCategories.items];
+                categories = [
+                    ...defaultCateg.data.listDefaultCategories.items,
+                    ...customCateg.data.listCategories.items,
+                ];
 
-                renderCategoryList(categories, allCommunications, allCommsCount);
+                renderCategoryList(
+                    categories,
+                    allCommunications,
+                    allCommsCount
+                );
                 renderTable(allCommunications);
-
             } catch (error) {
                 console.error("Error rendering communications:", error);
             }
         }
 
         // Función para renderizar la lista de categorías
-        function renderCategoryList(categories, allCommunications, allCommsCount) {
+        function renderCategoryList(
+            categories,
+            allCommunications,
+            allCommsCount
+        ) {
             const ul2 = document.querySelector(".js-sub-list");
-            ul2.innerHTML = '';
+            ul2.innerHTML = "";
             const chartRightRef = document.getElementById("chart-info__right");
 
-            if (!chartRightRef.querySelector('.rs-select2--dark')) {
+            if (!chartRightRef.querySelector(".rs-select2--dark")) {
                 // Crear el primer div
-                const div1 = document.createElement('div');
-                div1.classList.add('rs-select2--dark', 'rs-select2--md', 'm-r-10');
+                const div1 = document.createElement("div");
+                div1.classList.add(
+                    "rs-select2--dark",
+                    "rs-select2--md",
+                    "m-r-10"
+                );
 
                 // Crear el primer select
-                select1.classList.add('js-select2');
-                select1.setAttribute('name', 'property');
+                select1.classList.add("js-select2");
+                select1.setAttribute("name", "property");
 
                 // Crear las opciones del primer select dinámicamente
-                const option1_default = document.createElement('option');
+                const option1_default = document.createElement("option");
                 option1_default.selected = true;
-                option1_default.textContent = 'Todas';
+                option1_default.textContent = "Todas";
                 select1.appendChild(option1_default);
 
                 // Crear el div de dropDownSelect2 para el primer select
-                const dropDown1 = document.createElement('div');
-                dropDown1.classList.add('dropDownSelect2');
+                const dropDown1 = document.createElement("div");
+                dropDown1.classList.add("dropDownSelect2");
 
                 // Añadir el select y el dropdown al primer div
                 div1.appendChild(select1);
                 div1.appendChild(dropDown1);
 
                 // Crear el segundo div
-                const div2 = document.createElement('div');
-                div2.classList.add('rs-select2--dark', 'rs-select2--sm');
+                const div2 = document.createElement("div");
+                div2.classList.add("rs-select2--dark", "rs-select2--sm");
 
                 // Crear el segundo select
-                const select2 = document.createElement('select');
-                select2.classList.add('js-select2', 'au-select-dark');
-                select2.setAttribute('name', 'time');
+                const select2 = document.createElement("select");
+                select2.classList.add("js-select2", "au-select-dark");
+                select2.setAttribute("name", "time");
 
                 // Crear las opciones del segundo select
-                const option2_1 = document.createElement('option');
+                const option2_1 = document.createElement("option");
                 option2_1.selected = true;
-                option2_1.textContent = 'Mes y dia';
+                option2_1.textContent = "Mes y dia";
 
-                const option2_2 = document.createElement('option');
-                option2_2.value = '';
-                option2_2.textContent = 'Por mes';
+                const option2_2 = document.createElement("option");
+                option2_2.value = "";
+                option2_2.textContent = "Por mes";
 
-                const option2_3 = document.createElement('option');
-                option2_3.value = '';
-                option2_3.textContent = 'Por día';
+                const option2_3 = document.createElement("option");
+                option2_3.value = "";
+                option2_3.textContent = "Por día";
 
                 // Añadir las opciones al segundo select
                 select2.appendChild(option2_1);
@@ -275,8 +360,8 @@ import { getUserInfo } from "./authentication";
                 select2.appendChild(option2_3);
 
                 // Crear el div de dropDownSelect2 para el segundo select
-                const dropDown2 = document.createElement('div');
-                dropDown2.classList.add('dropDownSelect2');
+                const dropDown2 = document.createElement("div");
+                dropDown2.classList.add("dropDownSelect2");
 
                 // Añadir el select y el dropdown al segundo div
                 div2.appendChild(select2);
@@ -287,11 +372,13 @@ import { getUserInfo } from "./authentication";
                 chartRightRef.appendChild(div2);
             } else {
                 // Actualizar select1 con nuevas opciones de categoría sin duplicar
-                const select1 = chartRightRef.querySelector('select[name="property"]');
-                select1.innerHTML = '';
-                const option1_default = document.createElement('option');
+                const select1 = chartRightRef.querySelector(
+                    'select[name="property"]'
+                );
+                select1.innerHTML = "";
+                const option1_default = document.createElement("option");
                 option1_default.selected = true;
-                option1_default.textContent = 'Todas';
+                option1_default.textContent = "Todas";
                 select1.appendChild(option1_default);
             }
 
@@ -300,8 +387,12 @@ import { getUserInfo } from "./authentication";
                 const a = document.createElement("a");
                 const icon = document.createElement("i");
 
-                const commsByCategoryCount = allCommunications.filter(email => email.category === category.categoryName).length;
-                const countPortion = parseFloat((commsByCategoryCount * 100 / allCommsCount).toFixed(2));
+                const commsByCategoryCount = allCommunications.filter(
+                    (email) => email.category === category.categoryName
+                ).length;
+                const countPortion = parseFloat(
+                    ((commsByCategoryCount * 100) / allCommsCount).toFixed(2)
+                );
 
                 const colorObj = colorObjects[index];
 
@@ -322,7 +413,7 @@ import { getUserInfo } from "./authentication";
                 li.appendChild(a);
                 ul2.appendChild(li);
 
-                const option = document.createElement('option');
+                const option = document.createElement("option");
                 option.value = category.categoryName;
                 option.textContent = category.categoryName;
                 select1.appendChild(option);
@@ -331,15 +422,16 @@ import { getUserInfo } from "./authentication";
                     renderProgressBar(category.categoryName, countPortion);
                     window.myChart.data.datasets.push(categoryDataset);
                     renderChartInfo(category, colorObj);
-
                 }
 
-                a.addEventListener("click", async function (event) {
+                a.addEventListener("click", async function(event) {
                     event.preventDefault();
                     selectedCategoryName = category.categoryName;
 
                     document.getElementById("step1").innerHTML = "categories";
-                    document.getElementById("step2").innerHTML = selectedCategoryName;
+                    document.getElementById(
+                        "step2"
+                    ).innerHTML = selectedCategoryName;
 
                     await renderCommunications();
                 });
@@ -362,7 +454,6 @@ import { getUserInfo } from "./authentication";
             chartNote.appendChild(colorSpan);
             chartNote.appendChild(labelSpan);
             chartLeftRef.appendChild(chartNote);
-
         }
 
         // Función para renderizar la barra de progreso
@@ -404,7 +495,7 @@ import { getUserInfo } from "./authentication";
 
         // Función para renderizar la tabla de comunicaciones
         function renderTable(allCommunications) {
-            const dataSet = allCommunications.map(email => {
+            const dataSet = allCommunications.map((email) => {
                 const values = Object.values(email);
                 if (selectedCategoryName) {
                     values.splice(2, 1);
@@ -422,9 +513,11 @@ import { getUserInfo } from "./authentication";
                 // row.push(createActionButtonContainer());
             });
 
-            if ($.fn.DataTable.isDataTable('#tabla')) {
+            if ($.fn.DataTable.isDataTable("#tabla")) {
                 // Si DataTables ya está aplicado, destruir la instancia existente antes de volver a inicializarla
-                $('#tabla').DataTable().destroy();
+                $("#tabla")
+                    .DataTable()
+                    .destroy();
             }
 
             const table = new DataTable("#tabla", {
@@ -457,7 +550,9 @@ import { getUserInfo } from "./authentication";
         function createButtonContainer(className, icon, full) {
             const container = document.createElement("div");
             container.className = `${className} d-flex justify-content-center`;
-            container.innerHTML = `<button class="btn ${full ? "btn-primary" : "btn-outline-primary"}" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
+            container.innerHTML = `<button class="btn ${
+                full ? "btn-primary" : "btn-outline-primary"
+            }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
             return container;
         }
 
@@ -480,14 +575,15 @@ import { getUserInfo } from "./authentication";
 
         // Función para crear un badge
         function createBadge(category) {
-            const badgeClass = {
-                "DefaultCategory1": "badge-primary",
-                "DefaultCategory2": "badge-success",
-                "custom 1": "badge-warning",
-                "Leidos": "badge-danger",
-                "Recibidos": "badge-info",
-                "default": "badge-secondary"
-            }[category] || "badge-secondary";
+            const badgeClass =
+                {
+                    DefaultCategory1: "badge-primary",
+                    DefaultCategory2: "badge-success",
+                    "custom 1": "badge-warning",
+                    Leidos: "badge-danger",
+                    Recibidos: "badge-info",
+                    default: "badge-secondary",
+                }[category] || "badge-secondary";
 
             const div = document.createElement("div");
             div.innerHTML = `<span class="badge ${badgeClass}">${category}</span>`;
@@ -496,7 +592,7 @@ import { getUserInfo } from "./authentication";
 
         // Función para inicializar eventos de la tabla
         function initializeTableEvents(table) {
-            table.on("click", "tbody .edit", async function () {
+            table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openEditModal(data);
             });
@@ -506,17 +602,17 @@ import { getUserInfo } from "./authentication";
             //     await executeFunc(data);
             // });
 
-            table.on("click", "tbody .view1", async function () {
+            table.on("click", "tbody .view1", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openMessageModal(data);
             });
 
-            table.on("click", "tbody .view2", async function () {
+            table.on("click", "tbody .view2", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openResponseModal(data);
             });
 
-            table.on("click", "tbody .view3", async function () {
+            table.on("click", "tbody .view3", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openThreadModal(data);
             });
@@ -527,21 +623,49 @@ import { getUserInfo } from "./authentication";
                 query: actionsQuery,
                 variables: {
                     filter: {
-                        messageId: { eq: data[0] }
-                    }
-                }
+                        messageId: { eq: data[0] },
+                    },
+                },
             });
 
-            actions = actions.data.listCommunications.items[0]
-            let selectedCategory = categories.filter(category => category.categoryName === actions.category)
+            actions = actions.data.listCommunications.items[0];
+            let selectedCategory = categories.filter(
+                (category) => category.categoryName === actions.category
+            );
 
-            selectedCategory = selectedCategory[0]
+            selectedCategory = selectedCategory[0];
             let form = $("<form>").attr("id", "actionForm");
             form.append(
                 $("<div>")
                     .addClass("form-row")
-                    .append($("<div>").addClass("form-group1 col-md-6").attr("id", "fromId").append($("<label>").text("From:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).attr("name", "fromId").val(actions.fromId)))
-                    .append($("<div>").addClass("form-group1 col-md-6").attr("id", "dateTime").append($("<label>").text("Datetime:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).attr("name", "dateTime").val(actions.dateTime)))
+                    .append(
+                        $("<div>")
+                            .addClass("form-group1 col-md-6")
+                            .attr("id", "fromId")
+                            .append($("<label>").text("From:"))
+                            .append(
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .prop("disabled", true)
+                                    .attr("name", "fromId")
+                                    .val(actions.fromId)
+                            )
+                    )
+                    .append(
+                        $("<div>")
+                            .addClass("form-group1 col-md-6")
+                            .attr("id", "dateTime")
+                            .append($("<label>").text("Datetime:"))
+                            .append(
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .prop("disabled", true)
+                                    .attr("name", "dateTime")
+                                    .val(actions.dateTime)
+                            )
+                    )
             );
 
             form.append(
@@ -553,50 +677,170 @@ import { getUserInfo } from "./authentication";
                             .append(
                                 $("<label>").text("Category:"),
                                 $("<select>")
-                                    .addClass("form-control").attr("id", "category")
-                                    .append(categories.map(category => $("<option>").text(category.categoryName).val(category.categoryName))
-                                    ).val(selectedCategory.categoryName)
+                                    .addClass("form-control")
+                                    .attr("id", "category")
+                                    .append(
+                                        categories.map((category) =>
+                                            $("<option>")
+                                                .text(category.categoryName)
+                                                .val(category.categoryName)
+                                        )
+                                    )
+                                    .val(selectedCategory.categoryName)
                             ),
 
-                        $("<div>").addClass("form-group1 col-md-6").attr("id", "responseAttachment").append($("<label>").text("Response attachment"),
-                            $("<div>").addClass("input-group")
-                                .append(
-                                    $("<input>").attr("type", "text").addClass("form-control").val(actions.responseAttachment).prop("readonly", true),
-                                    $("<div>").addClass("input-group-append")
-                                        .append(
-                                            $("<button>").addClass("btn").attr("type", "button").append($("<i>").addClass("fa fa-times").css({ "color": "red" }))
-                                                .on("click", function () {
-                                                    $(this).closest(".input-group").find("input").val("");
-                                                })
-                                        )
-                                )
-                        )
-                    ))
+                        $("<div>")
+                            .addClass("form-group1 col-md-6")
+                            .attr("id", "responseAttachment")
+                            .append(
+                                $("<label>").text("Response attachment"),
+                                $("<div>")
+                                    .addClass("input-group")
+                                    .append(
+                                        $("<input>")
+                                            .attr("type", "text")
+                                            .addClass("form-control")
+                                            .val(actions.responseAttachment)
+                                            .prop("readonly", true),
+                                        $("<div>")
+                                            .addClass("input-group-append")
+                                            .append(
+                                                $("<button>")
+                                                    .addClass("btn")
+                                                    .attr("type", "button")
+                                                    .append(
+                                                        $("<i>")
+                                                            .addClass(
+                                                                "fa fa-times"
+                                                            )
+                                                            .css({
+                                                                color: "red",
+                                                            })
+                                                    )
+                                                    .on("click", function() {
+                                                        $(this)
+                                                            .closest(
+                                                                ".input-group"
+                                                            )
+                                                            .find("input")
+                                                            .val("");
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
+            );
 
-            form.append($("<div>").addClass("form-group1").attr("id", "responseAi").append($("<label>").text("Response AI:")).append($("<input>").attr("type", "text").addClass("form-control").val(actions.responseAi)));
+            form.append(
+                $("<div>")
+                    .addClass("form-group1")
+                    .attr("id", "responseAi")
+                    .append($("<label>").text("Response AI:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .val(actions.responseAi)
+                    )
+            );
 
-            form.append($("<div>").addClass("form-group1").attr("id", "messageSubject").append($("<label>").text("Message subjet:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).attr("name", "messageSubject").val(actions.messageSubject)));
-            form.append($("<div>").addClass("form-group1").attr("id", "messageBody").append($("<label>").text("Message Body:")).append($("<textarea>").addClass("form-control").prop("disabled", true).attr("name", "messageBody").val(actions.messageBody))); // Crea el modal con el formulario
-            form.append($("<div>").addClass("form-group1").attr("id", "responseSubject").append($("<label>").text("Response Subjet:")).append($("<input>").attr("type", "text").addClass("form-control").val(actions.responseSubject)));
-            form.append($("<div>").addClass("form-group1").attr("id", "responseBody").append($("<label>").text("Response Body:")).append($("<textarea>").addClass("form-control").val(actions.responseBody)));
+            form.append(
+                $("<div>")
+                    .addClass("form-group1")
+                    .attr("id", "messageSubject")
+                    .append($("<label>").text("Message subjet:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .attr("name", "messageSubject")
+                            .val(actions.messageSubject)
+                    )
+            );
+            form.append(
+                $("<div>")
+                    .addClass("form-group1")
+                    .attr("id", "messageBody")
+                    .append($("<label>").text("Message Body:"))
+                    .append(
+                        $("<textarea>")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .attr("name", "messageBody")
+                            .val(actions.messageBody)
+                    )
+            ); // Crea el modal con el formulario
+            form.append(
+                $("<div>")
+                    .addClass("form-group1")
+                    .attr("id", "responseSubject")
+                    .append($("<label>").text("Response Subjet:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .val(actions.responseSubject)
+                    )
+            );
+            form.append(
+                $("<div>")
+                    .addClass("form-group1")
+                    .attr("id", "responseBody")
+                    .append($("<label>").text("Response Body:"))
+                    .append(
+                        $("<textarea>")
+                            .addClass("form-control")
+                            .val(actions.responseBody)
+                    )
+            );
 
-            const formGroup = $("<div>").addClass("form-group1").attr("id", "execute");
-            const label = $("<label>").html(`<strong>${!actions.execute ? "Activar IA:" : "Desactivar IA:"}</strong>`);
+            const formGroup = $("<div>")
+                .addClass("form-group1")
+                .attr("id", "execute");
+            const label = $("<label>").html(
+                `<strong>${
+                    !actions.execute ? "Activar IA:" : "Desactivar IA:"
+                }</strong>`
+            );
             const button = $("<button>")
-                .addClass(`form-control ${!actions.execute ? "btn-success" : "btn-danger"}`)
+                .addClass(
+                    `form-control ${
+                        !actions.execute ? "btn-success" : "btn-danger"
+                    }`
+                )
                 .attr("type", "button")
-                .css({ "background-color": !actions.execute ? "#00ad5f" : "#fa4251", "width": "auto" })
-                .append($("<i>").addClass(!actions.execute ? "fas fa-check" : "fas fa-stop"))
-                .on("click", function () {
+                .css({
+                    "background-color": !actions.execute
+                        ? "#00ad5f"
+                        : "#fa4251",
+                    width: "auto",
+                })
+                .append(
+                    $("<i>").addClass(
+                        !actions.execute ? "fas fa-check" : "fas fa-stop"
+                    )
+                )
+                .on("click", function() {
                     actions.execute = !actions.execute;
                     if (!actions.execute) {
-                        button.removeClass("btn-danger").addClass("btn-success");
-                        button.find("i").removeClass("fas fa-stop").addClass("fas fa-check");
+                        button
+                            .removeClass("btn-danger")
+                            .addClass("btn-success");
+                        button
+                            .find("i")
+                            .removeClass("fas fa-stop")
+                            .addClass("fas fa-check");
                         button.css("background-color", "#00ad5f");
                         label.html(`<strong>Activar IA:</strong>`);
                     } else {
-                        button.removeClass("btn-success").addClass("btn-danger");
-                        button.find("i").removeClass("fas fa-check").addClass("fas fa-stop");
+                        button
+                            .removeClass("btn-success")
+                            .addClass("btn-danger");
+                        button
+                            .find("i")
+                            .removeClass("fas fa-check")
+                            .addClass("fas fa-stop");
                         button.css("background-color", "#fa4251");
                         label.html(`<strong>Desactivar IA:</strong>`);
                     }
@@ -605,15 +849,44 @@ import { getUserInfo } from "./authentication";
             formGroup.append(label).append(button);
             form.append(formGroup);
 
-            let modal = $("<div>").addClass("modal fade").attr("id", "actionModal").attr("tabindex", "-1").attr("role", "dialog").attr("aria-labelledby", "actionModalLabel").attr("aria-hidden", "true");
-            let modalDialog = $("<div>").addClass("modal-dialog modal-med").attr("role", "document");
+            let modal = $("<div>")
+                .addClass("modal fade")
+                .attr("id", "actionModal")
+                .attr("tabindex", "-1")
+                .attr("role", "dialog")
+                .attr("aria-labelledby", "actionModalLabel")
+                .attr("aria-hidden", "true");
+            let modalDialog = $("<div>")
+                .addClass("modal-dialog modal-med")
+                .attr("role", "document");
             let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>").addClass("modal-header headerCenter").append($("<h3>").addClass("modal-title").attr("id", "actionModalLabel").text("Editar"));
-            let modalBody = $("<div>").addClass("modal-body").append(form);
+            let modalHeader = $("<div>")
+                .addClass("modal-header headerCenter")
+                .append(
+                    $("<h3>")
+                        .addClass("modal-title")
+                        .attr("id", "actionModalLabel")
+                        .text("Editar")
+                );
+            let modalBody = $("<div>")
+                .addClass("modal-body")
+                .append(form);
             let modalFooter = $("<div>")
                 .addClass("modal-footer")
-                .append($("<button>").addClass("btn btn-primary").text("Guardar").attr("type", "button").attr("id", "saveBtn"))
-                .append($("<button>").addClass("btn btn-secondary").text("Cancelar").attr("data-dismiss", "modal").attr("id", "cancelBtn"));
+                .append(
+                    $("<button>")
+                        .addClass("btn btn-primary")
+                        .text("Guardar")
+                        .attr("type", "button")
+                        .attr("id", "saveBtn")
+                )
+                .append(
+                    $("<button>")
+                        .addClass("btn btn-secondary")
+                        .text("Cancelar")
+                        .attr("data-dismiss", "modal")
+                        .attr("id", "cancelBtn")
+                );
             modalContent.append(modalHeader, modalBody, modalFooter);
             modalDialog.append(modalContent);
             modal.append(modalDialog);
@@ -623,25 +896,27 @@ import { getUserInfo } from "./authentication";
 
             $("#actionModal").modal("show");
 
-            $("#saveBtn").on("click", function () {
-                $("#actionForm").submit()
-            })
+            $("#saveBtn").on("click", function() {
+                $("#actionForm").submit();
+            });
 
             // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
             // const userInfo = await getUserInfo()
             // let clientId = userInfo.sub
 
-            $("body").on("submit", "#actionForm", async function (event) {
+            $("body").on("submit", "#actionForm", async function(event) {
                 event.preventDefault();
 
                 let formData = {};
 
-                $("#actionForm").find(":input:disabled").each(function () {
-                    let name = $(this).attr("name")
-                    if (name) {
-                        formData[name] = $(this).val()
-                    }
-                })
+                $("#actionForm")
+                    .find(":input:disabled")
+                    .each(function() {
+                        let name = $(this).attr("name");
+                        if (name) {
+                            formData[name] = $(this).val();
+                        }
+                    });
 
                 formData = {
                     ...formData,
@@ -651,7 +926,7 @@ import { getUserInfo } from "./authentication";
                     responseAi: $("#responseAi input").val(),
                     responseSubject: $("#responseSubject input").val(),
                     responseBody: $("#responseBody textarea").val(),
-                    execute: actions.execute
+                    execute: actions.execute,
                 };
 
                 await client.graphql({
@@ -660,15 +935,15 @@ import { getUserInfo } from "./authentication";
                         input: formData,
                         condition: {
                             messageId: {
-                                eq: data[0]
-                            }
-                        }
-                    }
-                })
+                                eq: data[0],
+                            },
+                        },
+                    },
+                });
 
                 $("#actionModal").modal("hide");
-                location.reload()
-            })
+                location.reload();
+            });
         }
 
         async function openMessageModal(data) {
@@ -676,11 +951,11 @@ import { getUserInfo } from "./authentication";
                 query: messageDetails,
                 variables: {
                     filter: {
-                        messageId: { eq: data[0] }
-                    }
-                }
+                        messageId: { eq: data[0] },
+                    },
+                },
             });
-            message = message.data.listCommunications.items[0]
+            message = message.data.listCommunications.items[0];
             const normalizedDate = normalizeDate(message.dateTime);
 
             let form = $("<form>").attr("id", "messageForm");
@@ -697,27 +972,101 @@ import { getUserInfo } from "./authentication";
                                     .addClass("form-control")
                                     .prop("disabled", true)
                                     .val(message.category)
-                                    .append($("<option>").text(message.category).val(message.category))
+                                    .append(
+                                        $("<option>")
+                                            .text(message.category)
+                                            .val(message.category)
+                                    )
                             )
                     )
             );
             form.append(
                 $("<div>")
                     .addClass("form-row")
-                    .append($("<div>").addClass("form-group2 col-md-6").append($("<label>").text("From:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(message.fromId)))
-                    .append($("<div>").addClass("form-group2 col-md-6").append($("<label>").text("Datetime:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(normalizedDate)))
+                    .append(
+                        $("<div>")
+                            .addClass("form-group2 col-md-6")
+                            .append($("<label>").text("From:"))
+                            .append(
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .prop("disabled", true)
+                                    .val(message.fromId)
+                            )
+                    )
+                    .append(
+                        $("<div>")
+                            .addClass("form-group2 col-md-6")
+                            .append($("<label>").text("Datetime:"))
+                            .append(
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .prop("disabled", true)
+                                    .val(normalizedDate)
+                            )
+                    )
             );
-            form.append($("<div>").addClass("form-group2").append($("<label>").text("Message Summary:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(message.messagSummary)));
-            form.append($("<div>").addClass("form-group2").append($("<label>").text("Message Subjet:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(message.messageSubject)));
-            form.append($("<div>").addClass("form-group2").append($("<label>").text("Message Body:")).append($("<textarea>").addClass("form-control").prop("disabled", true).val(message.messageBody))); // Crea el modal con el formulario
-            let modal = $("<div>").addClass("modal fade").attr("id", "messageModal");
+            form.append(
+                $("<div>")
+                    .addClass("form-group2")
+                    .append($("<label>").text("Message Summary:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(message.messagSummary)
+                    )
+            );
+            form.append(
+                $("<div>")
+                    .addClass("form-group2")
+                    .append($("<label>").text("Message Subjet:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(message.messageSubject)
+                    )
+            );
+            form.append(
+                $("<div>")
+                    .addClass("form-group2")
+                    .append($("<label>").text("Message Body:"))
+                    .append(
+                        $("<textarea>")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(message.messageBody)
+                    )
+            ); // Crea el modal con el formulario
+            let modal = $("<div>")
+                .addClass("modal fade")
+                .attr("id", "messageModal");
             let modalDialog = $("<div>").addClass("modal-dialog modal-med");
             let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>").addClass("modal-header headerCenter").append($("<h3>").addClass("modal-title").attr("id", "myModalLabel").text("Contenido de la comunicación"));
-            let modalBody = $("<div>").addClass("modal-body").append(form);
+            let modalHeader = $("<div>")
+                .addClass("modal-header headerCenter")
+                .append(
+                    $("<h3>")
+                        .addClass("modal-title")
+                        .attr("id", "myModalLabel")
+                        .text("Contenido de la comunicación")
+                );
+            let modalBody = $("<div>")
+                .addClass("modal-body")
+                .append(form);
             let modalFooter = $("<div>")
                 .addClass("modal-footer")
-                .append($("<button>").addClass("btn btn-secondary").text("Cerrar").attr("data-dismiss", "modal"));
+                .append(
+                    $("<button>")
+                        .addClass("btn btn-secondary")
+                        .text("Cerrar")
+                        .attr("data-dismiss", "modal")
+                );
             modalContent.append(modalHeader, modalBody, modalFooter);
             modalDialog.append(modalContent);
             modal.append(modalDialog);
@@ -733,9 +1082,9 @@ import { getUserInfo } from "./authentication";
                 query: responseDetails,
                 variables: {
                     filter: {
-                        messageId: { eq: data[0] }
-                    }
-                }
+                        messageId: { eq: data[0] },
+                    },
+                },
             });
             response = response.data.listCommunications.items[0];
 
@@ -744,21 +1093,80 @@ import { getUserInfo } from "./authentication";
             form.append(
                 $("<div>")
                     .addClass("form-row")
-                    .append($("<div>").addClass("form-group3 col-md-6").append($("<label>").text("Response attachment"), $("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(response.responseAttachment)))
+                    .append(
+                        $("<div>")
+                            .addClass("form-group3 col-md-6")
+                            .append(
+                                $("<label>").text("Response attachment"),
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .prop("disabled", true)
+                                    .val(response.responseAttachment)
+                            )
+                    )
             );
-            form.append($("<div>").addClass("form-group3").append($("<label>").text("Response AI:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(response.responseAi)));
+            form.append(
+                $("<div>")
+                    .addClass("form-group3")
+                    .append($("<label>").text("Response AI:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(response.responseAi)
+                    )
+            );
 
-            form.append($("<div>").addClass("form-group3").append($("<label>").text("Response Subjet:")).append($("<input>").attr("type", "text").addClass("form-control").prop("disabled", true).val(response.responseSubject)));
-            form.append($("<div>").addClass("form-group3").append($("<label>").text("Response Body:")).append($("<textarea>").addClass("form-control").prop("disabled", true).val(response.responseBody)));
+            form.append(
+                $("<div>")
+                    .addClass("form-group3")
+                    .append($("<label>").text("Response Subjet:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(response.responseSubject)
+                    )
+            );
+            form.append(
+                $("<div>")
+                    .addClass("form-group3")
+                    .append($("<label>").text("Response Body:"))
+                    .append(
+                        $("<textarea>")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .val(response.responseBody)
+                    )
+            );
             // Crea el modal con el formulario
-            let modal = $("<div>").addClass("modal fade").attr("id", "responseModal");
+            let modal = $("<div>")
+                .addClass("modal fade")
+                .attr("id", "responseModal");
             let modalDialog = $("<div>").addClass("modal-dialog modal-med");
             let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>").addClass("modal-header headerCenter").append($("<h3>").addClass("modal-title").attr("id", "myModalLabel").text("Contenido de la respuesta"));
-            let modalBody = $("<div>").addClass("modal-body").append(form);
+            let modalHeader = $("<div>")
+                .addClass("modal-header headerCenter")
+                .append(
+                    $("<h3>")
+                        .addClass("modal-title")
+                        .attr("id", "myModalLabel")
+                        .text("Contenido de la respuesta")
+                );
+            let modalBody = $("<div>")
+                .addClass("modal-body")
+                .append(form);
             let modalFooter = $("<div>")
                 .addClass("modal-footer")
-                .append($("<button>").addClass("btn btn-secondary").text("Cerrar").attr("data-dismiss", "modal"));
+                .append(
+                    $("<button>")
+                        .addClass("btn btn-secondary")
+                        .text("Cerrar")
+                        .attr("data-dismiss", "modal")
+                );
             modalContent.append(modalHeader, modalBody, modalFooter);
             modalDialog.append(modalContent);
             modal.append(modalDialog);
@@ -774,11 +1182,11 @@ import { getUserInfo } from "./authentication";
                 query: threadQuery,
                 variables: {
                     filter: {
-                        messageId: { eq: data[0] }
-                    }
-                }
+                        messageId: { eq: data[0] },
+                    },
+                },
             });
-            thread = JSON.parse(thread.data.listCommunications.items[0].thread)
+            thread = JSON.parse(thread.data.listCommunications.items[0].thread);
             const normalizedDate = normalizeDate(thread.dateTime);
 
             var section = document.createElement("div");
@@ -805,13 +1213,17 @@ import { getUserInfo } from "./authentication";
             var timeline = document.createElement("div");
             timeline.className = "timeline";
 
-            thread.forEach(function (item) {
+            thread.forEach(function(item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
-
+                item.who == "external"
+                    ? timelineRow.addClass(".odd")
+                    : timelineRow.addClass(".even");
+                console.log(timelineRow);
                 var timelineTime = document.createElement("div");
                 timelineTime.className = "timeline-time";
-                timelineTime.innerHTML = item.time + "<small>" + item.date + "</small>";
+                timelineTime.innerHTML =
+                    item.time + "<small>" + item.date + "</small>";
 
                 var timelineDot = document.createElement("div");
                 timelineDot.className = "timeline-dot " + item.dotClass;
@@ -857,12 +1269,12 @@ import { getUserInfo } from "./authentication";
 
                 var badgesDiv = document.createElement("div");
 
-                item.badges.forEach(function (badge) {
-                    var badgeSpan = document.createElement("span");
-                    badgeSpan.className = "badge badge-light";
-                    badgeSpan.innerHTML = badge;
-                    badgesDiv.appendChild(badgeSpan);
-                });
+                // item.badges.forEach(function (badge) {
+                //     var badgeSpan = document.createElement("span");
+                //     badgeSpan.className = "badge badge-light";
+                //     badgeSpan.innerHTML = badge;
+                //     badgesDiv.appendChild(badgeSpan);
+                // });
 
                 fromDiv.appendChild(fromLabel);
                 fromDiv.appendChild(fromValue);
@@ -893,13 +1305,29 @@ import { getUserInfo } from "./authentication";
             section.appendChild(container);
 
             // Crea el modal con el formulario
-            let modal = $("<div>").addClass("modal fade").attr("id", "threadModal");
+            let modal = $("<div>")
+                .addClass("modal fade")
+                .attr("id", "threadModal");
             let modalDialog = $("<div>").addClass("modal-dialog Modal_BIG"); // Cambia "modal-lg" por "modal-sm" si quieres un modal más pequeño
             let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>").addClass("modal-header headerCenter").append($("<h3>").addClass("modal-title").attr("id", "threadModalLabel").text("Hilo de la conversación"));
+            let modalHeader = $("<div>")
+                .addClass("modal-header headerCenter")
+                .append(
+                    $("<h3>")
+                        .addClass("modal-title")
+                        .attr("id", "threadModalLabel")
+                        .text("Hilo de la conversación")
+                );
             let modalBody = $("<div>").addClass("modal-body");
             modalBody.append(section);
-            let modalFooter = $("<div>").addClass("modal-footer").append($("<button>").addClass("btn btn-secondary").text("Cerrar").attr("data-dismiss", "modal"));
+            let modalFooter = $("<div>")
+                .addClass("modal-footer")
+                .append(
+                    $("<button>")
+                        .addClass("btn btn-secondary")
+                        .text("Cerrar")
+                        .attr("data-dismiss", "modal")
+                );
             modalContent.append(modalHeader, modalBody, modalFooter);
             modalDialog.append(modalContent);
             modal.append(modalDialog);
@@ -909,20 +1337,22 @@ import { getUserInfo } from "./authentication";
             $("#threadModal").modal("show");
         }
 
-        window.onload = function () {
-            renderCommunications()
-        }
-
+        window.onload = function() {
+            renderCommunications();
+        };
     } catch (error) {
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
     var navbars = ["header", "aside"];
-    var hrefSelector = 'a:not([target="_blank"]):not([href^="#"]):not([class^="chosen-single"])';
-    var linkElement = navbars.map((element) => element + " " + hrefSelector).join(", ");
+    var hrefSelector =
+        'a:not([target="_blank"]):not([href^="#"]):not([class^="chosen-single"])';
+    var linkElement = navbars
+        .map((element) => element + " " + hrefSelector)
+        .join(", ");
     $(".animsition").animsition({
         inClass: "fade-in",
         outClass: "fade-out",
@@ -940,12 +1370,12 @@ import { getUserInfo } from "./authentication";
         overlay: false,
         overlayClass: "animsition-overlay-slide",
         overlayParentElement: "html",
-        transition: function (url) {
+        transition: function(url) {
             window.location.href = url;
         },
     });
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1006,7 +1436,7 @@ import { getUserInfo } from "./authentication";
                     fl: "#001BFF",
                     or: "#001BFF",
                 },
-                onRegionClick: function (event, code, region) {
+                onRegionClick: function(event, code, region) {
                     event.preventDefault();
                 },
             });
@@ -1024,8 +1454,12 @@ import { getUserInfo } from "./authentication";
                 color: "#007BFF",
                 borderColor: "#fff",
                 backgroundColor: "#fff",
-                onRegionClick: function (element, code, region) {
-                    var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
+                onRegionClick: function(element, code, region) {
+                    var message =
+                        'You clicked "' +
+                        region +
+                        '" which has the code: ' +
+                        code.toUpperCase();
 
                     alert(message);
                 },
@@ -1082,8 +1516,12 @@ import { getUserInfo } from "./authentication";
                 color: "#007BFF",
                 borderColor: "#fff",
                 backgroundColor: "#fff",
-                onRegionClick: function (element, code, region) {
-                    var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
+                onRegionClick: function(element, code, region) {
+                    var message =
+                        'You clicked "' +
+                        region +
+                        '" which has the code: ' +
+                        code.toUpperCase();
                     alert(message);
                 },
             });
@@ -1123,7 +1561,7 @@ import { getUserInfo } from "./authentication";
 //         console.log(err);
 //     }
 // })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1142,13 +1580,13 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
     // Select 2
     try {
-        $(".js-select2").each(function () {
+        $(".js-select2").each(function() {
             $(this).select2({
                 minimumResultsForSearch: 20,
                 dropdownParent: $(this).next(".dropDownSelect2"),
@@ -1158,7 +1596,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1168,7 +1606,7 @@ import { getUserInfo } from "./authentication";
         var sub_menu_is_showed = -1;
 
         for (var i = 0; i < menu.length; i++) {
-            $(menu[i]).on("click", function (e) {
+            $(menu[i]).on("click", function(e) {
                 e.preventDefault();
                 $(".js-right-sidebar").removeClass("show-sidebar");
                 if (jQuery.inArray(this, menu) == sub_menu_is_showed) {
@@ -1183,11 +1621,11 @@ import { getUserInfo } from "./authentication";
                 }
             });
         }
-        $(".js-item-menu, .js-dropdown").click(function (event) {
+        $(".js-item-menu, .js-dropdown").click(function(event) {
             event.stopPropagation();
         });
 
-        $("body,html").on("click", function () {
+        $("body,html").on("click", function() {
             for (var i = 0; i < menu.length; i++) {
                 menu[i].classList.remove("show-dropdown");
             }
@@ -1202,7 +1640,7 @@ import { getUserInfo } from "./authentication";
     var right_sidebar = $(".js-right-sidebar");
     var sidebar_btn = $(".js-sidebar-btn");
 
-    sidebar_btn.on("click", function (e) {
+    sidebar_btn.on("click", function(e) {
         e.preventDefault();
         for (var i = 0; i < menu.length; i++) {
             menu[i].classList.remove("show-dropdown");
@@ -1211,24 +1649,26 @@ import { getUserInfo } from "./authentication";
         right_sidebar.toggleClass("show-sidebar");
     });
 
-    $(".js-right-sidebar, .js-sidebar-btn").click(function (event) {
+    $(".js-right-sidebar, .js-sidebar-btn").click(function(event) {
         event.stopPropagation();
     });
 
-    $("body,html").on("click", function () {
+    $("body,html").on("click", function() {
         right_sidebar.removeClass("show-sidebar");
     });
 
     // Sublist Sidebar
     try {
         var arrow = $(".js-arrow");
-        arrow.each(function () {
+        arrow.each(function() {
             var that = $(this);
-            that.on("click", function (e) {
+            that.on("click", function(e) {
                 e.preventDefault();
                 that.find(".arrow").toggleClass("up");
                 that.toggleClass("open");
-                that.parent().find(".js-sub-list").slideToggle("250");
+                that.parent()
+                    .find(".js-sub-list")
+                    .slideToggle("250");
             });
         });
     } catch (error) {
@@ -1237,11 +1677,11 @@ import { getUserInfo } from "./authentication";
 
     try {
         // Hamburger Menu
-        $(".hamburger").on("click", function () {
+        $(".hamburger").on("click", function() {
             $(this).toggleClass("is-active");
             $(".navbar-mobile").slideToggle("500");
         });
-        $(".navbar-mobile__list li.has-dropdown > a").on("click", function () {
+        $(".navbar-mobile__list li.has-dropdown > a").on("click", function() {
             var dropdown = $(this).siblings("ul.navbar-mobile__dropdown");
             $(this).toggleClass("active");
             $(dropdown).slideToggle("500");
@@ -1252,22 +1692,24 @@ import { getUserInfo } from "./authentication";
     }
     /////////////////////////////////////////007
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
     try {
         var showTablebutton = document.getElementsByClassName("showTable")[0];
-        var showstatisticbutton = document.getElementsByClassName("showstatistic");
+        var showstatisticbutton = document.getElementsByClassName(
+            "showstatistic"
+        );
         var statistic = document.getElementById("statistics");
         var table = document.getElementById("table");
 
-        showTablebutton.addEventListener("click", function () {
+        showTablebutton.addEventListener("click", function() {
             statistic.style.display = "none";
             table.style.display = "block";
         });
         for (var i = 0; i < showstatisticbutton.length; i++) {
-            showstatisticbutton[i].addEventListener("click", function (event) {
+            showstatisticbutton[i].addEventListener("click", function(event) {
                 statistic.style.display = "block";
                 table.style.display = "none";
             });
@@ -1276,7 +1718,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1284,17 +1726,20 @@ import { getUserInfo } from "./authentication";
     try {
         var list_load = $(".js-list-load");
         if (list_load[0]) {
-            list_load.each(function () {
+            list_load.each(function() {
                 var that = $(this);
                 that.find(".js-load-item").hide();
                 var load_btn = that.find(".js-load-btn");
-                load_btn.on("click", function (e) {
+                load_btn.on("click", function(e) {
                     $(this)
                         .text("Loading...")
                         .delay(1500)
-                        .queue(function (next) {
+                        .queue(function(next) {
                             $(this).hide();
-                            that.find(".js-load-item").fadeToggle("slow", "swing");
+                            that.find(".js-load-item").fadeToggle(
+                                "slow",
+                                "swing"
+                            );
                         });
                     e.preventDefault();
                 });
@@ -1304,7 +1749,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1318,11 +1763,15 @@ import { getUserInfo } from "./authentication";
     try {
         var inbox_wrap = $(".js-inbox");
         var message = $(".au-message__item");
-        message.each(function () {
+        message.each(function() {
             var that = $(this);
 
-            that.on("click", function () {
-                $(this).parent().parent().parent().toggleClass("show-chat-box");
+            that.on("click", function() {
+                $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .toggleClass("show-chat-box");
             });
         });
     } catch (error) {

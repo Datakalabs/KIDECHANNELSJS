@@ -273,29 +273,29 @@ export const actionsQuery = `
 }
 `
 
-export const executeQuery = `
-  query listCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-    items {
-      clientId
-      dateTime
-      execute
-    }
-    nextToken
-      __typename
-  }
-}
-`
+// export const executeQuery = `
+//   query listCommunications(
+//     $clientId: String
+//     $dateTime: ModelStringKeyConditionInput
+//     $filter: ModelCommunicationsFilterInput
+//     $limit: Int
+//     $nextToken: String
+//     $sortDirection: ModelSortDirection
+//   ) {
+//     listCommunications(
+//       clientId: $clientId
+//       dateTime: $dateTime
+//       filter: $filter
+//       limit: $limit
+//       nextToken: $nextToken
+//       sortDirection: $sortDirection) {
+//     items {
+//       clientId
+//       dateTime
+//       execute
+//     }
+//     nextToken
+//       __typename
+//   }
+// }
+// `

@@ -1,6 +1,6 @@
 import { Amplify } from 'aws-amplify'
 import { generateClient } from "aws-amplify/api";
-import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery, executeQuery } from "../src/graphql/queries";
+import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery } from "../src/graphql/queries";
 import { updateCommunications } from "../src/graphql/mutations";
 import backendConfig from '../src/amplifyconfiguration.json'
 import { getUserInfo } from "./authentication";
@@ -857,12 +857,12 @@ import { getUserInfo } from "./authentication";
 
                 var badgesDiv = document.createElement("div");
 
-                item.badges.forEach(function (badge) {
-                    var badgeSpan = document.createElement("span");
-                    badgeSpan.className = "badge badge-light";
-                    badgeSpan.innerHTML = badge;
-                    badgesDiv.appendChild(badgeSpan);
-                });
+                // item.badges.forEach(function (badge) {
+                //     var badgeSpan = document.createElement("span");
+                //     badgeSpan.className = "badge badge-light";
+                //     badgeSpan.innerHTML = badge;
+                //     badgesDiv.appendChild(badgeSpan);
+                // });
 
                 fromDiv.appendChild(fromLabel);
                 fromDiv.appendChild(fromValue);
@@ -944,153 +944,6 @@ import { getUserInfo } from "./authentication";
             window.location.href = url;
         },
     });
-})(jQuery);
-(function ($) {
-    // USE STRICT
-    "use strict";
-
-    // Map
-    try {
-        var vmap = $("#vmap");
-        if (vmap[0]) {
-            vmap.vectorMap({
-                map: "world_en",
-                backgroundColor: null,
-                color: "#ffffff",
-                hoverOpacity: 0.7,
-                selectedColor: "#1de9b6",
-                enableZoom: true,
-                showTooltip: true,
-                values: sample_data,
-                scaleColors: ["#1de9b6", "#03a9f5"],
-                normalizeFunction: "polynomial",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Europe Map
-    try {
-        var vmap1 = $("#vmap1");
-        if (vmap1[0]) {
-            vmap1.vectorMap({
-                map: "europe_en",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                enableZoom: true,
-                showTooltip: true,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // USA Map
-    try {
-        var vmap2 = $("#vmap2");
-
-        if (vmap2[0]) {
-            vmap2.vectorMap({
-                map: "usa_en",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                enableZoom: true,
-                showTooltip: true,
-                selectedColor: null,
-                hoverColor: null,
-                colors: {
-                    mo: "#001BFF",
-                    fl: "#001BFF",
-                    or: "#001BFF",
-                },
-                onRegionClick: function (event, code, region) {
-                    event.preventDefault();
-                },
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Germany Map
-    try {
-        var vmap3 = $("#vmap3");
-        if (vmap3[0]) {
-            vmap3.vectorMap({
-                map: "germany_en",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                onRegionClick: function (element, code, region) {
-                    var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
-
-                    alert(message);
-                },
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // France Map
-    try {
-        var vmap4 = $("#vmap4");
-        if (vmap4[0]) {
-            vmap4.vectorMap({
-                map: "france_fr",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                enableZoom: true,
-                showTooltip: true,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Russia Map
-    try {
-        var vmap5 = $("#vmap5");
-        if (vmap5[0]) {
-            vmap5.vectorMap({
-                map: "russia_en",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                hoverOpacity: 0.7,
-                selectedColor: "#999999",
-                enableZoom: true,
-                showTooltip: true,
-                scaleColors: ["#C8EEFF", "#006491"],
-                normalizeFunction: "polynomial",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Brazil Map
-    try {
-        var vmap6 = $("#vmap6");
-        if (vmap6[0]) {
-            vmap6.vectorMap({
-                map: "brazil_br",
-                color: "#007BFF",
-                borderColor: "#fff",
-                backgroundColor: "#fff",
-                onRegionClick: function (element, code, region) {
-                    var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
-                    alert(message);
-                },
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
 })(jQuery);
 // (function ($) {
 //     // Use Strict

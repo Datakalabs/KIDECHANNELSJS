@@ -2,15 +2,21 @@ import {
     createCategories,
     deleteCategories,
     updateCategories,
+    updateCommunications,
     updateDefaultCategories,
 } from "../src/graphql/mutations.js";
 import {
     getCategories,
     getDefaultCategories,
     listCategories,
+    listCommunications,
     listDefaultCategories,
 } from "../src/graphql/queries.js";
 import { client } from "./amplifyConfig.js";
+import { getUserInfo } from "./authentication.js";
+
+const userInfo = await getUserInfo();
+let clientId = userInfo.sub;
 
 (async function($) {
     // USE STRICT
@@ -258,7 +264,6 @@ import { client } from "./amplifyConfig.js";
                         elementRepeted.push(element);
                 });
 
-                console.log("categoryAdded:", element.categoryName);
                 if (!elementRepeted.includes(element)) {
                     await client.graphql({
                         query: createCategories,
@@ -290,10 +295,49 @@ import { client } from "./amplifyConfig.js";
 
             for (let i = 0; i < deletedCategories.length; i++) {
                 const c = deletedCategories[i];
-                await client.graphql({
-                    query: deleteCategories,
-                    variables: { input: { id: c.id } },
+                const allCommunicationsByCategory = await client.graphql({
+                    query: listCommunications,
+                    variables: {
+                        filter: { category: { eq: c.categoryName } },
+                    },
                 });
+                let Items =
+                    allCommunicationsByCategory.data.listCommunications.items;
+                if (Items.length > 0) {
+                    const agree = prompt(
+                        `Hay Comunicaciones que tienen la categoria "${c.categoryName}", todas seran categorizadas a "UNCATEGORY". Desea continuar?`
+                    );
+
+                    if (agree != "no" && agree != "No" && agree != "NO") {
+                        for (let j = 0; j < Items.length; j++) {
+                            try {
+                                console.log(Items[j]);
+                                await client.graphql({
+                                    query: updateCommunications,
+                                    variables: {
+                                        input: {
+                                            clientId,
+                                            dateTime: Items[j].dateTime,
+                                            category: "UNCATEGORY",
+                                        },
+                                        condition: {
+                                            messageId: {
+                                                eq: Items[j].messageId,
+                                            },
+                                        },
+                                    },
+                                });
+                            } catch (error) {
+                                console.log(error);
+                            }
+                        }
+                    }
+                } else {
+                    await client.graphql({
+                        query: deleteCategories,
+                        variables: { input: { id: c.id } },
+                    });
+                }
             }
 
             location.reload();

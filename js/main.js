@@ -1,6 +1,14 @@
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
-import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery } from "../src/graphql/queries";
+import {
+    listCommunications,
+    listDefaultCategories,
+    listCategories,
+    messageDetails,
+    responseDetails,
+    actionsQuery,
+    threadQuery,
+} from "../src/graphql/queries";
 import { updateCommunications } from "../src/graphql/mutations";
 import backendConfig from "../src/amplifyconfiguration.json";
 import { getUserInfo } from "./authentication";
@@ -423,7 +431,7 @@ import { getUserInfo } from "./authentication";
                         "step2"
                     ).innerHTML = selectedCategoryName;
 
-                    a.href = `categories.html?${selectedCategoryName}`
+                    a.href = `categories.html?${selectedCategoryName}`;
 
                     await renderCommunications();
                 });
@@ -1333,6 +1341,7 @@ import { getUserInfo } from "./authentication";
 
         window.onload = function() {
             renderCommunications();
+            setInterval(renderCommunications, 30000);
         };
     } catch (error) {
         console.log(error);

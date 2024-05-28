@@ -285,12 +285,59 @@ let clientId = userInfo.sub;
             for (let i = 0; i < oldCategories.length; i++) {
                 const c = oldCategories[i];
                 const element = document.getElementById(c.id);
-                await client.graphql({
-                    query: updateCategories,
+                const allCommunicationsByCategory = await client.graphql({
+                    query: listCommunications,
                     variables: {
-                        input: { id: c.id, categoryName: element.value },
+                        filter: { category: { eq: c.categoryName } },
                     },
                 });
+                let Items =
+                    allCommunicationsByCategory.data.listCommunications.items;
+                if (Items.length > 0) {
+                    const agree = prompt(
+                        `Hay Comunicaciones que tienen la categoria "${c.categoryName}", todas seran categorizadas a "${element.value}". Desea continuar?`
+                    );
+
+                    if (agree != "no" && agree != "No" && agree != "NO") {
+                        for (let j = 0; j < Items.length; j++) {
+                            try {
+                                await client.graphql({
+                                    query: updateCommunications,
+                                    variables: {
+                                        input: {
+                                            clientId,
+                                            dateTime: Items[j].dateTime,
+                                            category: element.value,
+                                        },
+                                        condition: {
+                                            messageId: {
+                                                eq: Items[j].messageId,
+                                            },
+                                        },
+                                    },
+                                });
+                                await client.graphql({
+                                    query: updateCategories,
+                                    variables: {
+                                        input: {
+                                            id: c.id,
+                                            categoryName: element.value,
+                                        },
+                                    },
+                                });
+                            } catch (error) {
+                                console.log(error);
+                            }
+                        }
+                    }
+                } else {
+                    await client.graphql({
+                        query: updateCategories,
+                        variables: {
+                            input: { id: c.id, categoryName: element.value },
+                        },
+                    });
+                }
             }
 
             for (let i = 0; i < deletedCategories.length; i++) {
@@ -311,7 +358,6 @@ let clientId = userInfo.sub;
                     if (agree != "no" && agree != "No" && agree != "NO") {
                         for (let j = 0; j < Items.length; j++) {
                             try {
-                                console.log(Items[j]);
                                 await client.graphql({
                                     query: updateCommunications,
                                     variables: {
@@ -326,6 +372,10 @@ let clientId = userInfo.sub;
                                             },
                                         },
                                     },
+                                });
+                                await client.graphql({
+                                    query: deleteCategories,
+                                    variables: { input: { id: c.id } },
                                 });
                             } catch (error) {
                                 console.log(error);
@@ -419,7 +469,10 @@ let clientId = userInfo.sub;
             newCategory.appendChild(inputWrapper);
             newCategory.appendChild(deleteBtnWrapper);
             categoryForm.appendChild(newCategory);
-            oldCategories.push({ id: category.id });
+            oldCategories.push({
+                id: category.id,
+                categoryName: category.categoryName,
+            });
         });
     } catch (error) {
         console.log(error);

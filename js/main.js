@@ -1341,7 +1341,9 @@ import { getUserInfo } from "./authentication";
 
         window.onload = function() {
             renderCommunications();
-            setInterval(renderCommunications, 30000);
+            if (window.location.pathname === "/index.html") {
+                setInterval(renderCommunications, 30000);
+            }
         };
     } catch (error) {
         console.log(error);

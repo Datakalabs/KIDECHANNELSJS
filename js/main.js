@@ -396,7 +396,6 @@ import { getUserInfo } from "./authentication";
                     data: [52, 60, 55, 50, 65, 80, 57, 70, 105, 115, 40, 130], // Placeholder data
                 };
 
-                a.href = "#";
                 a.classList.add("showTable");
                 icon.classList.add("fas", "fa-tags");
                 a.appendChild(icon);
@@ -423,6 +422,8 @@ import { getUserInfo } from "./authentication";
                     document.getElementById(
                         "step2"
                     ).innerHTML = selectedCategoryName;
+
+                    a.href = `categories.html?${selectedCategoryName}`
 
                     await renderCommunications();
                 });
@@ -1368,37 +1369,6 @@ import { getUserInfo } from "./authentication";
         },
     });
 })(jQuery);
-// (function ($) {
-//     // Use Strict
-//     "use strict";
-//     try {
-//         var progressbarSimple = $(".js-progressbar-simple");
-//         progressbarSimple.each(function () {
-//             var that = $(this);
-//             var executed = false;
-//             $(window).on("load", function () {
-//                 that.waypoint(
-//                     function () {
-//                         if (!executed) {
-//                             executed = true;
-//                             /*progress bar*/
-//                             that.progressbar({
-//                                 update: function (current_percentage, $this) {
-//                                     $this.find(".js-value").html(current_percentage + "%");
-//                                 },
-//                             });
-//                         }
-//                     },
-//                     {
-//                         offset: "bottom-in-view",
-//                     }
-//                 );
-//             });
-//         });
-//     } catch (err) {
-//         console.log(err);
-//     }
-// })(jQuery);
 (function($) {
     // USE STRICT
     "use strict";

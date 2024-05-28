@@ -909,8 +909,8 @@ import { getUserInfo } from "./authentication";
             });
 
             // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
-            // const userInfo = await getUserInfo()
-            // let clientId = userInfo.sub
+            const userInfo = await getUserInfo();
+            let clientId = userInfo.sub;
 
             $("body").on("submit", "#actionForm", async function(event) {
                 event.preventDefault();
@@ -928,7 +928,7 @@ import { getUserInfo } from "./authentication";
 
                 formData = {
                     ...formData,
-                    clientId: "0001", // Traer con getUserInfo()
+                    clientId,
                     category: $("#category").val(),
                     responseAttachment: $("#responseAttachment input").val(),
                     responseAi: $("#responseAi input").val(),

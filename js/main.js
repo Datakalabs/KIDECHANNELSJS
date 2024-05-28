@@ -241,8 +241,8 @@ import { getUserInfo } from "./authentication";
         };
 
         // Función para obtener comunicaciones
+        let allCommunications;
         async function fetchCommunications(selectedCategoryName) {
-            let allCommunications;
             const variables = selectedCategoryName
                 ? { filter: { category: { eq: selectedCategoryName } } }
                 : {};
@@ -268,9 +268,10 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                let allCommunications = await fetchCommunications(
-                    selectedCategoryName
-                );
+                await fetchCommunications(selectedCategoryName);
+                if (window.location.pathname === "/index.html") {
+                    setInterval(fetchCommunications, 25000);
+                }
                 let allCommsCount = allCommunications.length;
 
                 const [defaultCateg, customCateg] = await Promise.all([
@@ -288,7 +289,10 @@ import { getUserInfo } from "./authentication";
                     allCommunications,
                     allCommsCount
                 );
-                renderTable(allCommunications);
+                renderTable();
+                if (window.location.pathname === "/index.html") {
+                    setInterval(renderTable, 30000);
+                }
             } catch (error) {
                 console.error("Error rendering communications:", error);
             }
@@ -488,7 +492,7 @@ import { getUserInfo } from "./authentication";
         }
 
         // Función para renderizar la tabla de comunicaciones
-        function renderTable(allCommunications) {
+        function renderTable() {
             const dataSet = allCommunications.map((email) => {
                 const values = Object.values(email);
                 if (selectedCategoryName) {
@@ -508,36 +512,40 @@ import { getUserInfo } from "./authentication";
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
-                // Si DataTables ya está aplicado, destruir la instancia existente antes de volver a inicializarla
-                $("#tabla")
-                    .DataTable()
-                    .destroy();
-            }
-
-            const table = new DataTable("#tabla", {
-                columns: [
-                    { title: "Com ID" },
-                    { title: "Channel" },
-                    ...(selectedCategoryName ? [] : [{ title: "Category" }]),
-                    { title: "Datetime" },
-                    { title: "From" },
-                    { title: "To" },
-                    { title: "Response AI" },
-                    { title: "Response Attachment" },
-                    { title: "Message Content" },
-                    { title: "Response Content" },
-                    { title: "Thread" },
-                    { title: "Acciones" },
-                ],
-                data: dataSet,
-                layout: {
-                    topStart: {
-                        buttons: ["csv", "excel", "pdf", "print"],
+                updateDataTable($("#tabla").DataTable(), dataSet);
+            } else {
+                const table = new DataTable("#tabla", {
+                    columns: [
+                        { title: "Com ID" },
+                        { title: "Channel" },
+                        ...(selectedCategoryName
+                            ? []
+                            : [{ title: "Category" }]),
+                        { title: "Datetime" },
+                        { title: "From" },
+                        { title: "To" },
+                        { title: "Response AI" },
+                        { title: "Response Attachment" },
+                        { title: "Message Content" },
+                        { title: "Response Content" },
+                        { title: "Thread" },
+                        { title: "Acciones" },
+                    ],
+                    data: dataSet,
+                    layout: {
+                        topStart: {
+                            buttons: ["csv", "excel", "pdf", "print"],
+                        },
                     },
-                },
-            });
+                });
+                initializeTableEvents(table);
+            }
+        }
 
-            initializeTableEvents(table);
+        function updateDataTable(dataTable, data) {
+            dataTable.clear();
+            dataTable.rows.add(data);
+            dataTable.draw(false);
         }
 
         // Función para crear un contenedor de botones
@@ -913,7 +921,7 @@ import { getUserInfo } from "./authentication";
 
                 formData = {
                     ...formData,
-                    clientId, // Traer con getUserInfo()
+                    clientId,
                     category: $("#category").val(),
                     responseAttachment: $("#responseAttachment input").val(),
                     responseAi: $("#responseAi input").val(),
@@ -1335,7 +1343,6 @@ import { getUserInfo } from "./authentication";
 
         window.onload = function () {
             renderCommunications();
-            setInterval(renderCommunications, 30000);
         };
     } catch (error) {
         console.log(error);

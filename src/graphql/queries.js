@@ -300,3 +300,138 @@ export const actionsQuery = `
 //   }
 // }
 // `
+
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+export const getPreQuoteOption = /* GraphQL */ `
+    query GetPreQuoteOption($clientId: String!, $optionName: String!) {
+        getPreQuoteOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listPreQuoteOptions = /* GraphQL */ `
+    query ListPreQuoteOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelPreQuoteOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listPreQuoteOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+export const getTriggerOption = /* GraphQL */ `
+    query GetTriggerOption($clientId: String!, $optionName: String!) {
+        getTriggerOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listTriggerOptions = /* GraphQL */ `
+    query ListTriggerOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelTriggerOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listTriggerOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+export const getRetargetingOption = /* GraphQL */ `
+    query GetRetargetingOption($clientId: String!, $optionName: String!) {
+        getRetargetingOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listRetargetingOptions = /* GraphQL */ `
+    query ListRetargetingOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelRetargetingOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listRetargetingOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;

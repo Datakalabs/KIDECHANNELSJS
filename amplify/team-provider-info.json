@@ -24,5 +24,31 @@
         "KideChannels": {}
       }
     }
+  },
+  "temp": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-kidechannels-temp-56603-authRole",
+      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-temp-56603-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-temp-56603-authRole",
+      "Region": "eu-west-3",
+      "DeploymentBucketName": "amplify-kidechannels-temp-56603-deployment",
+      "UnauthRoleName": "amplify-kidechannels-temp-56603-unauthRole",
+      "StackName": "amplify-kidechannels-temp-56603",
+      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-kidechannels-temp-56603/ecc532e0-1dfe-11ef-ab37-0a962abb1dfb",
+      "AmplifyAppId": "dwcqi9jbpj54"
+    },
+    "categories": {
+      "auth": {
+        "amplifykideai": {
+          "userPoolId": "eu-west-3_N4QVtaRLF",
+          "userPoolName": "FuerteRRHH",
+          "webClientId": "m7qd5d585r35oleco83u18nj8",
+          "nativeClientId": "m7qd5d585r35oleco83u18nj8"
+        }
+      },
+      "api": {
+        "KideChannels": {}
+      }
+    }
   }
 }

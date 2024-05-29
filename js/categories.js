@@ -169,6 +169,8 @@ import { getUserInfo } from "./authentication";
         // Se genera el cliente para las llamadas
         const client = generateClient();
 
+        let userInfo = await getUserInfo()
+        let clientId = userInfo.userData.userId
         let selectedCategoryName = window.location.search.slice(1)
         let categories;
         document.getElementById("step2").innerHTML = selectedCategoryName;
@@ -197,7 +199,7 @@ import { getUserInfo } from "./authentication";
         // Función para obtener comunicaciones
         async function fetchCommunications(selectedCategoryName) {
             let allCommunications;
-            const variables = { filter: { category: { eq: selectedCategoryName } } }
+            const variables = { clientId, filter: { category: { eq: selectedCategoryName } } }
 
             try {
                 const response = await client.graphql({
@@ -223,10 +225,11 @@ import { getUserInfo } from "./authentication";
                 let allCommunications = await fetchCommunications(
                     selectedCategoryName
                 );
+                let variables = { clientId }
 
                 const [defaultCateg, customCateg] = await Promise.all([
-                    client.graphql({ query: listDefaultCategories }),
-                    client.graphql({ query: listCategories }),
+                    client.graphql({ query: listDefaultCategories, variables }),
+                    client.graphql({ query: listCategories, variables }),
                 ]);
 
                 categories = [

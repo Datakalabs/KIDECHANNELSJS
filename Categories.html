@@ -50,7 +50,7 @@
                             <img src="images/icon/avatar-big-01.jpg" alt="NOMBRE CLIENTE" />
                         </div>
                         <h4 class="name" id="name">NOMBRE CLIENTE</h4>
-                        <a href="#">Salir</a>
+                        <button type="submit" id="logout-button">Salir</a>
                     </div>
                     <nav class="navbar-sidebar2">
                         <ul class="list-unstyled navbar__list">
@@ -60,7 +60,7 @@
                             </li>
                             <li class="has-sub">
                                 <a class="js-arrow" href="#">
-                                    <i class="fas fa-trophy"></i>Categorías
+                                    <i class="fas fa-tags"></i>Categorías
                                     <span class="arrow">
                                         <i class="fas fa-angle-down"></i>
                                     </span>
@@ -69,20 +69,17 @@
                             </li>
                             <li class="has-sub">
                                 <a class="js-arrow" href="#">
-                                    <i class="fas fa-copy"></i>Configuración
+                                    <i class="fas fa-cog"></i>Configuración
                                     <span class="arrow">
                                         <i class="fas fa-angle-down"></i>
                                     </span>
                                 </a>
                                 <ul class="list-unstyled navbar__sub-list js-sub-list">
                                     <li>
-                                        <a href="form.html"> <i class="fas fa-sign-in-alt"></i>Configurar Categorías</a>
+                                        <a href="CategoriesConfig.html"> <i class="fas fa-cog"></i>Configurar Categorías</a>
                                     </li>
                                     <li>
-                                        <a href="register.html"> <i class="fas fa-user"></i>Register</a>
-                                    </li>
-                                    <li>
-                                        <a href="forget-pass.html"> <i class="fas fa-unlock-alt"></i>Forget Password</a>
+                                        <a href="/Authorizations.html"> <i class="fas fa-lock"></i>Autorizaciones</a>
                                     </li>
                                 </ul>
                             </li>
@@ -207,12 +204,12 @@
                                             <span class="au-breadcrumb-span">You are here:</span>
                                             <ul class="list-unstyled list-inline au-breadcrumb__list">
                                                 <li class="list-inline-item active">
-                                                    <a href="#">Categories</a>
+                                                    <a href="#" id="step1">Categories</a>
                                                 </li>
                                                 <li class="list-inline-item seprate">
                                                     <span>/</span>
                                                 </li>
-                                                <li class="list-inline-item"></li>
+                                                <li class="list-inline-item" id="step2"></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -274,6 +271,7 @@
         <!-- Main JS-->
         <script src="dist/main.bundle.js"></script>
         <script src="dist/categories.bundle.js"></script>
+        <script src="dist/loginLogout.bundle.js"></script>
         <script src="dist/menuSidebar.bundle.js"></script>
     </body>
 </html>

@@ -253,7 +253,6 @@ import { getUserInfo } from "./authentication";
                 const a = document.createElement("a");
                 const icon = document.createElement("i");
 
-                a.href = "categories.html";
                 a.classList.add("showTable");
                 icon.classList.add("fas", "fa-tags");
                 a.appendChild(icon);
@@ -264,11 +263,8 @@ import { getUserInfo } from "./authentication";
                 a.addEventListener("click", async function (event) {
                     event.preventDefault();
                     selectedCategoryName = category.categoryName;
-
-                    document.getElementById("step1").innerHTML = "categories";
-                    document.getElementById(
-                        "step2"
-                    ).innerHTML = selectedCategoryName;
+                    document.getElementById("step2").innerHTML = selectedCategoryName;
+                    a.href = `categories.html?${selectedCategoryName}`;
 
                     await renderCommunications();
                 });
@@ -642,8 +638,8 @@ import { getUserInfo } from "./authentication";
             });
 
             // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
-            // const userInfo = await getUserInfo()
-            // let clientId = userInfo.sub
+            const userInfo = await getUserInfo()
+            let clientId = userInfo.sub
 
             $("body").on("submit", "#actionForm", async function (event) {
                 event.preventDefault();
@@ -661,7 +657,7 @@ import { getUserInfo } from "./authentication";
 
                 formData = {
                     ...formData,
-                    clientId: "0001", // Traer con getUserInfo()
+                    clientId,
                     category: $("#category").val(),
                     responseAttachment: $("#responseAttachment input").val(),
                     responseAi: $("#responseAi input").val(),

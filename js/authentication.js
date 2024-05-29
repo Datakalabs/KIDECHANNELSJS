@@ -109,3 +109,4 @@ export const getUserInfo = async () => {
         userData = await getCurrentUser();
     return { ...attributes, userData };
 };
+

@@ -177,6 +177,8 @@ import { getUserInfo } from "./authentication";
         // Se genera el cliente para las llamadas
         const client = generateClient();
 
+        let userInfo = await getUserInfo()
+        let clientId = userInfo.userData.userId
         let selectedCategoryName;
         let categories;
         const select1 = document.createElement("select");
@@ -242,10 +244,8 @@ import { getUserInfo } from "./authentication";
 
         // Función para obtener comunicaciones
         let allCommunications;
-        async function fetchCommunications(selectedCategoryName) {
-            const variables = selectedCategoryName
-                ? { filter: { category: { eq: selectedCategoryName } } }
-                : {};
+        async function fetchCommunications() {
+            const variables = { filter: { clientId: { eq: clientId } } }
 
             try {
                 const response = await client.graphql({
@@ -268,7 +268,7 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                await fetchCommunications(selectedCategoryName);
+                await fetchCommunications();
                 if (window.location.pathname === "/index.html") {
                     setInterval(fetchCommunications, 25000);
                 }
@@ -620,7 +620,6 @@ import { getUserInfo } from "./authentication";
         }
 
         async function openEditModal(data) {
-            console.log(data[0])
             let actions = await client.graphql({
                 query: actionsQuery,
                 variables: {
@@ -901,10 +900,6 @@ import { getUserInfo } from "./authentication";
                 $("#actionForm").submit();
             });
 
-            // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
-            const userInfo = await getUserInfo()
-            let clientId = userInfo.sub
-
             $("body").on("submit", "#actionForm", async function (event) {
                 event.preventDefault();
 
@@ -930,7 +925,6 @@ import { getUserInfo } from "./authentication";
                     execute: actions.execute,
                 };
 
-                console.log(formData)
                 await client.graphql({
                     query: updateCommunications,
                     variables: {
@@ -1341,9 +1335,9 @@ import { getUserInfo } from "./authentication";
             $("#threadModal").modal("show");
         }
 
-        window.onload = function () {
-            renderCommunications();
-        };
+        // window.onload = function () {
+        renderCommunications();
+        // };
     } catch (error) {
         console.log(error);
     }

@@ -32,6 +32,33 @@ type Categories @model @auth(rules: [{ allow: public }, { allow: private }]) {
     configuration: CategoryConfiguration
 }
 
+type PreQuoteOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["optionName"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
+type TriggerOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["optionName"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
+type RetargetingOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["optionName"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
 type Communications
     @model
     @auth(

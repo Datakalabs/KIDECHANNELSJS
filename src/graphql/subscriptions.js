@@ -163,6 +163,141 @@ export const onDeleteCategories = /* GraphQL */ `
     }
   }
 `;
+export const onCreatePreQuoteOption = /* GraphQL */ `
+  subscription OnCreatePreQuoteOption(
+    $filter: ModelSubscriptionPreQuoteOptionFilterInput
+  ) {
+    onCreatePreQuoteOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdatePreQuoteOption = /* GraphQL */ `
+  subscription OnUpdatePreQuoteOption(
+    $filter: ModelSubscriptionPreQuoteOptionFilterInput
+  ) {
+    onUpdatePreQuoteOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeletePreQuoteOption = /* GraphQL */ `
+  subscription OnDeletePreQuoteOption(
+    $filter: ModelSubscriptionPreQuoteOptionFilterInput
+  ) {
+    onDeletePreQuoteOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateTriggerOption = /* GraphQL */ `
+  subscription OnCreateTriggerOption(
+    $filter: ModelSubscriptionTriggerOptionFilterInput
+  ) {
+    onCreateTriggerOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateTriggerOption = /* GraphQL */ `
+  subscription OnUpdateTriggerOption(
+    $filter: ModelSubscriptionTriggerOptionFilterInput
+  ) {
+    onUpdateTriggerOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteTriggerOption = /* GraphQL */ `
+  subscription OnDeleteTriggerOption(
+    $filter: ModelSubscriptionTriggerOptionFilterInput
+  ) {
+    onDeleteTriggerOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateRetargetingOption = /* GraphQL */ `
+  subscription OnCreateRetargetingOption(
+    $filter: ModelSubscriptionRetargetingOptionFilterInput
+  ) {
+    onCreateRetargetingOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateRetargetingOption = /* GraphQL */ `
+  subscription OnUpdateRetargetingOption(
+    $filter: ModelSubscriptionRetargetingOptionFilterInput
+  ) {
+    onUpdateRetargetingOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteRetargetingOption = /* GraphQL */ `
+  subscription OnDeleteRetargetingOption(
+    $filter: ModelSubscriptionRetargetingOptionFilterInput
+  ) {
+    onDeleteRetargetingOption(filter: $filter) {
+      clientId
+      id
+      optionName
+      detail
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateCommunications = /* GraphQL */ `
   subscription OnCreateCommunications(
     $filter: ModelSubscriptionCommunicationsFilterInput

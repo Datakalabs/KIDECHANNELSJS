@@ -2,158 +2,159 @@
 // this is an auto generated file. This will be overwritten
 
 export const getDefaultCategories = /* GraphQL */ `
-  query GetDefaultCategories($id: ID!) {
-    getDefaultCategories(id: $id) {
-      id
-      clientId
-      categoryName
-      configuration {
-        autoResponse
-        autoRedirect
-        redirectTo
-        autoQuote
-        quoteOption
-        autoTrigger
-        triggerOption
-        autoRetargeting
-        retargetingOption
-        retargetingTime
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
+    query GetDefaultCategories($id: ID!) {
+        getDefaultCategories(id: $id) {
+            id
+            clientId
+            categoryName
+            configuration {
+                autoResponse
+                autoRedirect
+                redirectTo
+                autoQuote
+                quoteOption
+                autoTrigger
+                triggerOption
+                autoRetargeting
+                retargetingOption
+                retargetingTime
+                __typename
+            }
+            createdAt
+            updatedAt
+            __typename
+        }
     }
-  }
 `;
 export const listDefaultCategories = /* GraphQL */ `
-  query ListDefaultCategories(
-    $filter: ModelDefaultCategoriesFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listDefaultCategories(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
+    query ListDefaultCategories(
+        $filter: ModelDefaultCategoriesFilterInput
+        $limit: Int
+        $nextToken: String
     ) {
-      items {
-        id
-        clientId
-        categoryName
-        createdAt
-        updatedAt
-        __typename
-      }
-      nextToken
-      __typename
+        listDefaultCategories(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                clientId
+                categoryName
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
     }
-  }
 `;
 export const getCategories = /* GraphQL */ `
-  query GetCategories($id: ID!) {
-    getCategories(id: $id) {
-      id
-      clientId
-      categoryName
-      configuration {
-        autoResponse
-        autoRedirect
-        redirectTo
-        autoQuote
-        quoteOption
-        autoTrigger
-        triggerOption
-        autoRetargeting
-        retargetingOption
-        retargetingTime
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
+    query GetCategories($id: ID!) {
+        getCategories(id: $id) {
+            id
+            clientId
+            categoryName
+            configuration {
+                autoResponse
+                autoRedirect
+                redirectTo
+                autoQuote
+                quoteOption
+                autoTrigger
+                triggerOption
+                autoRetargeting
+                retargetingOption
+                retargetingTime
+                __typename
+            }
+            createdAt
+            updatedAt
+            __typename
+        }
     }
-  }
 `;
 export const listCategories = /* GraphQL */ `
-  query ListCategories(
-    $filter: ModelCategoriesFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listCategories(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        clientId
-        categoryName
-        createdAt
-        updatedAt
-        __typename
-      }
-      nextToken
-      __typename
+    query ListCategories(
+        $filter: ModelCategoriesFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listCategories(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items {
+                id
+                clientId
+                categoryName
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
     }
-  }
 `;
 export const getCommunications = /* GraphQL */ `
-  query GetCommunications($clientId: String!, $dateTime: AWSDateTime!) {
-    getCommunications(clientId: $clientId, dateTime: $dateTime) {
-      clientId
-      id
-      messageId
-      channel
-      category
-      dateTime
-      fromId
-      toId
-      responseAi
-      messageSubject
-      messageBody
-      messagSummary
-      messageAttachment
-      responseBody
-      responseSubject
-      responseAttachment
-      execute
-      threadId
-      thread
-      actions
-      createdAt
-      updatedAt
-      __typename
+    query GetCommunications($clientId: String!, $dateTime: AWSDateTime!) {
+        getCommunications(clientId: $clientId, dateTime: $dateTime) {
+            clientId
+            id
+            messageId
+            channel
+            category
+            dateTime
+            fromId
+            toId
+            responseAi
+            messageSubject
+            messageBody
+            messagSummary
+            messageAttachment
+            responseBody
+            responseSubject
+            responseAttachment
+            execute
+            threadId
+            thread
+            actions
+            createdAt
+            updatedAt
+            __typename
+        }
     }
-  }
 `;
 export const listCommunications = /* GraphQL */ `
-  query ListCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-      items {
-        messageId
-        channel
-        category
-        dateTime
-        fromId
-        toId
-        responseAi
-        responseAttachment
-      }
-      nextToken
-      __typename
+    query ListCommunications(
+        $clientId: String
+        $dateTime: ModelStringKeyConditionInput
+        $filter: ModelCommunicationsFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listCommunications(
+            clientId: $clientId
+            dateTime: $dateTime
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                messageId
+                channel
+                category
+                dateTime
+                fromId
+                toId
+                responseAi
+                responseAttachment
+            }
+            nextToken
+            __typename
+        }
     }
-  }
 `;
 
 export const messageDetails = `
@@ -184,7 +185,7 @@ export const messageDetails = `
       __typename
   }
 }
-`
+`;
 
 export const responseDetails = `
 query listCommunications(
@@ -212,7 +213,7 @@ query listCommunications(
       __typename
   }
 }
-`
+`;
 
 export const threadQuery = `
 query listCommunications(
@@ -237,7 +238,7 @@ query listCommunications(
       __typename
   }
 }
-`
+`;
 
 export const actionsQuery = `
   query listCommunications(
@@ -271,7 +272,7 @@ export const actionsQuery = `
       __typename
   }
 }
-`
+`;
 
 // export const executeQuery = `
 //   query listCommunications(

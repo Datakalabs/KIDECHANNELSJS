@@ -169,6 +169,150 @@ export const deleteCategories = /* GraphQL */ `
         }
     }
 `;
+export const createPreQuoteOption = /* GraphQL */ `
+    mutation CreatePreQuoteOption(
+        $input: CreatePreQuoteOptionInput!
+        $condition: ModelPreQuoteOptionConditionInput
+    ) {
+        createPreQuoteOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const updatePreQuoteOption = /* GraphQL */ `
+    mutation UpdatePreQuoteOption(
+        $input: UpdatePreQuoteOptionInput!
+        $condition: ModelPreQuoteOptionConditionInput
+    ) {
+        updatePreQuoteOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const deletePreQuoteOption = /* GraphQL */ `
+    mutation DeletePreQuoteOption(
+        $input: DeletePreQuoteOptionInput!
+        $condition: ModelPreQuoteOptionConditionInput
+    ) {
+        deletePreQuoteOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const createTriggerOption = /* GraphQL */ `
+    mutation CreateTriggerOption(
+        $input: CreateTriggerOptionInput!
+        $condition: ModelTriggerOptionConditionInput
+    ) {
+        createTriggerOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const updateTriggerOption = /* GraphQL */ `
+    mutation UpdateTriggerOption(
+        $input: UpdateTriggerOptionInput!
+        $condition: ModelTriggerOptionConditionInput
+    ) {
+        updateTriggerOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const deleteTriggerOption = /* GraphQL */ `
+    mutation DeleteTriggerOption(
+        $input: DeleteTriggerOptionInput!
+        $condition: ModelTriggerOptionConditionInput
+    ) {
+        deleteTriggerOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const createRetargetingOption = /* GraphQL */ `
+    mutation CreateRetargetingOption(
+        $input: CreateRetargetingOptionInput!
+        $condition: ModelRetargetingOptionConditionInput
+    ) {
+        createRetargetingOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const updateRetargetingOption = /* GraphQL */ `
+    mutation UpdateRetargetingOption(
+        $input: UpdateRetargetingOptionInput!
+        $condition: ModelRetargetingOptionConditionInput
+    ) {
+        updateRetargetingOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const deleteRetargetingOption = /* GraphQL */ `
+    mutation DeleteRetargetingOption(
+        $input: DeleteRetargetingOptionInput!
+        $condition: ModelRetargetingOptionConditionInput
+    ) {
+        deleteRetargetingOption(input: $input, condition: $condition) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
 export const createCommunications = /* GraphQL */ `
     mutation CreateCommunications(
         $input: CreateCommunicationsInput!

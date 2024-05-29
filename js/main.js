@@ -245,7 +245,7 @@ import { getUserInfo } from "./authentication";
         // Función para obtener comunicaciones
         let allCommunications;
         async function fetchCommunications() {
-            const variables = { filter: { clientId: { eq: clientId } } }
+            const variables = { clientId }
 
             try {
                 const response = await client.graphql({
@@ -273,6 +273,7 @@ import { getUserInfo } from "./authentication";
                     setInterval(fetchCommunications, 25000);
                 }
                 let allCommsCount = allCommunications.length;
+                let variables = { clientId }
 
                 const [defaultCateg, customCateg] = await Promise.all([
                     client.graphql({ query: listDefaultCategories }),
@@ -1183,7 +1184,6 @@ import { getUserInfo } from "./authentication";
                 },
             });
             thread = JSON.parse(thread.data.listCommunications.items[0].thread);
-            const normalizedDate = normalizeDate(thread.dateTime);
 
             var section = document.createElement("div");
             section.className = "section__content section__content--p30";
@@ -1217,7 +1217,6 @@ import { getUserInfo } from "./authentication";
                 } else {
                     timelineRow.classList.add("client");
                 }
-                console.log(timelineRow);
                 var timelineTime = document.createElement("div");
                 timelineTime.className = "timeline-time";
                 timelineTime.innerHTML =
@@ -1335,9 +1334,7 @@ import { getUserInfo } from "./authentication";
             $("#threadModal").modal("show");
         }
 
-        // window.onload = function () {
         renderCommunications();
-        // };
     } catch (error) {
         console.log(error);
     }

@@ -6,9 +6,9 @@ type DefaultCategories
             { allow: private, operations: [read] }
         ]
     ) {
+    clientId: String! @primaryKey(sortKeyFields: ["categoryName"])
     id: ID!
-    clientId: String
-    categoryName: String
+    categoryName: String!
     configuration: CategoryConfiguration
 }
 
@@ -26,9 +26,9 @@ type CategoryConfiguration {
 }
 
 type Categories @model @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["categoryName"])
     id: ID!
-    clientId: String
-    categoryName: String
+    categoryName: String!
     configuration: CategoryConfiguration
 }
 

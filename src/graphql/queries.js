@@ -1,100 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getDefaultCategories = /* GraphQL */ `
-    query GetDefaultCategories($id: ID!) {
-        getDefaultCategories(id: $id) {
-            id
-            clientId
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
-        }
-    }
-`;
-export const listDefaultCategories = /* GraphQL */ `
-    query ListDefaultCategories(
-        $filter: ModelDefaultCategoriesFilterInput
-        $limit: Int
-        $nextToken: String
-    ) {
-        listDefaultCategories(
-            filter: $filter
-            limit: $limit
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                clientId
-                categoryName
-                createdAt
-                updatedAt
-                __typename
-            }
-            nextToken
-            __typename
-        }
-    }
-`;
-export const getCategories = /* GraphQL */ `
-    query GetCategories($id: ID!) {
-        getCategories(id: $id) {
-            id
-            clientId
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
-        }
-    }
-`;
-export const listCategories = /* GraphQL */ `
-    query ListCategories(
-        $filter: ModelCategoriesFilterInput
-        $limit: Int
-        $nextToken: String
-    ) {
-        listCategories(filter: $filter, limit: $limit, nextToken: $nextToken) {
-            items {
-                id
-                clientId
-                categoryName
-                createdAt
-                updatedAt
-                __typename
-            }
-            nextToken
-            __typename
-        }
-    }
-`;
 export const getCommunications = /* GraphQL */ `
     query GetCommunications($clientId: String!, $dateTime: AWSDateTime!) {
         getCommunications(clientId: $clientId, dateTime: $dateTime) {
@@ -300,3 +206,249 @@ export const actionsQuery = `
 //   }
 // }
 // `
+
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+export const getPreQuoteOption = /* GraphQL */ `
+    query GetPreQuoteOption($clientId: String!, $optionName: String!) {
+        getPreQuoteOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listPreQuoteOptions = /* GraphQL */ `
+    query ListPreQuoteOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelPreQuoteOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listPreQuoteOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+export const getTriggerOption = /* GraphQL */ `
+    query GetTriggerOption($clientId: String!, $optionName: String!) {
+        getTriggerOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listTriggerOptions = /* GraphQL */ `
+    query ListTriggerOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelTriggerOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listTriggerOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+export const getRetargetingOption = /* GraphQL */ `
+    query GetRetargetingOption($clientId: String!, $optionName: String!) {
+        getRetargetingOption(clientId: $clientId, optionName: $optionName) {
+            clientId
+            id
+            optionName
+            detail
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listRetargetingOptions = /* GraphQL */ `
+    query ListRetargetingOptions(
+        $clientId: String
+        $optionName: ModelStringKeyConditionInput
+        $filter: ModelRetargetingOptionFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listRetargetingOptions(
+            clientId: $clientId
+            optionName: $optionName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                optionName
+                detail
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+
+export const getDefaultCategories = /* GraphQL */ `
+    query GetDefaultCategories($clientId: String!, $categoryName: String!) {
+        getDefaultCategories(clientId: $clientId, categoryName: $categoryName) {
+            clientId
+            id
+            categoryName
+            configuration {
+                autoResponse
+                autoRedirect
+                redirectTo
+                autoQuote
+                quoteOption
+                autoTrigger
+                triggerOption
+                autoRetargeting
+                retargetingOption
+                retargetingTime
+                __typename
+            }
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listDefaultCategories = /* GraphQL */ `
+    query ListDefaultCategories(
+        $clientId: String
+        $categoryName: ModelStringKeyConditionInput
+        $filter: ModelDefaultCategoriesFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listDefaultCategories(
+            clientId: $clientId
+            categoryName: $categoryName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                categoryName
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;
+export const getCategories = /* GraphQL */ `
+    query GetCategories($clientId: String!, $categoryName: String!) {
+        getCategories(clientId: $clientId, categoryName: $categoryName) {
+            clientId
+            id
+            categoryName
+            configuration {
+                autoResponse
+                autoRedirect
+                redirectTo
+                autoQuote
+                quoteOption
+                autoTrigger
+                triggerOption
+                autoRetargeting
+                retargetingOption
+                retargetingTime
+                __typename
+            }
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`;
+export const listCategories = /* GraphQL */ `
+    query ListCategories(
+        $clientId: String
+        $categoryName: ModelStringKeyConditionInput
+        $filter: ModelCategoriesFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listCategories(
+            clientId: $clientId
+            categoryName: $categoryName
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                categoryName
+                createdAt
+                updatedAt
+                __typename
+            }
+            nextToken
+            __typename
+        }
+    }
+`;

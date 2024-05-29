@@ -28,8 +28,12 @@ let clientId = userInfo.sub;
         let categories,
             defaultCategories = await client.graphql({
                 query: listDefaultCategories,
+                variables: { clientId },
             }),
-            customCategories = await client.graphql({ query: listCategories });
+            customCategories = await client.graphql({
+                query: listCategories,
+                variables: { clientId },
+            });
 
         categories = [
             ...defaultCategories.data.listDefaultCategories.items,
@@ -64,6 +68,17 @@ let clientId = userInfo.sub;
                 const config = data?.getDefaultCategories
                     ? data?.getDefaultCategories.configuration
                     : data?.getCategories.configuration;
+
+                // let preQuoteOptions = await client.graphql({
+                //         query: listDefaultCategories,
+                //     });
+
+                // preQuoteOptions.item.forEach((e) => {
+                //     const option = document.createElement("option");
+                //     option.value = e.categoryName;
+                //     option.innerHTML = e.categoryName;
+                //     select.appendChild(option);
+                // });
                 for (const key in config) {
                     let value = config[key];
                     const element = document.getElementById(key);
@@ -269,7 +284,7 @@ let clientId = userInfo.sub;
                         query: createCategories,
                         variables: {
                             input: {
-                                clientId: "0001",
+                                clientId,
                                 categoryName: element.value,
                                 configuration: parameters,
                             },

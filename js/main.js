@@ -276,8 +276,8 @@ import { getUserInfo } from "./authentication";
                 let variables = { clientId }
 
                 const [defaultCateg, customCateg] = await Promise.all([
-                    client.graphql({ query: listDefaultCategories }),
-                    client.graphql({ query: listCategories }),
+                    client.graphql({ query: listDefaultCategories, variables }),
+                    client.graphql({ query: listCategories, variables }),
                 ]);
 
                 categories = [

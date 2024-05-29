@@ -13,7 +13,7 @@ import { updateCommunications } from "../src/graphql/mutations";
 import backendConfig from "../src/amplifyconfiguration.json";
 import { getUserInfo } from "./authentication";
 
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -167,7 +167,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(async function($) {
+(async function ($) {
     // USE STRICT
     "use strict";
     try {
@@ -177,6 +177,8 @@ import { getUserInfo } from "./authentication";
         // Se genera el cliente para las llamadas
         const client = generateClient();
 
+        let userInfo = await getUserInfo()
+        let clientId = userInfo.userData.userId
         let selectedCategoryName;
         let categories;
         const select1 = document.createElement("select");
@@ -242,10 +244,8 @@ import { getUserInfo } from "./authentication";
 
         // Función para obtener comunicaciones
         let allCommunications;
-        async function fetchCommunications(selectedCategoryName) {
-            const variables = selectedCategoryName
-                ? { filter: { category: { eq: selectedCategoryName } } }
-                : {};
+        async function fetchCommunications() {
+            const variables = { filter: { clientId: { eq: clientId } } }
 
             try {
                 const response = await client.graphql({
@@ -268,7 +268,7 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                await fetchCommunications(selectedCategoryName);
+                await fetchCommunications();
                 if (window.location.pathname === "/index.html") {
                     setInterval(fetchCommunications, 25000);
                 }
@@ -426,15 +426,9 @@ import { getUserInfo } from "./authentication";
                     renderChartInfo(category, colorObj);
                 }
 
-                a.addEventListener("click", async function(event) {
+                a.addEventListener("click", async function (event) {
                     event.preventDefault();
                     selectedCategoryName = category.categoryName;
-
-                    document.getElementById("step1").innerHTML = "categories";
-                    document.getElementById(
-                        "step2"
-                    ).innerHTML = selectedCategoryName;
-
                     a.href = `categories.html?${selectedCategoryName}`;
 
                     await renderCommunications();
@@ -558,9 +552,8 @@ import { getUserInfo } from "./authentication";
         function createButtonContainer(className, icon, full) {
             const container = document.createElement("div");
             container.className = `${className} d-flex justify-content-center`;
-            container.innerHTML = `<button class="btn ${
-                full ? "btn-primary" : "btn-outline-primary"
-            }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
+            container.innerHTML = `<button class="btn ${full ? "btn-primary" : "btn-outline-primary"
+                }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
             return container;
         }
 
@@ -600,7 +593,7 @@ import { getUserInfo } from "./authentication";
 
         // Función para inicializar eventos de la tabla
         function initializeTableEvents(table) {
-            table.on("click", "tbody .edit", async function() {
+            table.on("click", "tbody .edit", async function () {
                 const data = table.row($(this).closest("tr")).data();
                 await openEditModal(data);
             });
@@ -610,17 +603,17 @@ import { getUserInfo } from "./authentication";
             //     await executeFunc(data);
             // });
 
-            table.on("click", "tbody .view1", async function() {
+            table.on("click", "tbody .view1", async function () {
                 const data = table.row($(this).closest("tr")).data();
                 await openMessageModal(data);
             });
 
-            table.on("click", "tbody .view2", async function() {
+            table.on("click", "tbody .view2", async function () {
                 const data = table.row($(this).closest("tr")).data();
                 await openResponseModal(data);
             });
 
-            table.on("click", "tbody .view3", async function() {
+            table.on("click", "tbody .view3", async function () {
                 const data = table.row($(this).closest("tr")).data();
                 await openThreadModal(data);
             });
@@ -637,6 +630,7 @@ import { getUserInfo } from "./authentication";
             });
 
             actions = actions.data.listCommunications.items[0];
+            console.log(actions)
             let selectedCategory = categories.filter(
                 (category) => category.categoryName === actions.category
             );
@@ -725,7 +719,7 @@ import { getUserInfo } from "./authentication";
                                                                 color: "red",
                                                             })
                                                     )
-                                                    .on("click", function() {
+                                                    .on("click", function () {
                                                         $(this)
                                                             .closest(
                                                                 ".input-group"
@@ -807,14 +801,12 @@ import { getUserInfo } from "./authentication";
                 .addClass("form-group1")
                 .attr("id", "execute");
             const label = $("<label>").html(
-                `<strong>${
-                    !actions.execute ? "Activar IA:" : "Desactivar IA:"
+                `<strong>${!actions.execute ? "Activar IA:" : "Desactivar IA:"
                 }</strong>`
             );
             const button = $("<button>")
                 .addClass(
-                    `form-control ${
-                        !actions.execute ? "btn-success" : "btn-danger"
+                    `form-control ${!actions.execute ? "btn-success" : "btn-danger"
                     }`
                 )
                 .attr("type", "button")
@@ -829,7 +821,7 @@ import { getUserInfo } from "./authentication";
                         !actions.execute ? "fas fa-check" : "fas fa-stop"
                     )
                 )
-                .on("click", function() {
+                .on("click", function () {
                     actions.execute = !actions.execute;
                     if (!actions.execute) {
                         button
@@ -904,22 +896,18 @@ import { getUserInfo } from "./authentication";
 
             $("#actionModal").modal("show");
 
-            $("#saveBtn").on("click", function() {
+            $("#saveBtn").on("click", function () {
                 $("#actionForm").submit();
             });
 
-            // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
-            const userInfo = await getUserInfo();
-            let clientId = userInfo.sub;
-
-            $("body").on("submit", "#actionForm", async function(event) {
+            $("body").on("submit", "#actionForm", async function (event) {
                 event.preventDefault();
 
                 let formData = {};
 
                 $("#actionForm")
                     .find(":input:disabled")
-                    .each(function() {
+                    .each(function () {
                         let name = $(this).attr("name");
                         if (name) {
                             formData[name] = $(this).val();
@@ -1221,7 +1209,7 @@ import { getUserInfo } from "./authentication";
             var timeline = document.createElement("div");
             timeline.className = "timeline";
 
-            thread.forEach(function(item) {
+            thread.forEach(function (item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
                 if (item.who === "external") {
@@ -1347,14 +1335,14 @@ import { getUserInfo } from "./authentication";
             $("#threadModal").modal("show");
         }
 
-        window.onload = function() {
-            renderCommunications();
-        };
+        // window.onload = function () {
+        renderCommunications();
+        // };
     } catch (error) {
         console.log(error);
     }
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
     var navbars = ["header", "aside"];
@@ -1380,12 +1368,12 @@ import { getUserInfo } from "./authentication";
         overlay: false,
         overlayClass: "animsition-overlay-slide",
         overlayParentElement: "html",
-        transition: function(url) {
+        transition: function (url) {
             window.location.href = url;
         },
     });
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -1404,13 +1392,13 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
     // Select 2
     try {
-        $(".js-select2").each(function() {
+        $(".js-select2").each(function () {
             $(this).select2({
                 minimumResultsForSearch: 20,
                 dropdownParent: $(this).next(".dropDownSelect2"),
@@ -1420,7 +1408,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -1430,7 +1418,7 @@ import { getUserInfo } from "./authentication";
         var sub_menu_is_showed = -1;
 
         for (var i = 0; i < menu.length; i++) {
-            $(menu[i]).on("click", function(e) {
+            $(menu[i]).on("click", function (e) {
                 e.preventDefault();
                 $(".js-right-sidebar").removeClass("show-sidebar");
                 if (jQuery.inArray(this, menu) == sub_menu_is_showed) {
@@ -1445,11 +1433,11 @@ import { getUserInfo } from "./authentication";
                 }
             });
         }
-        $(".js-item-menu, .js-dropdown").click(function(event) {
+        $(".js-item-menu, .js-dropdown").click(function (event) {
             event.stopPropagation();
         });
 
-        $("body,html").on("click", function() {
+        $("body,html").on("click", function () {
             for (var i = 0; i < menu.length; i++) {
                 menu[i].classList.remove("show-dropdown");
             }
@@ -1464,7 +1452,7 @@ import { getUserInfo } from "./authentication";
     var right_sidebar = $(".js-right-sidebar");
     var sidebar_btn = $(".js-sidebar-btn");
 
-    sidebar_btn.on("click", function(e) {
+    sidebar_btn.on("click", function (e) {
         e.preventDefault();
         for (var i = 0; i < menu.length; i++) {
             menu[i].classList.remove("show-dropdown");
@@ -1473,20 +1461,20 @@ import { getUserInfo } from "./authentication";
         right_sidebar.toggleClass("show-sidebar");
     });
 
-    $(".js-right-sidebar, .js-sidebar-btn").click(function(event) {
+    $(".js-right-sidebar, .js-sidebar-btn").click(function (event) {
         event.stopPropagation();
     });
 
-    $("body,html").on("click", function() {
+    $("body,html").on("click", function () {
         right_sidebar.removeClass("show-sidebar");
     });
 
     // Sublist Sidebar
     try {
         var arrow = $(".js-arrow");
-        arrow.each(function() {
+        arrow.each(function () {
             var that = $(this);
-            that.on("click", function(e) {
+            that.on("click", function (e) {
                 e.preventDefault();
                 that.find(".arrow").toggleClass("up");
                 that.toggleClass("open");
@@ -1501,11 +1489,11 @@ import { getUserInfo } from "./authentication";
 
     try {
         // Hamburger Menu
-        $(".hamburger").on("click", function() {
+        $(".hamburger").on("click", function () {
             $(this).toggleClass("is-active");
             $(".navbar-mobile").slideToggle("500");
         });
-        $(".navbar-mobile__list li.has-dropdown > a").on("click", function() {
+        $(".navbar-mobile__list li.has-dropdown > a").on("click", function () {
             var dropdown = $(this).siblings("ul.navbar-mobile__dropdown");
             $(this).toggleClass("active");
             $(dropdown).slideToggle("500");
@@ -1516,7 +1504,7 @@ import { getUserInfo } from "./authentication";
     }
     /////////////////////////////////////////007
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -1528,12 +1516,12 @@ import { getUserInfo } from "./authentication";
         var statistic = document.getElementById("statistics");
         var table = document.getElementById("table");
 
-        showTablebutton.addEventListener("click", function() {
+        showTablebutton.addEventListener("click", function () {
             statistic.style.display = "none";
             table.style.display = "block";
         });
         for (var i = 0; i < showstatisticbutton.length; i++) {
-            showstatisticbutton[i].addEventListener("click", function(event) {
+            showstatisticbutton[i].addEventListener("click", function (event) {
                 statistic.style.display = "block";
                 table.style.display = "none";
             });
@@ -1542,7 +1530,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -1550,15 +1538,15 @@ import { getUserInfo } from "./authentication";
     try {
         var list_load = $(".js-list-load");
         if (list_load[0]) {
-            list_load.each(function() {
+            list_load.each(function () {
                 var that = $(this);
                 that.find(".js-load-item").hide();
                 var load_btn = that.find(".js-load-btn");
-                load_btn.on("click", function(e) {
+                load_btn.on("click", function (e) {
                     $(this)
                         .text("Loading...")
                         .delay(1500)
-                        .queue(function(next) {
+                        .queue(function (next) {
                             $(this).hide();
                             that.find(".js-load-item").fadeToggle(
                                 "slow",
@@ -1573,7 +1561,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function($) {
+(function ($) {
     // USE STRICT
     "use strict";
 
@@ -1587,10 +1575,10 @@ import { getUserInfo } from "./authentication";
     try {
         var inbox_wrap = $(".js-inbox");
         var message = $(".au-message__item");
-        message.each(function() {
+        message.each(function () {
             var that = $(this);
 
-            that.on("click", function() {
+            that.on("click", function () {
                 $(this)
                     .parent()
                     .parent()

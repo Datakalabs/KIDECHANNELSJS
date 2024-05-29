@@ -170,47 +170,8 @@ import { getUserInfo } from "./authentication";
         const client = generateClient();
 
         let selectedCategoryName = window.location.search.slice(1)
-        console.log(selectedCategoryName)
         let categories;
-        const select1 = document.createElement("select");
-
-        const colorObjects = [
-            {
-                category_line: "rgba(0,181,233,0.9)",
-                bg: "rgba(0,181,233,0.2)",
-                class: "dot dot--blue",
-            },
-            {
-                category_line: "rgba(0,173,95,0.9)",
-                bg: "rgba(0,173,95,0.2)",
-                class: "dot dot--green",
-            },
-            {
-                category_line: "rgba(255,99,132,0.9)",
-                bg: "rgba(255,99,132,0.2)",
-                class: "dot dot--red",
-            },
-            {
-                category_line: "rgba(255,159,64,0.9)",
-                bg: "rgba(255,159,64,0.2)",
-                class: "dot dot--orange",
-            },
-            {
-                category_line: "rgba(75,192,192,0.9)",
-                bg: "rgba(75,192,192,0.2)",
-                class: "dot dot--turquoise",
-            },
-            {
-                category_line: "rgba(153,102,255,0.9)",
-                bg: "rgba(153,102,255,0.2)",
-                class: "dot dot--purple",
-            },
-            {
-                category_line: "rgba(255,205,86,0.9)",
-                bg: "rgba(255,205,86,0.2)",
-                class: "dot dot--yellow",
-            },
-        ];
+        document.getElementById("step2").innerHTML = selectedCategoryName;
 
         // Función para normalizar la fecha
         const normalizeDate = (dateString) => {
@@ -236,9 +197,7 @@ import { getUserInfo } from "./authentication";
         // Función para obtener comunicaciones
         async function fetchCommunications(selectedCategoryName) {
             let allCommunications;
-            const variables = selectedCategoryName
-                ? { filter: { category: { eq: selectedCategoryName } } }
-                : {};
+            const variables = { filter: { category: { eq: selectedCategoryName } } }
 
             try {
                 const response = await client.graphql({
@@ -264,7 +223,6 @@ import { getUserInfo } from "./authentication";
                 let allCommunications = await fetchCommunications(
                     selectedCategoryName
                 );
-                let allCommsCount = allCommunications.length;
 
                 const [defaultCateg, customCateg] = await Promise.all([
                     client.graphql({ query: listDefaultCategories }),
@@ -276,11 +234,7 @@ import { getUserInfo } from "./authentication";
                     ...customCateg.data.listCategories.items,
                 ];
 
-                renderCategoryList(
-                    categories,
-                    allCommunications,
-                    allCommsCount
-                );
+                renderCategoryList(categories);
                 renderTable(allCommunications);
             } catch (error) {
                 console.error("Error rendering communications:", error);
@@ -290,114 +244,15 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar la lista de categorías
         function renderCategoryList(
             categories,
-            allCommunications,
-            allCommsCount
         ) {
             const ul2 = document.querySelector(".js-sub-list");
             ul2.innerHTML = "";
-            // const chartRightRef = document.getElementById("chart-info__right");
 
-            // if (!chartRightRef.querySelector(".rs-select2--dark")) {
-            //     // Crear el primer div
-            //     const div1 = document.createElement("div");
-            //     div1.classList.add(
-            //         "rs-select2--dark",
-            //         "rs-select2--md",
-            //         "m-r-10"
-            //     );
-
-            //     // Crear el primer select
-            //     select1.classList.add("js-select2");
-            //     select1.setAttribute("name", "property");
-
-            //     // Crear las opciones del primer select dinámicamente
-            //     const option1_default = document.createElement("option");
-            //     option1_default.selected = true;
-            //     option1_default.textContent = "Todas";
-            //     select1.appendChild(option1_default);
-
-            //     // Crear el div de dropDownSelect2 para el primer select
-            //     const dropDown1 = document.createElement("div");
-            //     dropDown1.classList.add("dropDownSelect2");
-
-            //     // Añadir el select y el dropdown al primer div
-            //     div1.appendChild(select1);
-            //     div1.appendChild(dropDown1);
-
-            //     // Crear el segundo div
-            //     const div2 = document.createElement("div");
-            //     div2.classList.add("rs-select2--dark", "rs-select2--sm");
-
-            //     // Crear el segundo select
-            //     const select2 = document.createElement("select");
-            //     select2.classList.add("js-select2", "au-select-dark");
-            //     select2.setAttribute("name", "time");
-
-            //     // Crear las opciones del segundo select
-            //     const option2_1 = document.createElement("option");
-            //     option2_1.selected = true;
-            //     option2_1.textContent = "Mes y dia";
-
-            //     const option2_2 = document.createElement("option");
-            //     option2_2.value = "";
-            //     option2_2.textContent = "Por mes";
-
-            //     const option2_3 = document.createElement("option");
-            //     option2_3.value = "";
-            //     option2_3.textContent = "Por día";
-
-            //     // Añadir las opciones al segundo select
-            //     select2.appendChild(option2_1);
-            //     select2.appendChild(option2_2);
-            //     select2.appendChild(option2_3);
-
-            //     // Crear el div de dropDownSelect2 para el segundo select
-            //     const dropDown2 = document.createElement("div");
-            //     dropDown2.classList.add("dropDownSelect2");
-
-            //     // Añadir el select y el dropdown al segundo div
-            //     div2.appendChild(select2);
-            //     div2.appendChild(dropDown2);
-
-            //     // Añadir ambos divs al elemento chartRightRef
-            //     chartRightRef.appendChild(div1);
-            //     chartRightRef.appendChild(div2);
-            // } else {
-            //     // Actualizar select1 con nuevas opciones de categoría sin duplicar
-            //     const select1 = chartRightRef.querySelector(
-            //         'select[name="property"]'
-            //     );
-            //     select1.innerHTML = "";
-            //     const option1_default = document.createElement("option");
-            //     option1_default.selected = true;
-            //     option1_default.textContent = "Todas";
-            //     select1.appendChild(option1_default);
-            // }
-
-            categories.forEach((category, index) => {
+            categories.forEach((category) => {
                 const li = document.createElement("li");
                 const a = document.createElement("a");
                 const icon = document.createElement("i");
 
-                const commsByCategoryCount = allCommunications.filter(
-                    (email) => email.category === category.categoryName
-                ).length;
-                const countPortion = parseFloat(
-                    ((commsByCategoryCount * 100) / allCommsCount).toFixed(2)
-                );
-
-                const colorObj = colorObjects[index];
-
-                const categoryDataset = {
-                    label: category.categoryName,
-                    backgroundColor: colorObj.bg,
-                    borderColor: colorObj.category_line,
-                    pointHoverBackgroundColor: colorObj.category_line,
-                    borderWidth: 0,
-                    data: [52, 60, 55, 50, 65, 80, 57, 70, 105, 115, 40, 130], // Placeholder data
-                };
-
-                a.href = "categories.html";
                 a.classList.add("showTable");
                 icon.classList.add("fas", "fa-tags");
                 a.appendChild(icon);
@@ -405,105 +260,34 @@ import { getUserInfo } from "./authentication";
                 li.appendChild(a);
                 ul2.appendChild(li);
 
-                const option = document.createElement("option");
-                option.value = category.categoryName;
-                option.textContent = category.categoryName;
-                select1.appendChild(option);
-
-                if (!selectedCategoryName) {
-                    // renderProgressBar(category.categoryName, countPortion);
-                    // window.myChart.data.datasets.push(categoryDataset);
-                    // renderChartInfo(category, colorObj);
-                }
-
                 a.addEventListener("click", async function (event) {
                     event.preventDefault();
                     selectedCategoryName = category.categoryName;
-
-                    document.getElementById("step1").innerHTML = "categories";
-                    document.getElementById(
-                        "step2"
-                    ).innerHTML = selectedCategoryName;
+                    document.getElementById("step2").innerHTML = selectedCategoryName;
+                    a.href = `categories.html?${selectedCategoryName}`;
 
                     await renderCommunications();
                 });
             });
         }
 
-        // Función para renderizar la información del gráfico
-        function renderChartInfo(category, colorObj) {
-            const chartLeftRef = document.getElementById("chart-info__left");
-
-            const chartNote = document.createElement("div");
-            chartNote.className = "chart-note";
-
-            const colorSpan = document.createElement("span");
-            colorSpan.className = colorObj.class;
-
-            const labelSpan = document.createElement("span");
-            labelSpan.textContent = category.categoryName;
-
-            chartNote.appendChild(colorSpan);
-            chartNote.appendChild(labelSpan);
-            chartLeftRef.appendChild(chartNote);
-        }
-
-        // Función para renderizar la barra de progreso
-        function renderProgressBar(categoryName, countPortion) {
-            const skillContainer = document.getElementById("skill-container");
-            // Crear los elementos necesarios
-            const progressContainer = document.createElement("div");
-            progressContainer.className = "progress-cont";
-
-            const progressDiv = document.createElement("div");
-            progressDiv.className = "progress";
-
-            const titleSpan = document.createElement("span");
-            titleSpan.className = "progress__title";
-            titleSpan.textContent = categoryName;
-
-            const barDiv = document.createElement("div");
-            barDiv.className = "progress-bar";
-            barDiv.setAttribute("role", "progressbar");
-            barDiv.setAttribute("aria-valuenow", countPortion);
-            barDiv.setAttribute("aria-valuemin", "0");
-            barDiv.setAttribute("aria-valuemax", "100");
-            barDiv.style.width = countPortion + "%";
-
-            const valueSpan = document.createElement("span");
-            valueSpan.className = "progress__value js-value";
-            valueSpan.textContent = countPortion + "%";
-
-            // Añadir los elementos al DOM en el orden correcto
-            barDiv.appendChild(valueSpan);
-            progressDiv.appendChild(barDiv);
-            progressContainer.appendChild(titleSpan);
-            progressContainer.appendChild(progressDiv);
-            skillContainer.appendChild(progressContainer);
-
-            // Inicializar la barra de progreso de Bootstrap
-            $(barDiv).progressbar();
-        }
-
         // Función para renderizar la tabla de comunicaciones
         function renderTable(allCommunications) {
             const dataSet = allCommunications.map((email) => {
+                delete email.category
                 const values = Object.values(email);
                 return values;
             });
 
             dataSet.forEach((row) => {
-                row[2] = createBadge(row[2]);
-                row[3] = createDiv(row[3]);
+                row[2] = createDiv(row[2]);
                 row.push(createButtonContainer("view1", "eye"));
                 row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
                 row.push(createButtonContainer("edit", "pencil-alt", "full"));
-                // row.push(createActionButtonContainer());
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
-                // Si DataTables ya está aplicado, destruir la instancia existente antes de volver a inicializarla
                 $("#tabla")
                     .DataTable()
                     .destroy();
@@ -543,37 +327,10 @@ import { getUserInfo } from "./authentication";
             return container;
         }
 
-        // Función para crear el contenedor de acciones
-        // function createActionButtonContainer() {
-        //     const container = document.createElement("div");
-        //     container.className = "headerCenter"
-        //     container.innerHTML = `
-        // <button class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
-        // <button class="check btn btn-success" style="background-color: #00ad5f;"><i class="fas fa-check"></i></button>`;
-        //     return container;
-        // }
-
         // Función para crear una div con contenido
         function createDiv(content) {
             const div = document.createElement("div");
             div.innerHTML = content;
-            return div;
-        }
-
-        // Función para crear un badge
-        function createBadge(category) {
-            const badgeClass =
-                {
-                    DefaultCategory1: "badge-primary",
-                    DefaultCategory2: "badge-success",
-                    "custom 1": "badge-warning",
-                    Leidos: "badge-danger",
-                    Recibidos: "badge-info",
-                    default: "badge-secondary",
-                }[category] || "badge-secondary";
-
-            const div = document.createElement("div");
-            div.innerHTML = `<span class="badge ${badgeClass}">${category}</span>`;
             return div;
         }
 
@@ -583,11 +340,6 @@ import { getUserInfo } from "./authentication";
                 const data = table.row($(this).closest("tr")).data();
                 await openEditModal(data);
             });
-
-            // table.on("click", "tbody .check", async function () {
-            //     const data = table.row($(this).closest("tr")).data();
-            //     await executeFunc(data);
-            // });
 
             table.on("click", "tbody .view1", async function () {
                 const data = table.row($(this).closest("tr")).data();
@@ -886,8 +638,8 @@ import { getUserInfo } from "./authentication";
             });
 
             // REEMPLAZAR EN FORMDATA CUANDO TENGAMOS DATA REAL
-            // const userInfo = await getUserInfo()
-            // let clientId = userInfo.sub
+            const userInfo = await getUserInfo()
+            let clientId = userInfo.sub
 
             $("body").on("submit", "#actionForm", async function (event) {
                 event.preventDefault();
@@ -905,7 +657,7 @@ import { getUserInfo } from "./authentication";
 
                 formData = {
                     ...formData,
-                    clientId: "0001", // Traer con getUserInfo()
+                    clientId,
                     category: $("#category").val(),
                     responseAttachment: $("#responseAttachment input").val(),
                     responseAi: $("#responseAi input").val(),
@@ -1206,7 +958,6 @@ import { getUserInfo } from "./authentication";
                 } else {
                     timelineRow.classList.add("client");
                 }
-                console.log(timelineRow);
                 var timelineTime = document.createElement("div");
                 timelineTime.className = "timeline-time";
                 timelineTime.innerHTML =

@@ -94,18 +94,20 @@
         }
     }
 
-    function loadComponent(url, elementId) {
+    function loadComponent(url, elementId, callback) {
         fetch(url)
             .then(response => response.text())
             .then(data => {
                 document.getElementById(elementId).innerHTML = data;
-                initializeMenu()
+                if (callback) callback()
             })
-            .catch(error => console.error('Error loading component:', error));
+            .catch(error => console.error('Error al cargar el componente:', error));
     }
     document.addEventListener('DOMContentLoaded', function () {
-        loadComponent('RightMenuSidebar.html', 'right-menu-sidebar');
+        loadComponent('RightMenuSidebar.html', 'right-menu-sidebar', function () {
+            window.getUserName()
+            initializeMenu()
+        })
     });
-
     window.initializeMenu = initializeMenu;
 })(jQuery);

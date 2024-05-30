@@ -1,14 +1,21 @@
 import { getUserInfo } from "./authentication";
 
-(async function ($) {
-    document.addEventListener('DOMContentLoaded', async () => {
-        const name = document.getElementById("name");
-        if (name) {
+(function ($) {
+    async function getUserName() {
+        try {
+            // document.addEventListener('DOMContentLoaded', async () => {
             const response = await getUserInfo()
             if (response) {
-                name.innerHTML = `${response.name} ${response.family_name}`
+                const userNameElements = document.querySelectorAll(".name");
+                userNameElements?.forEach(element => {
+                    element.innerHTML = `${response.name} ${response.family_name}`
+                });
+                return response
             }
-
+            // })
+        } catch (error) {
+            console.log(error)
         }
-    })
+    }
+    window.getUserName = getUserName
 })()

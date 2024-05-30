@@ -6,8 +6,8 @@ export const onCreateDefaultCategories = /* GraphQL */ `
     $filter: ModelSubscriptionDefaultCategoriesFilterInput
   ) {
     onCreateDefaultCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse
@@ -33,8 +33,8 @@ export const onUpdateDefaultCategories = /* GraphQL */ `
     $filter: ModelSubscriptionDefaultCategoriesFilterInput
   ) {
     onUpdateDefaultCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse
@@ -60,8 +60,8 @@ export const onDeleteDefaultCategories = /* GraphQL */ `
     $filter: ModelSubscriptionDefaultCategoriesFilterInput
   ) {
     onDeleteDefaultCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse
@@ -87,8 +87,8 @@ export const onCreateCategories = /* GraphQL */ `
     $filter: ModelSubscriptionCategoriesFilterInput
   ) {
     onCreateCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse
@@ -114,8 +114,8 @@ export const onUpdateCategories = /* GraphQL */ `
     $filter: ModelSubscriptionCategoriesFilterInput
   ) {
     onUpdateCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse
@@ -141,8 +141,8 @@ export const onDeleteCategories = /* GraphQL */ `
     $filter: ModelSubscriptionCategoriesFilterInput
   ) {
     onDeleteCategories(filter: $filter) {
-      id
       clientId
+      id
       categoryName
       configuration {
         autoResponse

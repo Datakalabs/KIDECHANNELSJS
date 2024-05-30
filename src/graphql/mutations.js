@@ -7,8 +7,8 @@ export const createDefaultCategories = /* GraphQL */ `
         $condition: ModelDefaultCategoriesConditionInput
     ) {
         createDefaultCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse
@@ -35,8 +35,8 @@ export const updateDefaultCategories = /* GraphQL */ `
         $condition: ModelDefaultCategoriesConditionInput
     ) {
         updateDefaultCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse
@@ -63,8 +63,8 @@ export const deleteDefaultCategories = /* GraphQL */ `
         $condition: ModelDefaultCategoriesConditionInput
     ) {
         deleteDefaultCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse
@@ -91,8 +91,8 @@ export const createCategories = /* GraphQL */ `
         $condition: ModelCategoriesConditionInput
     ) {
         createCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse
@@ -119,8 +119,8 @@ export const updateCategories = /* GraphQL */ `
         $condition: ModelCategoriesConditionInput
     ) {
         updateCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse
@@ -147,8 +147,8 @@ export const deleteCategories = /* GraphQL */ `
         $condition: ModelCategoriesConditionInput
     ) {
         deleteCategories(input: $input, condition: $condition) {
-            id
             clientId
+            id
             categoryName
             configuration {
                 autoResponse

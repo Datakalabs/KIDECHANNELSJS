@@ -11,6 +11,9 @@ import {
     listCategories,
     listCommunications,
     listDefaultCategories,
+    listPreQuoteOptions,
+    listRetargetingOptions,
+    listTriggerOptions,
 } from "../src/graphql/queries.js";
 import { client } from "./amplifyConfig.js";
 import { getUserInfo } from "./authentication.js";
@@ -46,39 +49,75 @@ let clientId = userInfo.sub;
             select.appendChild(option);
         });
 
-        let categorySelect,
+        let categorySelectId,
+            categorySelectName,
             isDefault = true;
+        const quoteSelect = document.getElementById("quoteOption");
+        const triggerSelect = document.getElementById("triggerOption");
+        const retargetingSelect = document.getElementById("retargetingOption");
+        let preQuoteOptions = await client.graphql({
+            query: listPreQuoteOptions,
+            variables: { clientId },
+        });
+
+        let triggerOption = await client.graphql({
+            query: listTriggerOptions,
+            variables: { clientId },
+        });
+
+        let retargetingOption = await client.graphql({
+            query: listRetargetingOptions,
+            variables: { clientId },
+        });
+
+        preQuoteOptions.data.listPreQuoteOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            quoteSelect.appendChild(option);
+        });
+
+        retargetingOption.data.listRetargetingOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            retargetingSelect.appendChild(option);
+        });
+
+        triggerOption.data.listTriggerOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            triggerSelect.appendChild(option);
+        });
         select.addEventListener("change", async (e) => {
             if (e.target.value !== "Selecciona") {
                 const categ = categories.find(
                     (c) => c.categoryName === e.target.value
                 );
 
-                categorySelect = categ.id;
+                categorySelectId = categ.id;
+                categorySelectName = categ.categoryName;
                 let { data } = await client.graphql({
                     query: getDefaultCategories,
-                    variables: { id: categ.id },
+                    variables: {
+                        clientId,
+                        categoryName: categ.categoryName,
+                    },
                 });
                 !data.getDefaultCategories &&
                     ({ data } = await client.graphql({
                         query: getCategories,
-                        variables: { id: categ.id },
+                        variables: {
+                            clientId,
+                            categoryName: categ.categoryName,
+                        },
                     })) &&
                     (isDefault = false);
                 const config = data?.getDefaultCategories
                     ? data?.getDefaultCategories.configuration
                     : data?.getCategories.configuration;
 
-                // let preQuoteOptions = await client.graphql({
-                //         query: listDefaultCategories,
-                //     });
-
-                // preQuoteOptions.item.forEach((e) => {
-                //     const option = document.createElement("option");
-                //     option.value = e.categoryName;
-                //     option.innerHTML = e.categoryName;
-                //     select.appendChild(option);
-                // });
                 for (const key in config) {
                     let value = config[key];
                     const element = document.getElementById(key);
@@ -95,9 +134,9 @@ let clientId = userInfo.sub;
                                 break;
                             case "select-one":
                                 valueParsed = JSON.parse(value);
-                                element.value = valueParsed?.option
-                                    ? valueParsed.option
-                                    : value;
+                                element.value = valueParsed?.optionId
+                                    ? valueParsed.optionId
+                                    : "";
                                 break;
                             default:
                                 valueParsed = value ? JSON.parse(value) : {};
@@ -138,7 +177,7 @@ let clientId = userInfo.sub;
                         break;
                     case "select-one":
                         params[p] = elem.value
-                            ? `{\"option\":\"${elem.value}\"}`
+                            ? `{\"optionId\":\"${elem.value}\"}`
                             : "{}";
                         break;
                     default:
@@ -157,7 +196,9 @@ let clientId = userInfo.sub;
                       query: updateDefaultCategories,
                       variables: {
                           input: {
-                              id: categorySelect,
+                              clientId,
+                              id: categorySelectId,
+                              categoryName: categorySelectName,
                               configuration: params,
                           },
                       },
@@ -166,7 +207,9 @@ let clientId = userInfo.sub;
                       query: updateCategories,
                       variables: {
                           input: {
-                              id: categorySelect,
+                              clientId,
+                              id: categorySelectId,
+                              categoryName: categorySelectName,
                               configuration: params,
                           },
                       },
@@ -178,7 +221,9 @@ let clientId = userInfo.sub;
                 query: updateDefaultCategories,
                 variables: {
                     input: {
-                        id: categorySelect,
+                        clientId,
+                        categoryName: categorySelectName,
+                        id: categorySelectId,
                         configuration: {
                             autoRedirect: false,
                             autoRetargeting: false,
@@ -303,6 +348,7 @@ let clientId = userInfo.sub;
                 const allCommunicationsByCategory = await client.graphql({
                     query: listCommunications,
                     variables: {
+                        clientId,
                         filter: { category: { eq: c.categoryName } },
                     },
                 });
@@ -335,6 +381,7 @@ let clientId = userInfo.sub;
                                     query: updateCategories,
                                     variables: {
                                         input: {
+                                            clientId,
                                             id: c.id,
                                             categoryName: element.value,
                                         },
@@ -349,7 +396,11 @@ let clientId = userInfo.sub;
                     await client.graphql({
                         query: updateCategories,
                         variables: {
-                            input: { id: c.id, categoryName: element.value },
+                            input: {
+                                clientId,
+                                id: c.id,
+                                categoryName: element.value,
+                            },
                         },
                     });
                 }
@@ -360,6 +411,7 @@ let clientId = userInfo.sub;
                 const allCommunicationsByCategory = await client.graphql({
                     query: listCommunications,
                     variables: {
+                        clientId,
                         filter: { category: { eq: c.categoryName } },
                     },
                 });
@@ -390,7 +442,12 @@ let clientId = userInfo.sub;
                                 });
                                 await client.graphql({
                                     query: deleteCategories,
-                                    variables: { input: { id: c.id } },
+                                    variables: {
+                                        input: {
+                                            clientId,
+                                            categoryName: c.categoryName,
+                                        },
+                                    },
                                 });
                             } catch (error) {
                                 console.log(error);
@@ -400,7 +457,9 @@ let clientId = userInfo.sub;
                 } else {
                     await client.graphql({
                         query: deleteCategories,
-                        variables: { input: { id: c.id } },
+                        variables: {
+                            input: { clientId, categoryName: c.categoryName },
+                        },
                     });
                 }
             }

@@ -171,7 +171,7 @@ import { getUserInfo } from "./authentication";
 
         let userInfo = await getUserInfo()
         let clientId = userInfo.userData.userId
-        let selectedCategoryName = window.location.search.slice(1)
+        let selectedCategoryName = window.location.search.slice(1).replace(/%20/g, ' ');
         let categories;
         document.getElementById("step2").innerHTML = selectedCategoryName;
 
@@ -197,8 +197,8 @@ import { getUserInfo } from "./authentication";
         };
 
         // Función para obtener comunicaciones
+        let allCommunications
         async function fetchCommunications(selectedCategoryName) {
-            let allCommunications;
             const variables = { clientId, filter: { category: { eq: selectedCategoryName } } }
 
             try {
@@ -222,11 +222,11 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                let allCommunications = await fetchCommunications(
-                    selectedCategoryName
-                );
-                if (window.location.pathname === "/categories.html") {
-                    setInterval(fetchCommunications(selectedCategoryName), 5000);
+                await fetchCommunications(selectedCategoryName);
+                if (window.location.pathname.includes("/categories.html")) {
+                    setInterval((async () => {
+                        await fetchCommunications(selectedCategoryName)
+                    }), 25000);
                 }
                 let variables = { clientId }
 

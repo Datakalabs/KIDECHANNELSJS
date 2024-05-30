@@ -12,6 +12,7 @@ module.exports = {
         categories: './js/categories.js',
         categoryConfig: './js/categoriesConfig.js',
         menuSidebar: './js/menuSidebar.js',
+        rightMenuSidebar: './js/rightMenuSidebar.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

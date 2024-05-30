@@ -1602,6 +1602,14 @@ section {
     overflow-y: auto;
 }
 
+.dataka-logo {
+    width: 100px;
+}
+
+.dataka-logo-big {
+    max-width: 300px;
+}
+
 .menu-sidebar .logo {
     background: #f5f5f5;
     height: 75px;

@@ -225,6 +225,9 @@ import { getUserInfo } from "./authentication";
                 let allCommunications = await fetchCommunications(
                     selectedCategoryName
                 );
+                if (window.location.pathname === "/categories.html") {
+                    setInterval(fetchCommunications(selectedCategoryName), 5000);
+                }
                 let variables = { clientId }
 
                 const [defaultCateg, customCateg] = await Promise.all([
@@ -1077,10 +1080,7 @@ import { getUserInfo } from "./authentication";
 
             $("#threadModal").modal("show");
         }
-
-        window.onload = function () {
-            renderCommunications();
-        };
+        renderCommunications();
     } catch (error) {
         console.log(error);
     }

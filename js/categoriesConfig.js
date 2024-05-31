@@ -55,41 +55,6 @@ let clientId = userInfo.sub;
         const quoteSelect = document.getElementById("quoteOption");
         const triggerSelect = document.getElementById("triggerOption");
         const retargetingSelect = document.getElementById("retargetingOption");
-        let preQuoteOptions = await client.graphql({
-            query: listPreQuoteOptions,
-            variables: { clientId },
-        });
-
-        let triggerOption = await client.graphql({
-            query: listTriggerOptions,
-            variables: { clientId },
-        });
-
-        let retargetingOption = await client.graphql({
-            query: listRetargetingOptions,
-            variables: { clientId },
-        });
-
-        preQuoteOptions.data.listPreQuoteOptions.items.forEach((e) => {
-            const option = document.createElement("option");
-            option.value = e.id;
-            option.innerHTML = e.optionName;
-            quoteSelect.appendChild(option);
-        });
-
-        retargetingOption.data.listRetargetingOptions.items.forEach((e) => {
-            const option = document.createElement("option");
-            option.value = e.id;
-            option.innerHTML = e.optionName;
-            retargetingSelect.appendChild(option);
-        });
-
-        triggerOption.data.listTriggerOptions.items.forEach((e) => {
-            const option = document.createElement("option");
-            option.value = e.id;
-            option.innerHTML = e.optionName;
-            triggerSelect.appendChild(option);
-        });
         select.addEventListener("change", async (e) => {
             if (e.target.value !== "Selecciona") {
                 const categ = categories.find(
@@ -102,18 +67,18 @@ let clientId = userInfo.sub;
                     query: getDefaultCategories,
                     variables: {
                         clientId,
-                        categoryName: categ.categoryName,
+                        id: categ.id,
                     },
                 });
-                !data.getDefaultCategories &&
-                    ({ data } = await client.graphql({
-                        query: getCategories,
-                        variables: {
-                            clientId,
-                            categoryName: categ.categoryName,
-                        },
-                    })) &&
-                    (isDefault = false);
+                !data.getDefaultCategories
+                    ? ({ data } = await client.graphql({
+                          query: getCategories,
+                          variables: {
+                              clientId,
+                              id: categ.id,
+                          },
+                      })) && (isDefault = false)
+                    : (isDefault = true);
                 const config = data?.getDefaultCategories
                     ? data?.getDefaultCategories.configuration
                     : data?.getCategories.configuration;
@@ -150,6 +115,41 @@ let clientId = userInfo.sub;
                     }
                 }
             }
+        });
+        let preQuoteOptions = await client.graphql({
+            query: listPreQuoteOptions,
+            variables: { clientId },
+        });
+
+        let triggerOption = await client.graphql({
+            query: listTriggerOptions,
+            variables: { clientId },
+        });
+
+        let retargetingOption = await client.graphql({
+            query: listRetargetingOptions,
+            variables: { clientId },
+        });
+
+        preQuoteOptions.data.listPreQuoteOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            quoteSelect.appendChild(option);
+        });
+
+        retargetingOption.data.listRetargetingOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            retargetingSelect.appendChild(option);
+        });
+
+        triggerOption.data.listTriggerOptions.items.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.id;
+            option.innerHTML = e.optionName;
+            triggerSelect.appendChild(option);
         });
 
         const saveButton = document.getElementById("saveChange");
@@ -217,28 +217,60 @@ let clientId = userInfo.sub;
             window.alert("Se guardo la configuracion");
         });
         resetButton.addEventListener("click", async (e) => {
-            const a = await client.graphql({
-                query: updateDefaultCategories,
-                variables: {
-                    input: {
-                        clientId,
-                        categoryName: categorySelectName,
-                        id: categorySelectId,
-                        configuration: {
-                            autoRedirect: false,
-                            autoRetargeting: false,
-                            autoTrigger: false,
-                            autoQuote: false,
-                            autoResponse: false,
-                            redirectTo: {},
-                            quoteOption: {},
-                            triggerOption: {},
-                            retargetingOption: {},
-                            retargetingTime: "",
-                        },
-                    },
-                },
-            });
+            const auth = prompt(
+                "Estas seguro de volver a los valores por defecto?"
+            );
+            if (auth === "si") {
+                const params = {
+                    autoRedirect: false,
+                    autoRetargeting: false,
+                    autoTrigger: false,
+                    autoQuote: false,
+                    autoResponse: false,
+                    redirectTo: "{}",
+                    quoteOption: "{}",
+                    triggerOption: "{}",
+                    retargetingOption: "{}",
+                    retargetingTime: "",
+                };
+                isDefault
+                    ? await client.graphql({
+                          query: updateDefaultCategories,
+                          variables: {
+                              input: {
+                                  clientId,
+                                  id: categorySelectId,
+                                  categoryName: categorySelectName,
+                                  configuration: params,
+                              },
+                          },
+                      })
+                    : await client.graphql({
+                          query: updateCategories,
+                          variables: {
+                              input: {
+                                  clientId,
+                                  id: categorySelectId,
+                                  categoryName: categorySelectName,
+                                  configuration: params,
+                              },
+                          },
+                      });
+                for (const param in params) {
+                    let elem = document.getElementById(param);
+                    console.log(elem);
+                    switch (elem.type) {
+                        case "checkbox":
+                            elem.checked = params[param];
+                            break;
+                        case "select-one":
+                            elem.value = params[param] ? params[param] : "";
+                            break;
+                        default:
+                            elem.value = "";
+                    }
+                }
+            }
         });
 
         const editCategoriesBtn = document.querySelector(".edit_categories");
@@ -445,7 +477,7 @@ let clientId = userInfo.sub;
                                     variables: {
                                         input: {
                                             clientId,
-                                            categoryName: c.categoryName,
+                                            id: c.id,
                                         },
                                     },
                                 });
@@ -458,7 +490,7 @@ let clientId = userInfo.sub;
                     await client.graphql({
                         query: deleteCategories,
                         variables: {
-                            input: { clientId, categoryName: c.categoryName },
+                            input: { clientId, id: c.id },
                         },
                     });
                 }

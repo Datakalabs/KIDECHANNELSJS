@@ -106,6 +106,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         loadComponent('RightMenuSidebar.html', 'right-menu-sidebar', function () {
             window.getUserName()
+            window.logoutCall()
             initializeMenu()
         })
     });

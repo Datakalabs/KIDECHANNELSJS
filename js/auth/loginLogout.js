@@ -1,8 +1,7 @@
 const { logout, login, getUserInfo } = require("../authentication");
 
-(async () => {
+(async function ($) {
     document.addEventListener("DOMContentLoaded", async () => {
-        const logoutButton = document.getElementById("logout-button");
         const loginForm = document.getElementById("login-form");
         try {
             const userData = await getUserInfo();
@@ -26,20 +25,28 @@ const { logout, login, getUserInfo } = require("../authentication");
                     }
                 });
             }
-            // }
-        }
-        if (logoutButton) {
-            logoutButton.addEventListener("click", async (e) => {
-                e.preventDefault();
-                console.log(e);
-
-                try {
-                    await logout();
-                    window.location.href = "/login.html";
-                } catch (error) {
-                    console.error("Error during logout:", error);
-                }
-            });
         }
     });
 })();
+
+(async function ($) {
+    function logoutCall() {
+        const logoutButtons = document.querySelectorAll(".logout-button");
+        if (logoutButtons) {
+            logoutButtons.forEach(logoutButton => {
+                logoutButton.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    console.log(e);
+                    try {
+                        await logout();
+                        window.location.href = "/login.html";
+                    } catch (error) {
+                        console.error("Error during logout:", error);
+                    }
+
+                })
+            });
+        }
+    }
+    window.logoutCall = logoutCall
+})()

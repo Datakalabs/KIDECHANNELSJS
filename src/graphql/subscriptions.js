@@ -323,6 +323,7 @@ export const onCreateCommunications = /* GraphQL */ `
       threadId
       thread
       actions
+      status
       createdAt
       updatedAt
       __typename
@@ -354,6 +355,7 @@ export const onUpdateCommunications = /* GraphQL */ `
       threadId
       thread
       actions
+      status
       createdAt
       updatedAt
       __typename
@@ -385,6 +387,7 @@ export const onDeleteCommunications = /* GraphQL */ `
       threadId
       thread
       actions
+      status
       createdAt
       updatedAt
       __typename

@@ -27,23 +27,23 @@
   },
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-amplifykideai-dev-6903e-authRole",
-      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-amplifykideai-dev-6903e-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-amplifykideai-dev-6903e-authRole",
+      "AuthRoleName": "amplify-kidechannels-dev-1fc2d-authRole",
+      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-1fc2d-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-1fc2d-authRole",
       "Region": "eu-west-3",
-      "DeploymentBucketName": "amplify-amplifykideai-dev-6903e-deployment",
-      "UnauthRoleName": "amplify-amplifykideai-dev-6903e-unauthRole",
-      "StackName": "amplify-amplifykideai-dev-6903e",
-      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-amplifykideai-dev-6903e/105e0a40-03e4-11ef-9d44-0a763bf09c6f",
+      "DeploymentBucketName": "amplify-kidechannels-dev-1fc2d-deployment",
+      "UnauthRoleName": "amplify-kidechannels-dev-1fc2d-unauthRole",
+      "StackName": "amplify-kidechannels-dev-1fc2d",
+      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-kidechannels-dev-1fc2d/3bc7f6a0-1f50-11ef-97c3-0efd5781a89f",
       "AmplifyAppId": "dwcqi9jbpj54"
     },
     "categories": {
       "auth": {
         "amplifykideai": {
-          "nativeClientId": "m7qd5d585r35oleco83u18nj8",
           "userPoolId": "eu-west-3_N4QVtaRLF",
           "userPoolName": "FuerteRRHH",
-          "webClientId": "m7qd5d585r35oleco83u18nj8"
+          "webClientId": "m7qd5d585r35oleco83u18nj8",
+          "nativeClientId": "m7qd5d585r35oleco83u18nj8"
         }
       },
       "api": {

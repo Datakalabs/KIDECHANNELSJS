@@ -113,7 +113,6 @@ import { groupColors } from "../src/utils/groupColors";
         let userInfo = await getUserInfo();
         let clientId = userInfo.userData.userId;
         let selectedGroupName;
-        let categories;
         const select1 = document.createElement("select");
 
         // Función para normalizar la fecha
@@ -138,11 +137,7 @@ import { groupColors } from "../src/utils/groupColors";
         };
 
         // Función para obtener comunicaciones
-        let allCommunications,
-            filteredCommunications = [],
-            filterSelect;
-        let allGroups;
-
+        let allCommunications, allGroups;
         async function fetchCommunications() {
             const variables = { clientId };
 
@@ -181,7 +176,6 @@ import { groupColors } from "../src/utils/groupColors";
                 console.error("Error fetching groups:", error);
             }
         }
-
         async function renderCommunications() {
             try {
                 await fetchCommunications();
@@ -203,7 +197,7 @@ import { groupColors } from "../src/utils/groupColors";
                 console.error("Error rendering communications:", error);
             }
         }
-        // Función para renderizar la lista de grupos, gráfico y sidebar
+
         function renderGroupList(groups, allCommunications, allCommsCount) {
             const ul2 = document.querySelector(".js-sub-list");
             ul2.innerHTML = "";
@@ -270,7 +264,8 @@ import { groupColors } from "../src/utils/groupColors";
                     applyFilters(
                         select1.value,
                         select2.value,
-                        allCommunications
+                        allCommunications,
+                        groups
                     );
                 });
 
@@ -278,7 +273,8 @@ import { groupColors } from "../src/utils/groupColors";
                     applyFilters(
                         select1.value,
                         select2.value,
-                        allCommunications
+                        allCommunications,
+                        groups
                     );
                 });
             } else {
@@ -352,67 +348,67 @@ import { groupColors } from "../src/utils/groupColors";
             });
         }
 
-        function applyFilters(selectedGroup, selectedTime, allCommunications) {
+        function applyFilters(
+            selectedGroup,
+            selectedTime,
+            allCommunications,
+            groups
+        ) {
             let filteredCommunications = allCommunications;
 
             if (selectedGroup && selectedGroup !== "Todas") {
                 filteredCommunications = filteredCommunications.filter(
                     (comm) => {
-                        const group = allGroups.find(
-                            (g) => g.id === comm.groupId
-                        );
+                        const group = groups.find((g) => g.id === comm.groupId);
                         return group && group.groupName === selectedGroup;
                     }
                 );
             }
 
-            if (selectedTime === "dia") {
-                const commsByDay = filteredCommunications.filter((comm) => {
-                    const commYearMonth = `${comm.dateTime.split("-")[0]}-${
-                        comm.dateTime.split("-")[1]
-                    }`;
-                    const date = new Date();
-                    const currentYearMonth = `${date.getFullYear()}-${
-                        date.getMonth() < 9
-                            ? `0${date.getMonth() + 1}`
-                            : date.getMonth() + 1
-                    }`;
-                    return commYearMonth === currentYearMonth;
-                });
-                updateChart(commsByDay, "dia");
-            } else if (selectedTime === "mes") {
-                updateChart(filteredCommunications, "mes");
-            } else {
-                updateChart(filteredCommunications, false);
-            }
+            updateChart(filteredCommunications, selectedTime, groups);
         }
 
-        function updateChart(filteredCommunications, diaMes) {
-            console.log("diaMes", diaMes);
-
+        function updateChart(filteredCommunications, diaMes, groups) {
             window.myChart.data.datasets = [];
 
             if (diaMes && diaMes === "dia") {
-                const communicationsCount = new Array(31).fill(0);
+                const days = Array.from({ length: 31 }, (_, i) => i + 1);
+                const communicationsByDay = {};
+
+                // Inicializar estructura para almacenar comunicaciones por grupo y día
+                groups.forEach((group, index) => {
+                    communicationsByDay[group.id] = {
+                        name: group.groupName,
+                        data: new Array(31).fill(0),
+                        color: groupColors[index],
+                    };
+                });
+
+                // Contar comunicaciones por grupo y día
                 filteredCommunications.forEach((comm) => {
                     const date = new Date(comm.dateTime);
                     const day = date.getDate() - 1;
-                    communicationsCount[day]++;
+                    const groupId = comm.groupId;
+
+                    if (communicationsByDay[groupId]) {
+                        communicationsByDay[groupId].data[day]++;
+                    }
                 });
 
-                const days = Array.from({ length: 31 }, (_, i) => i + 1);
-
-                const dataset = {
-                    label: "Communications per Day",
-                    backgroundColor: "rgba(0, 123, 255, 0.5)",
-                    borderColor: "rgba(0, 123, 255, 0.9)",
-                    data: communicationsCount,
-                    borderWidth: 1,
-                };
+                // Crear datasets para el gráfico
+                Object.values(communicationsByDay).forEach((groupComm) => {
+                    const dataset = {
+                        label: groupComm.name,
+                        backgroundColor: groupComm.color.bg,
+                        borderColor: groupComm.color.group_line,
+                        pointHoverBackgroundColor: groupComm.color.group_line,
+                        data: groupComm.data,
+                        borderWidth: 1,
+                    };
+                    window.myChart.data.datasets.push(dataset);
+                });
 
                 window.myChart.data.labels = days;
-                window.myChart.data.datasets.push(dataset);
-                window.myChart.update();
             } else {
                 const communicationsCount = new Array(12).fill(0);
                 filteredCommunications.forEach((comm) => {
@@ -421,22 +417,37 @@ import { groupColors } from "../src/utils/groupColors";
                     communicationsCount[month]++;
                 });
 
-                const dataset = {
-                    label: "Communications per Month",
-                    backgroundColor: "rgba(0, 123, 255, 0.5)",
-                    borderColor: "rgba(0, 123, 255, 0.9)",
-                    data: communicationsCount,
-                    borderWidth: 1,
-                };
+                groups.forEach((group, index) => {
+                    const groupCommunications = filteredCommunications.filter(
+                        (comm) => comm.groupId === group.id
+                    );
+
+                    const colorObj = groupColors[index];
+
+                    const dataset = {
+                        label: group.groupName,
+                        backgroundColor: colorObj.bg,
+                        borderColor: colorObj.group_line,
+                        pointHoverBackgroundColor: colorObj.group_line,
+                        data: new Array(12).fill(0),
+                        borderWidth: 1,
+                    };
+
+                    groupCommunications.forEach((comm) => {
+                        const date = new Date(comm.dateTime);
+                        const month = date.getMonth();
+                        dataset.data[month]++;
+                    });
+
+                    window.myChart.data.datasets.push(dataset);
+                });
 
                 window.myChart.data.labels = monthNames;
-                window.myChart.data.datasets.push(dataset);
-                window.myChart.update();
             }
+
+            window.myChart.update();
         }
 
-        // Función para renderizar la lista de grupos Grafico
-        // function renderChartInfo1() {}
         // Función para renderizar la información del gráfico
         function renderChartInfo2(group, colorObj) {
             const chartLeftRef = document.getElementById("chart-info__left");
@@ -521,7 +532,6 @@ import { groupColors } from "../src/utils/groupColors";
 
                 return values;
             });
-            console.log(dataSet);
             dataSet.forEach((row) => {
                 row[2] = createBadge(row[2]);
                 row[3] = createDiv(row[3]);
@@ -646,14 +656,13 @@ import { groupColors } from "../src/utils/groupColors";
                 query: listCommunications,
                 variables: {
                     filter: {
-                        messageId: { eq: data[0] },
+                        id: { eq: data[0] },
                     },
                 },
             });
 
-            actions = communication.data.listCommunications.items[0];
-            console.log(actions);
-            let selectedCategory = categories.filter(
+            const actions = communication.data.listCommunications.items[0];
+            let selectedCategory = defaultCategories.filter(
                 (category) => category.categoryName === actions.category
             );
 
@@ -704,7 +713,7 @@ import { groupColors } from "../src/utils/groupColors";
                                     .addClass("form-control")
                                     .attr("id", "category")
                                     .append(
-                                        categories.map((category) =>
+                                        defaultCategories.map((category) =>
                                             $("<option>")
                                                 .text(category.categoryName)
                                                 .val(category.categoryName)
@@ -712,44 +721,24 @@ import { groupColors } from "../src/utils/groupColors";
                                     )
                                     .val(selectedCategory.categoryName)
                             ),
-
                         $("<div>")
                             .addClass("form-group1 col-md-6")
-                            .attr("id", "responseAttachment")
                             .append(
-                                $("<label>").text("Response attachment"),
-                                $("<div>")
-                                    .addClass("input-group")
+                                $("<label>").text("Group:"),
+                                $("<select>")
+                                    .addClass("form-control")
+                                    .attr("id", "group")
                                     .append(
-                                        $("<input>")
-                                            .attr("type", "text")
-                                            .addClass("form-control")
-                                            .val(actions.responseAttachment)
-                                            .prop("readonly", true),
-                                        $("<div>")
-                                            .addClass("input-group-append")
-                                            .append(
-                                                $("<button>")
-                                                    .addClass("btn")
-                                                    .attr("type", "button")
-                                                    .append(
-                                                        $("<i>")
-                                                            .addClass(
-                                                                "fa fa-times"
-                                                            )
-                                                            .css({
-                                                                color: "red",
-                                                            })
-                                                    )
-                                                    .on("click", function() {
-                                                        $(this)
-                                                            .closest(
-                                                                ".input-group"
-                                                            )
-                                                            .find("input")
-                                                            .val("");
-                                                    })
-                                            )
+                                        allGroups.map((group) =>
+                                            $("<option>")
+                                                .text(group.groupName)
+                                                .val(group.id)
+                                        )
+                                    )
+                                    .val(
+                                        allGroups.filter(
+                                            (g) => g.id === actions.groupId
+                                        )[0].id
                                     )
                             )
                     )
@@ -765,6 +754,44 @@ import { groupColors } from "../src/utils/groupColors";
                             .attr("type", "text")
                             .addClass("form-control")
                             .val(actions.responseAi)
+                    )
+            );
+
+            form.append(
+                $("<div>")
+                    .addClass("form-group1 ")
+                    .attr("id", "responseAttachment")
+                    .append(
+                        $("<label>").text("Response attachment"),
+                        $("<div>")
+                            .addClass("input-group")
+                            .append(
+                                $("<input>")
+                                    .attr("type", "text")
+                                    .addClass("form-control")
+                                    .val(actions.responseAttachment)
+                                    .prop("readonly", true),
+                                $("<div>")
+                                    .addClass("input-group-append")
+                                    .append(
+                                        $("<button>")
+                                            .addClass("btn")
+                                            .attr("type", "button")
+                                            .append(
+                                                $("<i>")
+                                                    .addClass("fa fa-times")
+                                                    .css({
+                                                        color: "red",
+                                                    })
+                                            )
+                                            .on("click", function() {
+                                                $(this)
+                                                    .closest(".input-group")
+                                                    .find("input")
+                                                    .val("");
+                                            })
+                                    )
+                            )
                     )
             );
 
@@ -941,7 +968,9 @@ import { groupColors } from "../src/utils/groupColors";
                 formData = {
                     ...formData,
                     clientId,
+                    id: data[0],
                     category: $("#category").val(),
+                    groupId: $("#group").val(),
                     responseAttachment: $("#responseAttachment input").val(),
                     responseAi: $("#responseAi input").val(),
                     responseSubject: $("#responseSubject input").val(),
@@ -950,14 +979,9 @@ import { groupColors } from "../src/utils/groupColors";
                 };
 
                 await client.graphql({
-                    query: updateCommunications,
+                    query: updateCommunication,
                     variables: {
                         input: formData,
-                        condition: {
-                            messageId: {
-                                eq: data[0],
-                            },
-                        },
                     },
                 });
 

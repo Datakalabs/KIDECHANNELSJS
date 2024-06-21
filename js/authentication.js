@@ -16,7 +16,7 @@ import {
 import { Amplify } from "aws-amplify";
 import backendConfig from "../src/amplifyconfiguration.json";
 import { client } from "./amplifyConfig.js";
-import { createDefaultCategories } from "../src/graphql/mutations.js";
+import { createGroup } from "../src/graphql/mutations.js";
 
 Amplify.configure(backendConfig);
 
@@ -71,7 +71,7 @@ const confirmSignInWithNewPassword = async () => {
             const element = defaultCategories[index];
             try {
                 await client.graphql({
-                    query: createDefaultCategories,
+                    query: createGroup,
                     variables: {
                         input: {
                             clientId: userData.userId,

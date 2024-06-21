@@ -1,20 +1,16 @@
-import {
-    createCategories,
-    deleteCategories,
-    updateCategories,
-    updateCommunications,
-    updateDefaultCategories,
-} from "../src/graphql/mutations.js";
-import {
-    getCategories,
-    getDefaultCategories,
-    listCategories,
-    listCommunications,
-    listDefaultCategories,
-    listPreQuoteOptions,
-    listRetargetingOptions,
-    listTriggerOptions,
-} from "../src/graphql/queries.js";
+// import {
+//     updateCommunication,
+// } from "../src/graphql/mutations.js";
+// import {
+//     getCategories,
+//     getDefaultCategories,
+//     listCategories,
+//     listCommunications,
+//     listDefaultCategories,
+//     listPreQuoteOptions,
+//     listRetargetingOptions,
+//     listTriggerOptions,
+// } from "../src/graphql/queries.js";
 import { client } from "./amplifyConfig.js";
 import { getUserInfo } from "./authentication.js";
 

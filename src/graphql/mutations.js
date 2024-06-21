@@ -1,171 +1,81 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createDefaultCategories = /* GraphQL */ `
-    mutation CreateDefaultCategories(
-        $input: CreateDefaultCategoriesInput!
-        $condition: ModelDefaultCategoriesConditionInput
+export const createTag = /* GraphQL */ `
+    mutation CreateTag(
+        $input: CreateTagInput!
+        $condition: ModelTagConditionInput
     ) {
-        createDefaultCategories(input: $input, condition: $condition) {
+        createTag(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            tagName
         }
     }
 `;
-export const updateDefaultCategories = /* GraphQL */ `
-    mutation UpdateDefaultCategories(
-        $input: UpdateDefaultCategoriesInput!
-        $condition: ModelDefaultCategoriesConditionInput
+export const updateTag = /* GraphQL */ `
+    mutation UpdateTag(
+        $input: UpdateTagInput!
+        $condition: ModelTagConditionInput
     ) {
-        updateDefaultCategories(input: $input, condition: $condition) {
+        updateTag(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            tagName
         }
     }
 `;
-export const deleteDefaultCategories = /* GraphQL */ `
-    mutation DeleteDefaultCategories(
-        $input: DeleteDefaultCategoriesInput!
-        $condition: ModelDefaultCategoriesConditionInput
+export const deleteTag = /* GraphQL */ `
+    mutation DeleteTag(
+        $input: DeleteTagInput!
+        $condition: ModelTagConditionInput
     ) {
-        deleteDefaultCategories(input: $input, condition: $condition) {
+        deleteTag(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            tagName
         }
     }
 `;
-export const createCategories = /* GraphQL */ `
-    mutation CreateCategories(
-        $input: CreateCategoriesInput!
-        $condition: ModelCategoriesConditionInput
+export const createGroup = /* GraphQL */ `
+    mutation CreateGroup(
+        $input: CreateGroupInput!
+        $condition: ModelGroupConditionInput
     ) {
-        createCategories(input: $input, condition: $condition) {
+        createGroup(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            groupName
+            categoriesConfig
+            color
         }
     }
 `;
-export const updateCategories = /* GraphQL */ `
-    mutation UpdateCategories(
-        $input: UpdateCategoriesInput!
-        $condition: ModelCategoriesConditionInput
+export const updateGroup = /* GraphQL */ `
+    mutation UpdateGroup(
+        $input: UpdateGroupInput!
+        $condition: ModelGroupConditionInput
     ) {
-        updateCategories(input: $input, condition: $condition) {
+        updateGroup(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            groupName
+            categoriesConfig
+            color
         }
     }
 `;
-export const deleteCategories = /* GraphQL */ `
-    mutation DeleteCategories(
-        $input: DeleteCategoriesInput!
-        $condition: ModelCategoriesConditionInput
+export const deleteGroup = /* GraphQL */ `
+    mutation DeleteGroup(
+        $input: DeleteGroupInput!
+        $condition: ModelGroupConditionInput
     ) {
-        deleteCategories(input: $input, condition: $condition) {
+        deleteGroup(input: $input, condition: $condition) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            groupName
+            categoriesConfig
+            color
         }
     }
 `;
@@ -179,9 +89,6 @@ export const createPreQuoteOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -195,9 +102,6 @@ export const updatePreQuoteOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -211,9 +115,6 @@ export const deletePreQuoteOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -227,9 +128,6 @@ export const createTriggerOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -243,9 +141,6 @@ export const updateTriggerOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -259,9 +154,6 @@ export const deleteTriggerOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -275,9 +167,6 @@ export const createRetargetingOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -291,9 +180,6 @@ export const updateRetargetingOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -307,18 +193,57 @@ export const deleteRetargetingOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
-export const createCommunications = /* GraphQL */ `
-    mutation CreateCommunications(
-        $input: CreateCommunicationsInput!
-        $condition: ModelCommunicationsConditionInput
+export const createContact = /* GraphQL */ `
+    mutation CreateContact(
+        $input: CreateContactInput!
+        $condition: ModelContactConditionInput
     ) {
-        createCommunications(input: $input, condition: $condition) {
+        createContact(input: $input, condition: $condition) {
+            clientId
+            id
+            contactName
+            contactEmail
+            groupId
+        }
+    }
+`;
+export const updateContact = /* GraphQL */ `
+    mutation UpdateContact(
+        $input: UpdateContactInput!
+        $condition: ModelContactConditionInput
+    ) {
+        updateContact(input: $input, condition: $condition) {
+            clientId
+            id
+            contactName
+            contactEmail
+            groupId
+        }
+    }
+`;
+export const deleteContact = /* GraphQL */ `
+    mutation DeleteContact(
+        $input: DeleteContactInput!
+        $condition: ModelContactConditionInput
+    ) {
+        deleteContact(input: $input, condition: $condition) {
+            clientId
+            id
+            contactName
+            contactEmail
+            groupId
+        }
+    }
+`;
+export const createCommunication = /* GraphQL */ `
+    mutation CreateCommunication(
+        $input: CreateCommunicationInput!
+        $condition: ModelCommunicationConditionInput
+    ) {
+        createCommunication(input: $input, condition: $condition) {
             clientId
             id
             messageId
@@ -340,47 +265,18 @@ export const createCommunications = /* GraphQL */ `
             thread
             actions
             status
-            createdAt
-            updatedAt
-            __typename
+            groupId
+            tagId
+            contactName
         }
     }
 `;
-export const updateCommunications = /* GraphQL */ `
-    mutation UpdateCommunications(
-        $input: UpdateCommunicationsInput!
-        $condition: ModelCommunicationsConditionInput
+export const updateCommunication = /* GraphQL */ `
+    mutation UpdateCommunication(
+        $input: UpdateCommunicationInput!
+        $condition: ModelCommunicationConditionInput
     ) {
-        updateCommunications(input: $input, condition: $condition) {
-            clientId
-            messageId
-            channel
-            category
-            dateTime
-            fromId
-            toId
-            responseAi
-            messageSubject
-            messageBody
-            messagSummary
-            messageAttachment
-            responseBody
-            responseSubject
-            responseAttachment
-            execute
-            threadId
-            thread
-            actions
-            status
-        }
-    }
-`;
-export const deleteCommunications = /* GraphQL */ `
-    mutation DeleteCommunications(
-        $input: DeleteCommunicationsInput!
-        $condition: ModelCommunicationsConditionInput
-    ) {
-        deleteCommunications(input: $input, condition: $condition) {
+        updateCommunication(input: $input, condition: $condition) {
             clientId
             id
             messageId
@@ -402,9 +298,42 @@ export const deleteCommunications = /* GraphQL */ `
             thread
             actions
             status
-            createdAt
-            updatedAt
-            __typename
+            groupId
+            tagId
+            contactName
+        }
+    }
+`;
+export const deleteCommunication = /* GraphQL */ `
+    mutation DeleteCommunication(
+        $input: DeleteCommunicationInput!
+        $condition: ModelCommunicationConditionInput
+    ) {
+        deleteCommunication(input: $input, condition: $condition) {
+            clientId
+            id
+            messageId
+            channel
+            category
+            dateTime
+            fromId
+            toId
+            responseAi
+            messageSubject
+            messageBody
+            messagSummary
+            messageAttachment
+            responseBody
+            responseSubject
+            responseAttachment
+            execute
+            threadId
+            thread
+            actions
+            status
+            groupId
+            tagId
+            contactName
         }
     }
 `;

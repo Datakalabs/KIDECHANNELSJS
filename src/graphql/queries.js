@@ -1,41 +1,25 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getDefaultCategories = /* GraphQL */ `
-    query GetDefaultCategories($clientId: String!, $id: ID!) {
-        getDefaultCategories(clientId: $clientId, id: $id) {
+export const getTag = /* GraphQL */ `
+    query GetTag($clientId: String!, $id: ID!) {
+        getTag(clientId: $clientId, id: $id) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            tagName
         }
     }
 `;
-export const listDefaultCategories = /* GraphQL */ `
-    query ListDefaultCategories(
+export const listTags = /* GraphQL */ `
+    query ListTags(
         $clientId: String
         $id: ModelIDKeyConditionInput
-        $filter: ModelDefaultCategoriesFilterInput
+        $filter: ModelTagFilterInput
         $limit: Int
         $nextToken: String
         $sortDirection: ModelSortDirection
     ) {
-        listDefaultCategories(
+        listTags(
             clientId: $clientId
             id: $id
             filter: $filter
@@ -46,51 +30,33 @@ export const listDefaultCategories = /* GraphQL */ `
             items {
                 clientId
                 id
-                categoryName
-                createdAt
-                updatedAt
-                __typename
+                tagName
             }
             nextToken
-            __typename
         }
     }
 `;
-export const getCategories = /* GraphQL */ `
-    query GetCategories($clientId: String!, $id: ID!) {
-        getCategories(clientId: $clientId, id: $id) {
+export const getGroup = /* GraphQL */ `
+    query GetGroup($clientId: String!, $id: ID!) {
+        getGroup(clientId: $clientId, id: $id) {
             clientId
             id
-            categoryName
-            configuration {
-                autoResponse
-                autoRedirect
-                redirectTo
-                autoQuote
-                quoteOption
-                autoTrigger
-                triggerOption
-                autoRetargeting
-                retargetingOption
-                retargetingTime
-                __typename
-            }
-            createdAt
-            updatedAt
-            __typename
+            groupName
+            categoriesConfig
+            color
         }
     }
 `;
-export const listCategories = /* GraphQL */ `
-    query ListCategories(
+export const listGroups = /* GraphQL */ `
+    query ListGroups(
         $clientId: String
         $id: ModelIDKeyConditionInput
-        $filter: ModelCategoriesFilterInput
+        $filter: ModelGroupFilterInput
         $limit: Int
         $nextToken: String
         $sortDirection: ModelSortDirection
     ) {
-        listCategories(
+        listGroups(
             clientId: $clientId
             id: $id
             filter: $filter
@@ -101,13 +67,11 @@ export const listCategories = /* GraphQL */ `
             items {
                 clientId
                 id
-                categoryName
-                createdAt
-                updatedAt
-                __typename
+                groupName
+                categoriesConfig
+                color
             }
             nextToken
-            __typename
         }
     }
 `;
@@ -118,9 +82,6 @@ export const getPreQuoteOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -146,12 +107,7 @@ export const listPreQuoteOptions = /* GraphQL */ `
                 id
                 optionName
                 detail
-                createdAt
-                updatedAt
-                __typename
             }
-            nextToken
-            __typename
         }
     }
 `;
@@ -162,9 +118,6 @@ export const getTriggerOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -190,12 +143,7 @@ export const listTriggerOptions = /* GraphQL */ `
                 id
                 optionName
                 detail
-                createdAt
-                updatedAt
-                __typename
             }
-            nextToken
-            __typename
         }
     }
 `;
@@ -206,9 +154,6 @@ export const getRetargetingOption = /* GraphQL */ `
             id
             optionName
             detail
-            createdAt
-            updatedAt
-            __typename
         }
     }
 `;
@@ -234,18 +179,51 @@ export const listRetargetingOptions = /* GraphQL */ `
                 id
                 optionName
                 detail
-                createdAt
-                updatedAt
-                __typename
             }
-            nextToken
-            __typename
         }
     }
 `;
-export const getCommunications = /* GraphQL */ `
-    query GetCommunications($clientId: String!, $dateTime: AWSDateTime!) {
-        getCommunications(clientId: $clientId, dateTime: $dateTime) {
+export const getContact = /* GraphQL */ `
+    query GetContact($clientId: String!, $id: ID!) {
+        getContact(clientId: $clientId, id: $id) {
+            clientId
+            id
+            contactName
+            contactEmail
+            groupId
+        }
+    }
+`;
+export const listContacts = /* GraphQL */ `
+    query ListContacts(
+        $clientId: String
+        $id: ModelIDKeyConditionInput
+        $filter: ModelContactFilterInput
+        $limit: Int
+        $nextToken: String
+        $sortDirection: ModelSortDirection
+    ) {
+        listContacts(
+            clientId: $clientId
+            id: $id
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            sortDirection: $sortDirection
+        ) {
+            items {
+                clientId
+                id
+                contactName
+                contactEmail
+                groupId
+            }
+        }
+    }
+`;
+export const getCommunication = /* GraphQL */ `
+    query GetCommunication($clientId: String!, $id: ID!) {
+        getCommunication(clientId: $clientId, id: $id) {
             clientId
             id
             messageId
@@ -267,30 +245,32 @@ export const getCommunications = /* GraphQL */ `
             thread
             actions
             status
-            createdAt
-            updatedAt
-            __typename
+            groupId
+            tagId
+            contactName
         }
     }
 `;
 export const listCommunications = /* GraphQL */ `
     query ListCommunications(
         $clientId: String
-        $dateTime: ModelStringKeyConditionInput
-        $filter: ModelCommunicationsFilterInput
+        $id: ModelIDKeyConditionInput
+        $filter: ModelCommunicationFilterInput
         $limit: Int
         $nextToken: String
         $sortDirection: ModelSortDirection
     ) {
         listCommunications(
             clientId: $clientId
-            dateTime: $dateTime
+            id: $id
             filter: $filter
             limit: $limit
             nextToken: $nextToken
             sortDirection: $sortDirection
         ) {
             items {
+                clientId
+                id
                 messageId
                 channel
                 category
@@ -298,127 +278,22 @@ export const listCommunications = /* GraphQL */ `
                 fromId
                 toId
                 responseAi
+                messageSubject
+                messageBody
+                messagSummary
+                messageAttachment
+                responseBody
+                responseSubject
                 responseAttachment
+                execute
+                threadId
+                thread
+                actions
+                status
+                groupId
+                tagId
+                contactName
             }
-            nextToken
-            __typename
         }
     }
-`;
-
-export const messageDetails = `
-  query listCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-    items {
-      category
-      fromId
-      dateTime
-      messagSummary
-      messageSubject
-      messageBody
-    }
-    nextToken
-      __typename
-  }
-}
-`;
-
-export const responseDetails = `
-query listCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-    items {
-      responseAttachment
-      responseAi
-      responseSubject
-      responseBody
-    }
-    nextToken
-      __typename
-  }
-}
-`;
-
-export const threadQuery = `
-query listCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-    items {
-      thread
-    }
-    nextToken
-      __typename
-  }
-}
-`;
-
-export const actionsQuery = `
-  query listCommunications(
-    $clientId: String
-    $dateTime: ModelStringKeyConditionInput
-    $filter: ModelCommunicationsFilterInput
-    $limit: Int
-    $nextToken: String
-    $sortDirection: ModelSortDirection
-  ) {
-    listCommunications(
-      clientId: $clientId
-      dateTime: $dateTime
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection) {
-    items {
-      fromId
-      dateTime
-      category
-      responseAttachment
-      responseAi
-      messageSubject
-      messageBody
-      responseSubject
-      responseBody
-      execute
-    }
-    nextToken
-      __typename
-  }
-}
 `;

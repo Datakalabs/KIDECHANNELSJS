@@ -1,11 +1,11 @@
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/api";
-import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery } from "../src/graphql/queries";
-import { updateCommunications } from "../src/graphql/mutations";
-import backendConfig from "../src/amplifyconfiguration.json";
-import { getUserInfo } from "./authentication";
+// import { Amplify } from "aws-amplify";
+// import { generateClient } from "aws-amplify/api";
+// import { listCommunications, listDefaultCategories, listCategories, messageDetails, responseDetails, actionsQuery, threadQuery } from "../src/graphql/queries";
+// import { updateCommunications } from "../src/graphql/mutations";
+// import backendConfig from "../src/amplifyconfiguration.json";
+// import { getUserInfo } from "./authentication";
 
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -159,7 +159,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(async function ($) {
+(async function($) {
     // USE STRICT
     "use strict";
     try {
@@ -169,9 +169,11 @@ import { getUserInfo } from "./authentication";
         // Se genera el cliente para las llamadas
         const client = generateClient();
 
-        let userInfo = await getUserInfo()
-        let clientId = userInfo.userData.userId
-        let selectedCategoryName = window.location.search.slice(1).replace(/%20/g, ' ');
+        let userInfo = await getUserInfo();
+        let clientId = userInfo.userData.userId;
+        let selectedCategoryName = window.location.search
+            .slice(1)
+            .replace(/%20/g, " ");
         let categories;
         document.getElementById("step2").innerHTML = selectedCategoryName;
 
@@ -197,9 +199,12 @@ import { getUserInfo } from "./authentication";
         };
 
         // Función para obtener comunicaciones
-        let allCommunications
+        let allCommunications;
         async function fetchCommunications(selectedCategoryName) {
-            const variables = { clientId, filter: { category: { eq: selectedCategoryName } } }
+            const variables = {
+                clientId,
+                filter: { category: { eq: selectedCategoryName } },
+            };
 
             try {
                 const response = await client.graphql({
@@ -224,11 +229,11 @@ import { getUserInfo } from "./authentication";
             try {
                 await fetchCommunications(selectedCategoryName);
                 if (window.location.pathname.includes("/categories.html")) {
-                    setInterval((async () => {
-                        await fetchCommunications(selectedCategoryName)
-                    }), 25000);
+                    setInterval(async () => {
+                        await fetchCommunications(selectedCategoryName);
+                    }, 25000);
                 }
-                let variables = { clientId }
+                let variables = { clientId };
 
                 const [defaultCateg, customCateg] = await Promise.all([
                     client.graphql({ query: listDefaultCategories, variables }),
@@ -248,9 +253,7 @@ import { getUserInfo } from "./authentication";
         }
 
         // Función para renderizar la lista de categorías
-        function renderCategoryList(
-            categories,
-        ) {
+        function renderCategoryList(categories) {
             const ul2 = document.querySelector(".js-sub-list");
             ul2.innerHTML = "";
 
@@ -266,10 +269,12 @@ import { getUserInfo } from "./authentication";
                 li.appendChild(a);
                 ul2.appendChild(li);
 
-                a.addEventListener("click", async function (event) {
+                a.addEventListener("click", async function(event) {
                     event.preventDefault();
                     selectedCategoryName = category.categoryName;
-                    document.getElementById("step2").innerHTML = selectedCategoryName;
+                    document.getElementById(
+                        "step2"
+                    ).innerHTML = selectedCategoryName;
                     a.href = `categories.html?${selectedCategoryName}`;
 
                     await renderCommunications();
@@ -280,7 +285,7 @@ import { getUserInfo } from "./authentication";
         // Función para renderizar la tabla de comunicaciones
         function renderTable(allCommunications) {
             const dataSet = allCommunications.map((email) => {
-                delete email.category
+                delete email.category;
                 const values = Object.values(email);
                 return values;
             });
@@ -328,8 +333,9 @@ import { getUserInfo } from "./authentication";
         function createButtonContainer(className, icon, full) {
             const container = document.createElement("div");
             container.className = `${className} d-flex justify-content-center`;
-            container.innerHTML = `<button class="btn ${full ? "btn-primary" : "btn-outline-primary"
-                }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
+            container.innerHTML = `<button class="btn ${
+                full ? "btn-primary" : "btn-outline-primary"
+            }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
             return container;
         }
 
@@ -342,22 +348,22 @@ import { getUserInfo } from "./authentication";
 
         // Función para inicializar eventos de la tabla
         function initializeTableEvents(table) {
-            table.on("click", "tbody .edit", async function () {
+            table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openEditModal(data);
             });
 
-            table.on("click", "tbody .view1", async function () {
+            table.on("click", "tbody .view1", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openMessageModal(data);
             });
 
-            table.on("click", "tbody .view2", async function () {
+            table.on("click", "tbody .view2", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openResponseModal(data);
             });
 
-            table.on("click", "tbody .view3", async function () {
+            table.on("click", "tbody .view3", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openThreadModal(data);
             });
@@ -462,7 +468,7 @@ import { getUserInfo } from "./authentication";
                                                                 color: "red",
                                                             })
                                                     )
-                                                    .on("click", function () {
+                                                    .on("click", function() {
                                                         $(this)
                                                             .closest(
                                                                 ".input-group"
@@ -544,12 +550,14 @@ import { getUserInfo } from "./authentication";
                 .addClass("form-group1")
                 .attr("id", "execute");
             const label = $("<label>").html(
-                `<strong>${!actions.execute ? "Activar IA:" : "Desactivar IA:"
+                `<strong>${
+                    !actions.execute ? "Activar IA:" : "Desactivar IA:"
                 }</strong>`
             );
             const button = $("<button>")
                 .addClass(
-                    `form-control ${!actions.execute ? "btn-success" : "btn-danger"
+                    `form-control ${
+                        !actions.execute ? "btn-success" : "btn-danger"
                     }`
                 )
                 .attr("type", "button")
@@ -564,7 +572,7 @@ import { getUserInfo } from "./authentication";
                         !actions.execute ? "fas fa-check" : "fas fa-stop"
                     )
                 )
-                .on("click", function () {
+                .on("click", function() {
                     actions.execute = !actions.execute;
                     if (!actions.execute) {
                         button
@@ -639,18 +647,18 @@ import { getUserInfo } from "./authentication";
 
             $("#actionModal").modal("show");
 
-            $("#saveBtn").on("click", function () {
+            $("#saveBtn").on("click", function() {
                 $("#actionForm").submit();
             });
 
-            $("body").on("submit", "#actionForm", async function (event) {
+            $("body").on("submit", "#actionForm", async function(event) {
                 event.preventDefault();
 
                 let formData = {};
 
                 $("#actionForm")
                     .find(":input:disabled")
-                    .each(function () {
+                    .each(function() {
                         let name = $(this).attr("name");
                         if (name) {
                             formData[name] = $(this).val();
@@ -952,7 +960,7 @@ import { getUserInfo } from "./authentication";
             var timeline = document.createElement("div");
             timeline.className = "timeline";
 
-            thread.forEach(function (item) {
+            thread.forEach(function(item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
                 if (item.who === "external") {
@@ -1081,7 +1089,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
     var navbars = ["header", "aside"];
@@ -1107,12 +1115,12 @@ import { getUserInfo } from "./authentication";
         overlay: false,
         overlayClass: "animsition-overlay-slide",
         overlayParentElement: "html",
-        transition: function (url) {
+        transition: function(url) {
             window.location.href = url;
         },
     });
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1131,13 +1139,13 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
     // Select 2
     try {
-        $(".js-select2").each(function () {
+        $(".js-select2").each(function() {
             $(this).select2({
                 minimumResultsForSearch: 20,
                 dropdownParent: $(this).next(".dropDownSelect2"),
@@ -1147,7 +1155,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1159,12 +1167,12 @@ import { getUserInfo } from "./authentication";
         var statistic = document.getElementById("statistics");
         var table = document.getElementById("table");
 
-        showTablebutton.addEventListener("click", function () {
+        showTablebutton.addEventListener("click", function() {
             statistic.style.display = "none";
             table.style.display = "block";
         });
         for (var i = 0; i < showstatisticbutton.length; i++) {
-            showstatisticbutton[i].addEventListener("click", function (event) {
+            showstatisticbutton[i].addEventListener("click", function(event) {
                 statistic.style.display = "block";
                 table.style.display = "none";
             });
@@ -1173,7 +1181,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1181,15 +1189,15 @@ import { getUserInfo } from "./authentication";
     try {
         var list_load = $(".js-list-load");
         if (list_load[0]) {
-            list_load.each(function () {
+            list_load.each(function() {
                 var that = $(this);
                 that.find(".js-load-item").hide();
                 var load_btn = that.find(".js-load-btn");
-                load_btn.on("click", function (e) {
+                load_btn.on("click", function(e) {
                     $(this)
                         .text("Loading...")
                         .delay(1500)
-                        .queue(function (next) {
+                        .queue(function(next) {
                             $(this).hide();
                             that.find(".js-load-item").fadeToggle(
                                 "slow",
@@ -1204,7 +1212,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1218,10 +1226,10 @@ import { getUserInfo } from "./authentication";
     try {
         var inbox_wrap = $(".js-inbox");
         var message = $(".au-message__item");
-        message.each(function () {
+        message.each(function() {
             var that = $(this);
 
-            that.on("click", function () {
+            that.on("click", function() {
                 $(this)
                     .parent()
                     .parent()

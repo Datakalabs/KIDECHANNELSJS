@@ -1,35 +1,15 @@
-type DefaultCategories
-    @model
-    @auth(
-        rules: [
-            { allow: public, operations: [read, create, update] }
-            { allow: private, operations: [read] }
-        ]
-    ) {
+type Tag @model @auth(rules: [{ allow: public }, { allow: private }]) {
     clientId: String! @primaryKey(sortKeyFields: ["id"])
     id: ID!
-    categoryName: String!
-    configuration: CategoryConfiguration
+    tagName: String!
 }
 
-type CategoryConfiguration {
-    autoResponse: Boolean
-    autoRedirect: Boolean
-    redirectTo: AWSJSON
-    autoQuote: Boolean
-    quoteOption: AWSJSON
-    autoTrigger: Boolean
-    triggerOption: AWSJSON
-    autoRetargeting: Boolean
-    retargetingOption: AWSJSON
-    retargetingTime: String
-}
-
-type Categories @model @auth(rules: [{ allow: public }, { allow: private }]) {
+type Group @model @auth(rules: [{ allow: public }]) {
     clientId: String! @primaryKey(sortKeyFields: ["id"])
     id: ID!
-    categoryName: String!
-    configuration: CategoryConfiguration
+    groupName: String!
+    categoriesConfig: AWSJSON
+    color: String
 }
 
 type PreQuoteOption
@@ -59,7 +39,15 @@ type RetargetingOption
     detail: String
 }
 
-type Communications
+type Contact @model @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    contactName: String
+    contactEmail: String!
+    groupId: String
+}
+
+type Communication
     @model
     @auth(
         rules: [
@@ -67,7 +55,7 @@ type Communications
             { allow: private, operations: [read, update, delete] }
         ]
     ) {
-    clientId: String! @primaryKey(sortKeyFields: ["dateTime"])
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
     id: ID!
     messageId: String
     channel: String
@@ -88,4 +76,7 @@ type Communications
     thread: AWSJSON
     actions: AWSJSON
     status: String
+    groupId: String
+    tagId: String
+    contactName: String
 }

@@ -1,48 +1,35 @@
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
-import {
-    listCommunications,
-    listDefaultCategories,
-    listCategories,
-    messageDetails,
-    responseDetails,
-    actionsQuery,
-    threadQuery,
-} from "../src/graphql/queries";
-import { updateCommunications } from "../src/graphql/mutations";
+import { listCommunications, listGroups } from "../src/graphql/queries";
+import { updateCommunication } from "../src/graphql/mutations";
 import backendConfig from "../src/amplifyconfiguration.json";
 import { getUserInfo } from "./authentication";
+import { defaultCategories } from "../src/utils/defaultCategories";
+import { groupColors } from "../src/utils/groupColors";
 
-(function ($) {
-    // USE STRICT
-    "use strict";
-
+(function($) {
     try {
-        // Recent Report 2
-
-        // var data3 = [52, 60, 55, 50, 65, 80, 57, 70, 105, 115, 40, 130];
-        // var data4 = [102, 70, 80, 100, 56, 53, 80, 75, 65, 90, 110, 75];
-
+        const monthNames = [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre",
+        ].splice(0, new Date().getMonth() + 1);
         var ctx = document.getElementById("recent-rep2-chart");
         if (ctx) {
             ctx.height = 230;
             window.myChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                        "Agosto",
-                        "Septiembre",
-                        "Octubre",
-                        "Noviembre",
-                        "Diciembre",
-                    ],
+                    labels: monthNames,
                     datasets: [],
                 },
                 options: {
@@ -69,8 +56,8 @@ import { getUserInfo } from "./authentication";
                                 ticks: {
                                     beginAtZero: true,
                                     maxTicksLimit: 5,
-                                    stepSize: 50,
-                                    max: 150,
+                                    stepSize: 10,
+                                    max: 50,
                                     fontFamily: "Poppins",
                                     fontSize: 12,
                                 },
@@ -98,76 +85,8 @@ import { getUserInfo } from "./authentication";
     } catch (error) {
         console.log(error);
     }
-
-    try {
-        //bar chart
-        var ctx = document.getElementById("barChart");
-        if (ctx) {
-            ctx.height = 200;
-            var myChart = new Chart(ctx, {
-                type: "bar",
-                defaultFontFamily: "Poppins",
-                data: {
-                    labels: [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                    ],
-                    datasets: [
-                        {
-                            label: "My First dataset",
-                            data: [65, 59, 80, 81, 56, 55, 40],
-                            borderColor: "rgba(0, 123, 255, 0.9)",
-                            borderWidth: "0",
-                            backgroundColor: "rgba(0, 123, 255, 0.5)",
-                            fontFamily: "Poppins",
-                        },
-                        {
-                            label: "My Second dataset",
-                            data: [28, 48, 40, 19, 86, 27, 90],
-                            borderColor: "rgba(0,0,0,0.09)",
-                            borderWidth: "0",
-                            backgroundColor: "rgba(0,0,0,0.07)",
-                            fontFamily: "Poppins",
-                        },
-                    ],
-                },
-                options: {
-                    legend: {
-                        position: "top",
-                        labels: {
-                            fontFamily: "Poppins",
-                        },
-                    },
-                    scales: {
-                        xAxes: [
-                            {
-                                ticks: {
-                                    fontFamily: "Poppins",
-                                },
-                            },
-                        ],
-                        yAxes: [
-                            {
-                                ticks: {
-                                    beginAtZero: true,
-                                    fontFamily: "Poppins",
-                                },
-                            },
-                        ],
-                    },
-                },
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
 })(jQuery);
-(async function ($) {
+(async function($) {
     // USE STRICT
     "use strict";
     try {
@@ -176,50 +95,26 @@ import { getUserInfo } from "./authentication";
 
         // Se genera el cliente para las llamadas
         const client = generateClient();
+        const monthNames = [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre",
+        ].splice(0, new Date().getMonth() + 1);
 
-        let userInfo = await getUserInfo()
-        let clientId = userInfo.userData.userId
-        let selectedCategoryName;
+        let userInfo = await getUserInfo();
+        let clientId = userInfo.userData.userId;
+        let selectedGroupName;
         let categories;
         const select1 = document.createElement("select");
-
-        const colorObjects = [
-            {
-                category_line: "rgba(0,181,233,0.9)",
-                bg: "rgba(0,181,233,0.2)",
-                class: "dot dot--blue",
-            },
-            {
-                category_line: "rgba(0,173,95,0.9)",
-                bg: "rgba(0,173,95,0.2)",
-                class: "dot dot--green",
-            },
-            {
-                category_line: "rgba(255,99,132,0.9)",
-                bg: "rgba(255,99,132,0.2)",
-                class: "dot dot--red",
-            },
-            {
-                category_line: "rgba(255,159,64,0.9)",
-                bg: "rgba(255,159,64,0.2)",
-                class: "dot dot--orange",
-            },
-            {
-                category_line: "rgba(75,192,192,0.9)",
-                bg: "rgba(75,192,192,0.2)",
-                class: "dot dot--turquoise",
-            },
-            {
-                category_line: "rgba(153,102,255,0.9)",
-                bg: "rgba(153,102,255,0.2)",
-                class: "dot dot--purple",
-            },
-            {
-                category_line: "rgba(255,205,86,0.9)",
-                bg: "rgba(255,205,86,0.2)",
-                class: "dot dot--yellow",
-            },
-        ];
 
         // Función para normalizar la fecha
         const normalizeDate = (dateString) => {
@@ -243,9 +138,13 @@ import { getUserInfo } from "./authentication";
         };
 
         // Función para obtener comunicaciones
-        let allCommunications;
+        let allCommunications,
+            filteredCommunications = [],
+            filterSelect;
+        let allGroups;
+
         async function fetchCommunications() {
-            const variables = { clientId }
+            const variables = { clientId };
 
             try {
                 const response = await client.graphql({
@@ -259,38 +158,44 @@ import { getUserInfo } from "./authentication";
                         dateTime: normalizeDate(comm.dateTime),
                     })
                 );
+
                 return allCommunications;
             } catch (error) {
                 console.error("Error fetching communications:", error);
             }
         }
 
-        // Función para renderizar las comunicaciones y categorías
+        async function fetchGroups() {
+            const variables = { clientId };
+
+            try {
+                const response = await client.graphql({
+                    query: listGroups,
+                    variables,
+                });
+
+                allGroups = response.data.listGroups.items;
+
+                return allGroups;
+            } catch (error) {
+                console.error("Error fetching groups:", error);
+            }
+        }
+
         async function renderCommunications() {
             try {
                 await fetchCommunications();
+                await fetchGroups();
+
                 if (window.location.pathname === "/index.html") {
                     setInterval(fetchCommunications, 25000);
                 }
+
                 let allCommsCount = allCommunications.length;
-                let variables = { clientId }
 
-                const [defaultCateg, customCateg] = await Promise.all([
-                    client.graphql({ query: listDefaultCategories, variables }),
-                    client.graphql({ query: listCategories, variables }),
-                ]);
-
-                categories = [
-                    ...defaultCateg.data.listDefaultCategories.items,
-                    ...customCateg.data.listCategories.items,
-                ];
-
-                renderCategoryList(
-                    categories,
-                    allCommunications,
-                    allCommsCount
-                );
+                renderGroupList(allGroups, allCommunications, allCommsCount);
                 renderTable();
+
                 if (window.location.pathname === "/index.html") {
                     setInterval(renderTable, 30000);
                 }
@@ -298,19 +203,15 @@ import { getUserInfo } from "./authentication";
                 console.error("Error rendering communications:", error);
             }
         }
-
-        // Función para renderizar la lista de categorías
-        function renderCategoryList(
-            categories,
-            allCommunications,
-            allCommsCount
-        ) {
+        // Función para renderizar la lista de grupos, gráfico y sidebar
+        function renderGroupList(groups, allCommunications, allCommsCount) {
             const ul2 = document.querySelector(".js-sub-list");
             ul2.innerHTML = "";
             const chartRightRef = document.getElementById("chart-info__right");
 
+            let select1, select2;
+
             if (!chartRightRef.querySelector(".rs-select2--dark")) {
-                // Crear el primer div
                 const div1 = document.createElement("div");
                 div1.classList.add(
                     "rs-select2--dark",
@@ -318,127 +219,226 @@ import { getUserInfo } from "./authentication";
                     "m-r-10"
                 );
 
-                // Crear el primer select
+                select1 = document.createElement("select");
                 select1.classList.add("js-select2");
                 select1.setAttribute("name", "property");
 
-                // Crear las opciones del primer select dinámicamente
                 const option1_default = document.createElement("option");
                 option1_default.selected = true;
                 option1_default.textContent = "Todas";
                 select1.appendChild(option1_default);
 
-                // Crear el div de dropDownSelect2 para el primer select
                 const dropDown1 = document.createElement("div");
                 dropDown1.classList.add("dropDownSelect2");
 
-                // Añadir el select y el dropdown al primer div
                 div1.appendChild(select1);
                 div1.appendChild(dropDown1);
 
-                // Crear el segundo div
                 const div2 = document.createElement("div");
                 div2.classList.add("rs-select2--dark", "rs-select2--sm");
 
-                // Crear el segundo select
-                const select2 = document.createElement("select");
+                select2 = document.createElement("select");
                 select2.classList.add("js-select2", "au-select-dark");
                 select2.setAttribute("name", "time");
 
-                // Crear las opciones del segundo select
                 const option2_1 = document.createElement("option");
                 option2_1.selected = true;
                 option2_1.textContent = "Mes y dia";
 
                 const option2_2 = document.createElement("option");
-                option2_2.value = "";
+                option2_2.value = "mes";
                 option2_2.textContent = "Por mes";
 
                 const option2_3 = document.createElement("option");
-                option2_3.value = "";
+                option2_3.value = "dia";
                 option2_3.textContent = "Por día";
 
-                // Añadir las opciones al segundo select
                 select2.appendChild(option2_1);
                 select2.appendChild(option2_2);
                 select2.appendChild(option2_3);
 
-                // Crear el div de dropDownSelect2 para el segundo select
                 const dropDown2 = document.createElement("div");
                 dropDown2.classList.add("dropDownSelect2");
 
-                // Añadir el select y el dropdown al segundo div
                 div2.appendChild(select2);
                 div2.appendChild(dropDown2);
 
-                // Añadir ambos divs al elemento chartRightRef
                 chartRightRef.appendChild(div1);
                 chartRightRef.appendChild(div2);
+
+                select1.addEventListener("change", function() {
+                    applyFilters(
+                        select1.value,
+                        select2.value,
+                        allCommunications
+                    );
+                });
+
+                select2.addEventListener("change", function() {
+                    applyFilters(
+                        select1.value,
+                        select2.value,
+                        allCommunications
+                    );
+                });
             } else {
-                // Actualizar select1 con nuevas opciones de categoría sin duplicar
-                const select1 = chartRightRef.querySelector(
+                select1 = chartRightRef.querySelector(
                     'select[name="property"]'
                 );
                 select1.innerHTML = "";
+
                 const option1_default = document.createElement("option");
                 option1_default.selected = true;
                 option1_default.textContent = "Todas";
                 select1.appendChild(option1_default);
+
+                select2 = chartRightRef.querySelector('select[name="time"]');
             }
 
-            categories.forEach((category, index) => {
+            groups.forEach((group, index) => {
                 const li = document.createElement("li");
                 const a = document.createElement("a");
                 const icon = document.createElement("i");
-
-                const commsByCategoryCount = allCommunications.filter(
-                    (email) => email.category === category.categoryName
+                const commsByGroupCount = allCommunications.filter(
+                    (comm) => comm.groupId === group.id
                 ).length;
                 const countPortion = parseFloat(
-                    ((commsByCategoryCount * 100) / allCommsCount).toFixed(2)
+                    ((commsByGroupCount * 100) / allCommsCount).toFixed(2)
                 );
 
-                const colorObj = colorObjects[index];
+                const colorObj = groupColors[index];
 
-                const categoryDataset = {
-                    label: category.categoryName,
+                const communicationsCount = new Array(12).fill(0);
+                allCommunications.forEach((comm) => {
+                    const date = new Date(comm.dateTime);
+                    const month = date.getMonth();
+                    communicationsCount[month]++;
+                });
+
+                const groupDataset = {
+                    label: group.groupName,
                     backgroundColor: colorObj.bg,
-                    borderColor: colorObj.category_line,
-                    pointHoverBackgroundColor: colorObj.category_line,
+                    borderColor: colorObj.group_line,
+                    pointHoverBackgroundColor: colorObj.group_line,
                     borderWidth: 0,
-                    data: [52, 60, 55, 50, 65, 80, 57, 70, 105, 115, 40, 130], // Placeholder data
+                    data: communicationsCount,
                 };
 
                 a.classList.add("showTable");
                 icon.classList.add("fas", "fa-tags");
                 a.appendChild(icon);
-                a.appendChild(document.createTextNode(category.categoryName));
+                a.appendChild(document.createTextNode(group.groupName));
                 li.appendChild(a);
                 ul2.appendChild(li);
 
                 const option = document.createElement("option");
-                option.value = category.categoryName;
-                option.textContent = category.categoryName;
+                option.value = group.groupName;
+                option.textContent = group.groupName;
                 select1.appendChild(option);
 
-                if (!selectedCategoryName) {
-                    renderProgressBar(category.categoryName, countPortion);
-                    window.myChart.data.datasets.push(categoryDataset);
-                    renderChartInfo(category, colorObj);
+                if (!selectedGroupName) {
+                    renderProgressBar(group.groupName, countPortion);
+                    renderChartInfo2(group, colorObj);
+                    window.myChart.data.datasets.push(groupDataset);
                 }
 
-                a.addEventListener("click", async function (event) {
+                a.addEventListener("click", async function(event) {
                     event.preventDefault();
-                    selectedCategoryName = category.categoryName;
-                    a.href = `categories.html?${selectedCategoryName}`;
+                    selectedGroupName = group.groupName;
+                    a.href = `groups.html?${selectedGroupName}`;
 
                     await renderCommunications();
                 });
             });
         }
 
+        function applyFilters(selectedGroup, selectedTime, allCommunications) {
+            let filteredCommunications = allCommunications;
+
+            if (selectedGroup && selectedGroup !== "Todas") {
+                filteredCommunications = filteredCommunications.filter(
+                    (comm) => {
+                        const group = allGroups.find(
+                            (g) => g.id === comm.groupId
+                        );
+                        return group && group.groupName === selectedGroup;
+                    }
+                );
+            }
+
+            if (selectedTime === "dia") {
+                const commsByDay = filteredCommunications.filter((comm) => {
+                    const commYearMonth = `${comm.dateTime.split("-")[0]}-${
+                        comm.dateTime.split("-")[1]
+                    }`;
+                    const date = new Date();
+                    const currentYearMonth = `${date.getFullYear()}-${
+                        date.getMonth() < 9
+                            ? `0${date.getMonth() + 1}`
+                            : date.getMonth() + 1
+                    }`;
+                    return commYearMonth === currentYearMonth;
+                });
+                updateChart(commsByDay, "dia");
+            } else if (selectedTime === "mes") {
+                updateChart(filteredCommunications, "mes");
+            } else {
+                updateChart(filteredCommunications, false);
+            }
+        }
+
+        function updateChart(filteredCommunications, diaMes) {
+            console.log("diaMes", diaMes);
+
+            window.myChart.data.datasets = [];
+
+            if (diaMes && diaMes === "dia") {
+                const communicationsCount = new Array(31).fill(0);
+                filteredCommunications.forEach((comm) => {
+                    const date = new Date(comm.dateTime);
+                    const day = date.getDate() - 1;
+                    communicationsCount[day]++;
+                });
+
+                const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+                const dataset = {
+                    label: "Communications per Day",
+                    backgroundColor: "rgba(0, 123, 255, 0.5)",
+                    borderColor: "rgba(0, 123, 255, 0.9)",
+                    data: communicationsCount,
+                    borderWidth: 1,
+                };
+
+                window.myChart.data.labels = days;
+                window.myChart.data.datasets.push(dataset);
+                window.myChart.update();
+            } else {
+                const communicationsCount = new Array(12).fill(0);
+                filteredCommunications.forEach((comm) => {
+                    const date = new Date(comm.dateTime);
+                    const month = date.getMonth();
+                    communicationsCount[month]++;
+                });
+
+                const dataset = {
+                    label: "Communications per Month",
+                    backgroundColor: "rgba(0, 123, 255, 0.5)",
+                    borderColor: "rgba(0, 123, 255, 0.9)",
+                    data: communicationsCount,
+                    borderWidth: 1,
+                };
+
+                window.myChart.data.labels = monthNames;
+                window.myChart.data.datasets.push(dataset);
+                window.myChart.update();
+            }
+        }
+
+        // Función para renderizar la lista de grupos Grafico
+        // function renderChartInfo1() {}
         // Función para renderizar la información del gráfico
-        function renderChartInfo(category, colorObj) {
+        function renderChartInfo2(group, colorObj) {
             const chartLeftRef = document.getElementById("chart-info__left");
 
             const chartNote = document.createElement("div");
@@ -448,7 +448,7 @@ import { getUserInfo } from "./authentication";
             colorSpan.className = colorObj.class;
 
             const labelSpan = document.createElement("span");
-            labelSpan.textContent = category.categoryName;
+            labelSpan.textContent = group.groupName;
 
             chartNote.appendChild(colorSpan);
             chartNote.appendChild(labelSpan);
@@ -456,7 +456,7 @@ import { getUserInfo } from "./authentication";
         }
 
         // Función para renderizar la barra de progreso
-        function renderProgressBar(categoryName, countPortion) {
+        function renderProgressBar(groupName, countPortion) {
             const skillContainer = document.getElementById("skill-container");
             // Crear los elementos necesarios
             const progressContainer = document.createElement("div");
@@ -467,7 +467,7 @@ import { getUserInfo } from "./authentication";
 
             const titleSpan = document.createElement("span");
             titleSpan.className = "progress__title";
-            titleSpan.textContent = categoryName;
+            titleSpan.textContent = groupName;
 
             const barDiv = document.createElement("div");
             barDiv.className = "progress-bar";
@@ -494,19 +494,39 @@ import { getUserInfo } from "./authentication";
 
         // Función para renderizar la tabla de comunicaciones
         function renderTable() {
-            const dataSet = allCommunications.map((email) => {
-                const values = Object.values(email);
-                if (selectedCategoryName) {
-                    values.splice(2, 1);
-                }
+            const dataSet = allCommunications.map((comm) => {
+                const keyArray = [
+                    "id",
+                    "channel",
+                    "category",
+                    "dateTime",
+                    "fromId",
+                    "toId",
+                    "groupId",
+                    "responseAi",
+                    "responseAttachment",
+                    "actions",
+                ];
+
+                const values = keyArray.map((key) => {
+                    return key === "fromId"
+                        ? comm.contactName
+                            ? comm.contactName
+                            : comm[key]
+                        : key === "groupId"
+                        ? allGroups.filter((g) => g.id === comm[key])[0]
+                              .groupName
+                        : comm[key];
+                });
+
                 return values;
             });
-
+            console.log(dataSet);
             dataSet.forEach((row) => {
                 row[2] = createBadge(row[2]);
                 row[3] = createDiv(row[3]);
-                row.push(createButtonContainer("view1", "eye"));
-                row.push(createButtonContainer("view2", "eye"));
+                // row.push(createButtonContainer("view1", "eye"));
+                // row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
                 row.push(createButtonContainer("edit", "pencil-alt", "full"));
                 // row.push(createActionButtonContainer());
@@ -519,18 +539,18 @@ import { getUserInfo } from "./authentication";
                     columns: [
                         { title: "Com ID" },
                         { title: "Channel" },
-                        ...(selectedCategoryName
-                            ? []
-                            : [{ title: "Category" }]),
+                        { title: "Category" },
                         { title: "Datetime" },
                         { title: "From" },
                         { title: "To" },
+                        ...(selectedGroupName ? [] : [{ title: "Group" }]),
                         { title: "Response AI" },
                         { title: "Response Attachment" },
-                        { title: "Message Content" },
-                        { title: "Response Content" },
-                        { title: "Thread" },
                         { title: "Acciones" },
+                        // { title: "Message Content" },
+                        // { title: "Response Content" },
+                        { title: "Thread" },
+                        { title: "Response" },
                     ],
                     data: dataSet,
                     layout: {
@@ -553,8 +573,9 @@ import { getUserInfo } from "./authentication";
         function createButtonContainer(className, icon, full) {
             const container = document.createElement("div");
             container.className = `${className} d-flex justify-content-center`;
-            container.innerHTML = `<button class="btn ${full ? "btn-primary" : "btn-outline-primary"
-                }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
+            container.innerHTML = `<button class="btn ${
+                full ? "btn-primary" : "btn-outline-primary"
+            }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
             return container;
         }
 
@@ -594,7 +615,7 @@ import { getUserInfo } from "./authentication";
 
         // Función para inicializar eventos de la tabla
         function initializeTableEvents(table) {
-            table.on("click", "tbody .edit", async function () {
+            table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openEditModal(data);
             });
@@ -604,25 +625,25 @@ import { getUserInfo } from "./authentication";
             //     await executeFunc(data);
             // });
 
-            table.on("click", "tbody .view1", async function () {
+            table.on("click", "tbody .view1", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openMessageModal(data);
             });
 
-            table.on("click", "tbody .view2", async function () {
+            table.on("click", "tbody .view2", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openResponseModal(data);
             });
 
-            table.on("click", "tbody .view3", async function () {
+            table.on("click", "tbody .view3", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openThreadModal(data);
             });
         }
 
         async function openEditModal(data) {
-            let actions = await client.graphql({
-                query: actionsQuery,
+            let communication = await client.graphql({
+                query: listCommunications,
                 variables: {
                     filter: {
                         messageId: { eq: data[0] },
@@ -630,8 +651,8 @@ import { getUserInfo } from "./authentication";
                 },
             });
 
-            actions = actions.data.listCommunications.items[0];
-            console.log(actions)
+            actions = communication.data.listCommunications.items[0];
+            console.log(actions);
             let selectedCategory = categories.filter(
                 (category) => category.categoryName === actions.category
             );
@@ -720,7 +741,7 @@ import { getUserInfo } from "./authentication";
                                                                 color: "red",
                                                             })
                                                     )
-                                                    .on("click", function () {
+                                                    .on("click", function() {
                                                         $(this)
                                                             .closest(
                                                                 ".input-group"
@@ -802,12 +823,14 @@ import { getUserInfo } from "./authentication";
                 .addClass("form-group1")
                 .attr("id", "execute");
             const label = $("<label>").html(
-                `<strong>${!actions.execute ? "Activar IA:" : "Desactivar IA:"
+                `<strong>${
+                    !actions.execute ? "Activar IA:" : "Desactivar IA:"
                 }</strong>`
             );
             const button = $("<button>")
                 .addClass(
-                    `form-control ${!actions.execute ? "btn-success" : "btn-danger"
+                    `form-control ${
+                        !actions.execute ? "btn-success" : "btn-danger"
                     }`
                 )
                 .attr("type", "button")
@@ -822,7 +845,7 @@ import { getUserInfo } from "./authentication";
                         !actions.execute ? "fas fa-check" : "fas fa-stop"
                     )
                 )
-                .on("click", function () {
+                .on("click", function() {
                     actions.execute = !actions.execute;
                     if (!actions.execute) {
                         button
@@ -897,18 +920,18 @@ import { getUserInfo } from "./authentication";
 
             $("#actionModal").modal("show");
 
-            $("#saveBtn").on("click", function () {
+            $("#saveBtn").on("click", function() {
                 $("#actionForm").submit();
             });
 
-            $("body").on("submit", "#actionForm", async function (event) {
+            $("body").on("submit", "#actionForm", async function(event) {
                 event.preventDefault();
 
                 let formData = {};
 
                 $("#actionForm")
                     .find(":input:disabled")
-                    .each(function () {
+                    .each(function() {
                         let name = $(this).attr("name");
                         if (name) {
                             formData[name] = $(this).val();
@@ -1175,14 +1198,14 @@ import { getUserInfo } from "./authentication";
         }
 
         async function openThreadModal(data) {
-            let thread = await client.graphql({
-                query: threadQuery,
-                variables: {
-                    filter: {
-                        messageId: { eq: data[0] },
-                    },
-                },
-            });
+            // let thread = await client.graphql({
+            //     query: threadQuery,
+            //     variables: {
+            //         filter: {
+            //             messageId: { eq: data[0] },
+            //         },
+            //     },
+            // });
             thread = JSON.parse(thread.data.listCommunications.items[0].thread);
 
             var section = document.createElement("div");
@@ -1209,7 +1232,7 @@ import { getUserInfo } from "./authentication";
             var timeline = document.createElement("div");
             timeline.className = "timeline";
 
-            thread.forEach(function (item) {
+            thread.forEach(function(item) {
                 var timelineRow = document.createElement("div");
                 timelineRow.className = "timeline-row";
                 if (item.who === "external") {
@@ -1339,7 +1362,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
     var navbars = ["header", "aside"];
@@ -1365,12 +1388,12 @@ import { getUserInfo } from "./authentication";
         overlay: false,
         overlayClass: "animsition-overlay-slide",
         overlayParentElement: "html",
-        transition: function (url) {
+        transition: function(url) {
             window.location.href = url;
         },
     });
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1389,13 +1412,13 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
     // Select 2
     try {
-        $(".js-select2").each(function () {
+        $(".js-select2").each(function() {
             $(this).select2({
                 minimumResultsForSearch: 20,
                 dropdownParent: $(this).next(".dropDownSelect2"),
@@ -1405,7 +1428,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1417,12 +1440,12 @@ import { getUserInfo } from "./authentication";
         var statistic = document.getElementById("statistics");
         var table = document.getElementById("table");
 
-        showTablebutton.addEventListener("click", function () {
+        showTablebutton.addEventListener("click", function() {
             statistic.style.display = "none";
             table.style.display = "block";
         });
         for (var i = 0; i < showstatisticbutton.length; i++) {
-            showstatisticbutton[i].addEventListener("click", function (event) {
+            showstatisticbutton[i].addEventListener("click", function(event) {
                 statistic.style.display = "block";
                 table.style.display = "none";
             });
@@ -1431,7 +1454,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1439,15 +1462,15 @@ import { getUserInfo } from "./authentication";
     try {
         var list_load = $(".js-list-load");
         if (list_load[0]) {
-            list_load.each(function () {
+            list_load.each(function() {
                 var that = $(this);
                 that.find(".js-load-item").hide();
                 var load_btn = that.find(".js-load-btn");
-                load_btn.on("click", function (e) {
+                load_btn.on("click", function(e) {
                     $(this)
                         .text("Loading...")
                         .delay(1500)
-                        .queue(function (next) {
+                        .queue(function(next) {
                             $(this).hide();
                             that.find(".js-load-item").fadeToggle(
                                 "slow",
@@ -1462,7 +1485,7 @@ import { getUserInfo } from "./authentication";
         console.log(error);
     }
 })(jQuery);
-(function ($) {
+(function($) {
     // USE STRICT
     "use strict";
 
@@ -1476,10 +1499,10 @@ import { getUserInfo } from "./authentication";
     try {
         var inbox_wrap = $(".js-inbox");
         var message = $(".au-message__item");
-        message.each(function () {
+        message.each(function() {
             var that = $(this);
 
-            that.on("click", function () {
+            that.on("click", function() {
                 $(this)
                     .parent()
                     .parent()

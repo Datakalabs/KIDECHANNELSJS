@@ -1,40 +1,14 @@
 {
-  "temp": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-kidechannels-temp-56603-authRole",
-      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-temp-56603-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-temp-56603-authRole",
-      "Region": "eu-west-3",
-      "DeploymentBucketName": "amplify-kidechannels-temp-56603-deployment",
-      "UnauthRoleName": "amplify-kidechannels-temp-56603-unauthRole",
-      "StackName": "amplify-kidechannels-temp-56603",
-      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-kidechannels-temp-56603/ecc532e0-1dfe-11ef-ab37-0a962abb1dfb",
-      "AmplifyAppId": "dwcqi9jbpj54"
-    },
-    "categories": {
-      "auth": {
-        "amplifykideai": {
-          "userPoolId": "eu-west-3_N4QVtaRLF",
-          "userPoolName": "FuerteRRHH",
-          "webClientId": "m7qd5d585r35oleco83u18nj8",
-          "nativeClientId": "m7qd5d585r35oleco83u18nj8"
-        }
-      },
-      "api": {
-        "KideChannels": {}
-      }
-    }
-  },
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-kidechannels-dev-1fc2d-authRole",
-      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-1fc2d-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-1fc2d-authRole",
+      "AuthRoleName": "amplify-kidechannels-dev-3e342-authRole",
+      "UnauthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-3e342-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::700046130725:role/amplify-kidechannels-dev-3e342-authRole",
       "Region": "eu-west-3",
-      "DeploymentBucketName": "amplify-kidechannels-dev-1fc2d-deployment",
-      "UnauthRoleName": "amplify-kidechannels-dev-1fc2d-unauthRole",
-      "StackName": "amplify-kidechannels-dev-1fc2d",
-      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-kidechannels-dev-1fc2d/3bc7f6a0-1f50-11ef-97c3-0efd5781a89f",
+      "DeploymentBucketName": "amplify-kidechannels-dev-3e342-deployment",
+      "UnauthRoleName": "amplify-kidechannels-dev-3e342-unauthRole",
+      "StackName": "amplify-kidechannels-dev-3e342",
+      "StackId": "arn:aws:cloudformation:eu-west-3:700046130725:stack/amplify-kidechannels-dev-3e342/a4fd90e0-285f-11ef-ae8f-069fdb50eabf",
       "AmplifyAppId": "dwcqi9jbpj54"
     },
     "categories": {

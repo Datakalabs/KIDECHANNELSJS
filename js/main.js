@@ -1,11 +1,13 @@
 import { Amplify } from "aws-amplify";
+import axios from "axios";
 import { generateClient } from "aws-amplify/api";
 import { listCommunications, listGroups } from "../src/graphql/queries";
 import { updateCommunication } from "../src/graphql/mutations";
 import backendConfig from "../src/amplifyconfiguration.json";
-import { getUserInfo } from "./authentication";
+import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { groupColors } from "../src/utils/groupColors";
+import { URL_MS_GOOGLE } from "../secrets";
 
 (function($) {
     try {
@@ -92,7 +94,7 @@ import { groupColors } from "../src/utils/groupColors";
     try {
         // Config de Amplify con la config del backend como prop
         Amplify.configure(backendConfig);
-
+        const { tokens } = await refreshAndGetTokens();
         // Se genera el cliente para las llamadas
         const client = generateClient();
         const monthNames = [
@@ -505,7 +507,9 @@ import { groupColors } from "../src/utils/groupColors";
 
         // Función para renderizar la tabla de comunicaciones
         function renderTable() {
+            let arrComsById = [];
             const dataSet = allCommunications.map((comm) => {
+                arrComsById.push(comm);
                 const keyArray = [
                     "id",
                     "channel",
@@ -513,6 +517,7 @@ import { groupColors } from "../src/utils/groupColors";
                     "dateTime",
                     "fromId",
                     "toId",
+                    "status",
                     "groupId",
                     "responseAi",
                     "responseAttachment",
@@ -539,7 +544,59 @@ import { groupColors } from "../src/utils/groupColors";
                 // row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
                 row.push(createButtonContainer("edit", "pencil-alt", "full"));
-                // row.push(createActionButtonContainer());
+
+                const currentCom = arrComsById.filter(
+                    (c) => c.id === row[0]
+                )[0];
+                const button = document.createElement("button");
+                button.className = `form-control btn-success`;
+                button.type = "button";
+
+                if (currentCom.status === "Answered") {
+                    button.style.backgroundColor = "#d3d3d3"; // Gris para "Answered"
+                    button.style.borderColor = "#d3d3d3"; // Borde gris para "Answered"
+                    button.disabled = true; // Deshabilitar botón para "Answered"
+                    button.style.cursor = "not-allowed";
+                } else {
+                    button.style.backgroundColor = "#00ad5f"; // Verde para otros estados
+                    button.style.borderColor = "#00ad5f"; // Borde verde para otros estados
+                }
+
+                const iTag = document.createElement("i");
+                iTag.className = "fas fa-check";
+                button.addEventListener("click", async function() {
+                    if (row[6] !== "Answered") {
+                        const { data } = await axios.post(
+                            `${URL_MS_GOOGLE}/communication/send`,
+                            {
+                                clientId,
+                                id: row[0],
+                                messageId: currentCom.messageId,
+                                threadId: currentCom.threadId,
+                                channel: currentCom.channel,
+                                fromId: currentCom.fromId,
+                                toId: currentCom.toId,
+                                responseAi: currentCom.responseAi,
+                                responseBody: currentCom.responseBody,
+                                responseSubject: currentCom.responseSubject,
+                                responseAttachment:
+                                    currentCom.responseAttachment,
+                                actions: currentCom.actions,
+                                groupId: currentCom.groupId,
+                            },
+                            {
+                                headers: {
+                                    "X-Cognito-Auth": tokens.idToken,
+                                },
+                            }
+                        );
+                        console.log(data);
+                        renderCommunications();
+                    }
+                });
+
+                button.appendChild(iTag);
+                row.push(button);
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
@@ -553,6 +610,7 @@ import { groupColors } from "../src/utils/groupColors";
                         { title: "Datetime" },
                         { title: "From" },
                         { title: "To" },
+                        { title: "Status" },
                         ...(selectedGroupName ? [] : [{ title: "Group" }]),
                         { title: "Response AI" },
                         { title: "Response Attachment" },
@@ -560,6 +618,7 @@ import { groupColors } from "../src/utils/groupColors";
                         // { title: "Message Content" },
                         // { title: "Response Content" },
                         { title: "Thread" },
+                        { title: "View & Edit" },
                         { title: "Response" },
                     ],
                     data: dataSet,
@@ -846,59 +905,59 @@ import { groupColors } from "../src/utils/groupColors";
                     )
             );
 
-            const formGroup = $("<div>")
-                .addClass("form-group1")
-                .attr("id", "execute");
-            const label = $("<label>").html(
-                `<strong>${
-                    !actions.execute ? "Activar IA:" : "Desactivar IA:"
-                }</strong>`
-            );
-            const button = $("<button>")
-                .addClass(
-                    `form-control ${
-                        !actions.execute ? "btn-success" : "btn-danger"
-                    }`
-                )
-                .attr("type", "button")
-                .css({
-                    "background-color": !actions.execute
-                        ? "#00ad5f"
-                        : "#fa4251",
-                    width: "auto",
-                })
-                .append(
-                    $("<i>").addClass(
-                        !actions.execute ? "fas fa-check" : "fas fa-stop"
-                    )
-                )
-                .on("click", function() {
-                    actions.execute = !actions.execute;
-                    if (!actions.execute) {
-                        button
-                            .removeClass("btn-danger")
-                            .addClass("btn-success");
-                        button
-                            .find("i")
-                            .removeClass("fas fa-stop")
-                            .addClass("fas fa-check");
-                        button.css("background-color", "#00ad5f");
-                        label.html(`<strong>Activar IA:</strong>`);
-                    } else {
-                        button
-                            .removeClass("btn-success")
-                            .addClass("btn-danger");
-                        button
-                            .find("i")
-                            .removeClass("fas fa-check")
-                            .addClass("fas fa-stop");
-                        button.css("background-color", "#fa4251");
-                        label.html(`<strong>Desactivar IA:</strong>`);
-                    }
-                });
+            // const formGroup = $("<div>")
+            //     .addClass("form-group1")
+            //     .attr("id", "execute");
+            // const label = $("<label>").html(
+            //     `<strong>${
+            //         !actions.execute ? "Activar IA:" : "Desactivar IA:"
+            //     }</strong>`
+            // );
+            // const button = $("<button>")
+            //     .addClass(
+            //         `form-control ${
+            //             !actions.execute ? "btn-success" : "btn-danger"
+            //         }`
+            //     )
+            //     .attr("type", "button")
+            //     .css({
+            //         "background-color": !actions.execute
+            //             ? "#00ad5f"
+            //             : "#fa4251",
+            //         width: "auto",
+            //     })
+            //     .append(
+            //         $("<i>").addClass(
+            //             !actions.execute ? "fas fa-check" : "fas fa-stop"
+            //         )
+            //     )
+            //     .on("click", function() {
+            //         actions.execute = !actions.execute;
+            //         if (!actions.execute) {
+            //             button
+            //                 .removeClass("btn-danger")
+            //                 .addClass("btn-success");
+            //             button
+            //                 .find("i")
+            //                 .removeClass("fas fa-stop")
+            //                 .addClass("fas fa-check");
+            //             button.css("background-color", "#00ad5f");
+            //             label.html(`<strong>Activar IA:</strong>`);
+            //         } else {
+            //             button
+            //                 .removeClass("btn-success")
+            //                 .addClass("btn-danger");
+            //             button
+            //                 .find("i")
+            //                 .removeClass("fas fa-check")
+            //                 .addClass("fas fa-stop");
+            //             button.css("background-color", "#fa4251");
+            //             label.html(`<strong>Desactivar IA:</strong>`);
+            //         }
+            //     });
 
-            formGroup.append(label).append(button);
-            form.append(formGroup);
+            // formGroup.append(label).append(button);
+            // form.append(formGroup);
 
             let modal = $("<div>")
                 .addClass("modal fade")
@@ -986,7 +1045,7 @@ import { groupColors } from "../src/utils/groupColors";
                 });
 
                 $("#actionModal").modal("hide");
-                location.reload();
+                renderCommunications();
             });
         }
 
@@ -1222,15 +1281,17 @@ import { groupColors } from "../src/utils/groupColors";
         }
 
         async function openThreadModal(data) {
-            // let thread = await client.graphql({
-            //     query: threadQuery,
-            //     variables: {
-            //         filter: {
-            //             messageId: { eq: data[0] },
-            //         },
-            //     },
-            // });
-            thread = JSON.parse(thread.data.listCommunications.items[0].thread);
+            let communication = await client.graphql({
+                query: listCommunications,
+                variables: {
+                    filter: {
+                        id: { eq: data[0] },
+                    },
+                },
+            });
+            const thread = JSON.parse(
+                communication.data.listCommunications.items[0].thread
+            );
 
             var section = document.createElement("div");
             section.className = "section__content section__content--p30";

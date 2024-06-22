@@ -1,13 +1,14 @@
-import { Amplify } from "aws-amplify";
 import axios from "axios";
-import { generateClient } from "aws-amplify/api";
 import { listCommunications, listGroups } from "../src/graphql/queries";
 import { updateCommunication } from "../src/graphql/mutations";
-import backendConfig from "../src/amplifyconfiguration.json";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { groupColors } from "../src/utils/groupColors";
+import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
+import { client } from "../src/utils/amplifyConfig";
+import { openEditModal } from "../src/modals/communications/editModal";
+import { openThreadModal } from "../src/modals/communications/threadModal";
 
 (function($) {
     try {
@@ -93,10 +94,8 @@ import { URL_MS_GOOGLE } from "../secrets";
     "use strict";
     try {
         // Config de Amplify con la config del backend como prop
-        Amplify.configure(backendConfig);
         const { tokens } = await refreshAndGetTokens();
         // Se genera el cliente para las llamadas
-        const client = generateClient();
         const monthNames = [
             "Enero",
             "Febrero",
@@ -116,27 +115,6 @@ import { URL_MS_GOOGLE } from "../secrets";
         let clientId = userInfo.userData.userId;
         let selectedGroupName;
         const select1 = document.createElement("select");
-
-        // Función para normalizar la fecha
-        const normalizeDate = (dateString) => {
-            const date = new Date(dateString);
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, "0");
-            const day = date
-                .getDate()
-                .toString()
-                .padStart(2, "0");
-            const hour = date
-                .getHours()
-                .toString()
-                .padStart(2, "0");
-            const minutes = date
-                .getMinutes()
-                .toString()
-                .padStart(2, "0");
-            const formattedDateTime = `${year}-${month}-${day} ${hour}:${minutes}`;
-            return formattedDateTime;
-        };
 
         // Función para obtener comunicaciones
         let allCommunications, allGroups;
@@ -182,10 +160,6 @@ import { URL_MS_GOOGLE } from "../secrets";
             try {
                 await fetchCommunications();
                 await fetchGroups();
-
-                if (window.location.pathname === "/index.html") {
-                    setInterval(fetchCommunications, 25000);
-                }
 
                 let allCommsCount = allCommunications.length;
 
@@ -614,7 +588,7 @@ import { URL_MS_GOOGLE } from "../secrets";
                         ...(selectedGroupName ? [] : [{ title: "Group" }]),
                         { title: "Response AI" },
                         { title: "Response Attachment" },
-                        { title: "Acciones" },
+                        { title: "Actions" },
                         // { title: "Message Content" },
                         // { title: "Response Content" },
                         { title: "Thread" },
@@ -667,18 +641,12 @@ import { URL_MS_GOOGLE } from "../secrets";
 
         // Función para crear un badge
         function createBadge(category) {
-            const badgeClass =
-                {
-                    DefaultCategory1: "badge-primary",
-                    DefaultCategory2: "badge-success",
-                    "custom 1": "badge-warning",
-                    Leidos: "badge-danger",
-                    Recibidos: "badge-info",
-                    default: "badge-secondary",
-                }[category] || "badge-secondary";
+            const categ = defaultCategories.filter(
+                (c) => c.categoryName === category
+            )[0];
 
             const div = document.createElement("div");
-            div.innerHTML = `<span class="badge ${badgeClass}">${category}</span>`;
+            div.innerHTML = `<span class="badge ${categ.badgeClass}">${categ.categoryName}</span>`;
             return div;
         }
 
@@ -686,7 +654,13 @@ import { URL_MS_GOOGLE } from "../secrets";
         function initializeTableEvents(table) {
             table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
-                await openEditModal(data);
+                await openEditModal(
+                    data,
+                    allCommunications,
+                    allGroups,
+                    clientId,
+                    renderCommunications
+                );
             });
 
             // table.on("click", "tbody .check", async function () {
@@ -706,346 +680,7 @@ import { URL_MS_GOOGLE } from "../secrets";
 
             table.on("click", "tbody .view3", async function() {
                 const data = table.row($(this).closest("tr")).data();
-                await openThreadModal(data);
-            });
-        }
-
-        async function openEditModal(data) {
-            let communication = await client.graphql({
-                query: listCommunications,
-                variables: {
-                    filter: {
-                        id: { eq: data[0] },
-                    },
-                },
-            });
-
-            const actions = communication.data.listCommunications.items[0];
-            let selectedCategory = defaultCategories.filter(
-                (category) => category.categoryName === actions.category
-            );
-
-            selectedCategory = selectedCategory[0];
-            let form = $("<form>").attr("id", "actionForm");
-            form.append(
-                $("<div>")
-                    .addClass("form-row")
-                    .append(
-                        $("<div>")
-                            .addClass("form-group1 col-md-6")
-                            .attr("id", "fromId")
-                            .append($("<label>").text("From:"))
-                            .append(
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .attr("name", "fromId")
-                                    .val(actions.fromId)
-                            )
-                    )
-                    .append(
-                        $("<div>")
-                            .addClass("form-group1 col-md-6")
-                            .attr("id", "dateTime")
-                            .append($("<label>").text("Datetime:"))
-                            .append(
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .attr("name", "dateTime")
-                                    .val(actions.dateTime)
-                            )
-                    )
-            );
-
-            form.append(
-                $("<div>")
-                    .addClass("form-row")
-                    .append(
-                        $("<div>")
-                            .addClass("form-group1 col-md-6")
-                            .append(
-                                $("<label>").text("Category:"),
-                                $("<select>")
-                                    .addClass("form-control")
-                                    .attr("id", "category")
-                                    .append(
-                                        defaultCategories.map((category) =>
-                                            $("<option>")
-                                                .text(category.categoryName)
-                                                .val(category.categoryName)
-                                        )
-                                    )
-                                    .val(selectedCategory.categoryName)
-                            ),
-                        $("<div>")
-                            .addClass("form-group1 col-md-6")
-                            .append(
-                                $("<label>").text("Group:"),
-                                $("<select>")
-                                    .addClass("form-control")
-                                    .attr("id", "group")
-                                    .append(
-                                        allGroups.map((group) =>
-                                            $("<option>")
-                                                .text(group.groupName)
-                                                .val(group.id)
-                                        )
-                                    )
-                                    .val(
-                                        allGroups.filter(
-                                            (g) => g.id === actions.groupId
-                                        )[0].id
-                                    )
-                            )
-                    )
-            );
-
-            form.append(
-                $("<div>")
-                    .addClass("form-group1")
-                    .attr("id", "responseAi")
-                    .append($("<label>").text("Response AI:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .val(actions.responseAi)
-                    )
-            );
-
-            form.append(
-                $("<div>")
-                    .addClass("form-group1 ")
-                    .attr("id", "responseAttachment")
-                    .append(
-                        $("<label>").text("Response attachment"),
-                        $("<div>")
-                            .addClass("input-group")
-                            .append(
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .val(actions.responseAttachment)
-                                    .prop("readonly", true),
-                                $("<div>")
-                                    .addClass("input-group-append")
-                                    .append(
-                                        $("<button>")
-                                            .addClass("btn")
-                                            .attr("type", "button")
-                                            .append(
-                                                $("<i>")
-                                                    .addClass("fa fa-times")
-                                                    .css({
-                                                        color: "red",
-                                                    })
-                                            )
-                                            .on("click", function() {
-                                                $(this)
-                                                    .closest(".input-group")
-                                                    .find("input")
-                                                    .val("");
-                                            })
-                                    )
-                            )
-                    )
-            );
-
-            form.append(
-                $("<div>")
-                    .addClass("form-group1")
-                    .attr("id", "messageSubject")
-                    .append($("<label>").text("Message subjet:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .attr("name", "messageSubject")
-                            .val(actions.messageSubject)
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group1")
-                    .attr("id", "messageBody")
-                    .append($("<label>").text("Message Body:"))
-                    .append(
-                        $("<textarea>")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .attr("name", "messageBody")
-                            .val(actions.messageBody)
-                    )
-            ); // Crea el modal con el formulario
-            form.append(
-                $("<div>")
-                    .addClass("form-group1")
-                    .attr("id", "responseSubject")
-                    .append($("<label>").text("Response Subjet:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .val(actions.responseSubject)
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group1")
-                    .attr("id", "responseBody")
-                    .append($("<label>").text("Response Body:"))
-                    .append(
-                        $("<textarea>")
-                            .addClass("form-control")
-                            .val(actions.responseBody)
-                    )
-            );
-
-            // const formGroup = $("<div>")
-            //     .addClass("form-group1")
-            //     .attr("id", "execute");
-            // const label = $("<label>").html(
-            //     `<strong>${
-            //         !actions.execute ? "Activar IA:" : "Desactivar IA:"
-            //     }</strong>`
-            // );
-            // const button = $("<button>")
-            //     .addClass(
-            //         `form-control ${
-            //             !actions.execute ? "btn-success" : "btn-danger"
-            //         }`
-            //     )
-            //     .attr("type", "button")
-            //     .css({
-            //         "background-color": !actions.execute
-            //             ? "#00ad5f"
-            //             : "#fa4251",
-            //         width: "auto",
-            //     })
-            //     .append(
-            //         $("<i>").addClass(
-            //             !actions.execute ? "fas fa-check" : "fas fa-stop"
-            //         )
-            //     )
-            //     .on("click", function() {
-            //         actions.execute = !actions.execute;
-            //         if (!actions.execute) {
-            //             button
-            //                 .removeClass("btn-danger")
-            //                 .addClass("btn-success");
-            //             button
-            //                 .find("i")
-            //                 .removeClass("fas fa-stop")
-            //                 .addClass("fas fa-check");
-            //             button.css("background-color", "#00ad5f");
-            //             label.html(`<strong>Activar IA:</strong>`);
-            //         } else {
-            //             button
-            //                 .removeClass("btn-success")
-            //                 .addClass("btn-danger");
-            //             button
-            //                 .find("i")
-            //                 .removeClass("fas fa-check")
-            //                 .addClass("fas fa-stop");
-            //             button.css("background-color", "#fa4251");
-            //             label.html(`<strong>Desactivar IA:</strong>`);
-            //         }
-            //     });
-
-            // formGroup.append(label).append(button);
-            // form.append(formGroup);
-
-            let modal = $("<div>")
-                .addClass("modal fade")
-                .attr("id", "actionModal")
-                .attr("tabindex", "-1")
-                .attr("role", "dialog")
-                .attr("aria-labelledby", "actionModalLabel")
-                .attr("aria-hidden", "true");
-            let modalDialog = $("<div>")
-                .addClass("modal-dialog modal-med")
-                .attr("role", "document");
-            let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>")
-                .addClass("modal-header headerCenter")
-                .append(
-                    $("<h3>")
-                        .addClass("modal-title")
-                        .attr("id", "actionModalLabel")
-                        .text("Editar")
-                );
-            let modalBody = $("<div>")
-                .addClass("modal-body")
-                .append(form);
-            let modalFooter = $("<div>")
-                .addClass("modal-footer")
-                .append(
-                    $("<button>")
-                        .addClass("btn btn-primary")
-                        .text("Guardar")
-                        .attr("type", "button")
-                        .attr("id", "saveBtn")
-                )
-                .append(
-                    $("<button>")
-                        .addClass("btn btn-secondary")
-                        .text("Cancelar")
-                        .attr("data-dismiss", "modal")
-                        .attr("id", "cancelBtn")
-                );
-            modalContent.append(modalHeader, modalBody, modalFooter);
-            modalDialog.append(modalContent);
-            modal.append(modalDialog);
-
-            $("#actionModal").remove();
-            $("body").append(modal);
-
-            $("#actionModal").modal("show");
-
-            $("#saveBtn").on("click", function() {
-                $("#actionForm").submit();
-            });
-
-            $("body").on("submit", "#actionForm", async function(event) {
-                event.preventDefault();
-
-                let formData = {};
-
-                $("#actionForm")
-                    .find(":input:disabled")
-                    .each(function() {
-                        let name = $(this).attr("name");
-                        if (name) {
-                            formData[name] = $(this).val();
-                        }
-                    });
-
-                formData = {
-                    ...formData,
-                    clientId,
-                    id: data[0],
-                    category: $("#category").val(),
-                    groupId: $("#group").val(),
-                    responseAttachment: $("#responseAttachment input").val(),
-                    responseAi: $("#responseAi input").val(),
-                    responseSubject: $("#responseSubject input").val(),
-                    responseBody: $("#responseBody textarea").val(),
-                    execute: actions.execute,
-                };
-
-                await client.graphql({
-                    query: updateCommunication,
-                    variables: {
-                        input: formData,
-                    },
-                });
-
-                $("#actionModal").modal("hide");
-                renderCommunications();
+                await openThreadModal(data, allCommunications);
             });
         }
 
@@ -1278,168 +913,6 @@ import { URL_MS_GOOGLE } from "../secrets";
             $("body").append(modal);
 
             $("#responseModal").modal("show");
-        }
-
-        async function openThreadModal(data) {
-            let communication = await client.graphql({
-                query: listCommunications,
-                variables: {
-                    filter: {
-                        id: { eq: data[0] },
-                    },
-                },
-            });
-            const thread = JSON.parse(
-                communication.data.listCommunications.items[0].thread
-            );
-
-            var section = document.createElement("div");
-            section.className = "section__content section__content--p30";
-
-            var container = document.createElement("div");
-            container.className = "container-fluid";
-
-            var bootdeyContainer = document.createElement("div");
-            bootdeyContainer.className = "container bootdey";
-
-            var row = document.createElement("div");
-            row.className = "row gutters";
-
-            var col = document.createElement("div");
-            col.className = "col-xl-12 col-lg-12 col-md-12 col-sm-12";
-
-            var card = document.createElement("div");
-            card.className = "card";
-
-            var cardBody = document.createElement("div");
-            cardBody.className = "card-body";
-
-            var timeline = document.createElement("div");
-            timeline.className = "timeline";
-
-            thread.forEach(function(item) {
-                var timelineRow = document.createElement("div");
-                timelineRow.className = "timeline-row";
-                if (item.who === "external") {
-                    timelineRow.classList.add("external");
-                } else {
-                    timelineRow.classList.add("client");
-                }
-                var timelineTime = document.createElement("div");
-                timelineTime.className = "timeline-time";
-                timelineTime.innerHTML =
-                    item.time + "<small>" + item.date + "</small>";
-
-                var timelineDot = document.createElement("div");
-                timelineDot.className = "timeline-dot " + item.dotClass;
-
-                var timelineContent = document.createElement("div");
-                timelineContent.className = "timeline-content";
-
-                var fromDiv = document.createElement("div");
-                fromDiv.style.display = "flex";
-                fromDiv.style.alignItems = "center";
-
-                var fromLabel = document.createElement("p");
-                fromLabel.style.paddingRight = "10px";
-                fromLabel.style.margin = "0";
-                fromLabel.style.color = "black";
-                fromLabel.innerHTML = "From:";
-
-                var fromValue = document.createElement("p");
-                fromValue.style.paddingRight = "10px";
-                fromValue.style.margin = "0";
-                fromValue.innerHTML = item.from;
-
-                var toDiv = document.createElement("div");
-                toDiv.style.display = "flex";
-                toDiv.style.alignItems = "center";
-
-                var toLabel = document.createElement("p");
-                toLabel.style.paddingRight = "10px";
-                toLabel.style.marginBottom = "10px";
-                toLabel.style.color = "black";
-                toLabel.innerHTML = "To:";
-
-                var toValue = document.createElement("p");
-                toValue.style.paddingRight = "10px";
-                toValue.style.marginBottom = "10px";
-                toValue.innerHTML = item.to;
-
-                var title = document.createElement("h4");
-                title.innerHTML = item.title;
-
-                var content = document.createElement("p");
-                content.innerHTML = item.content;
-
-                var badgesDiv = document.createElement("div");
-
-                // item.badges.forEach(function (badge) {
-                //     var badgeSpan = document.createElement("span");
-                //     badgeSpan.className = "badge badge-light";
-                //     badgeSpan.innerHTML = badge;
-                //     badgesDiv.appendChild(badgeSpan);
-                // });
-
-                fromDiv.appendChild(fromLabel);
-                fromDiv.appendChild(fromValue);
-
-                toDiv.appendChild(toLabel);
-                toDiv.appendChild(toValue);
-
-                timelineContent.appendChild(fromDiv);
-                timelineContent.appendChild(toDiv);
-                timelineContent.appendChild(title);
-                timelineContent.appendChild(content);
-                timelineContent.appendChild(badgesDiv);
-
-                timelineRow.appendChild(timelineTime);
-                timelineRow.appendChild(timelineDot);
-                timelineRow.appendChild(timelineContent);
-
-                timeline.appendChild(timelineRow);
-            });
-
-            // Construir la estructura de la sección
-            cardBody.appendChild(timeline);
-            card.appendChild(cardBody);
-            col.appendChild(card);
-            row.appendChild(col);
-            bootdeyContainer.appendChild(row);
-            container.appendChild(bootdeyContainer);
-            section.appendChild(container);
-
-            // Crea el modal con el formulario
-            let modal = $("<div>")
-                .addClass("modal fade")
-                .attr("id", "threadModal");
-            let modalDialog = $("<div>").addClass("modal-dialog Modal_BIG"); // Cambia "modal-lg" por "modal-sm" si quieres un modal más pequeño
-            let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>")
-                .addClass("modal-header headerCenter")
-                .append(
-                    $("<h3>")
-                        .addClass("modal-title")
-                        .attr("id", "threadModalLabel")
-                        .text("Hilo de la conversación")
-                );
-            let modalBody = $("<div>").addClass("modal-body");
-            modalBody.append(section);
-            let modalFooter = $("<div>")
-                .addClass("modal-footer")
-                .append(
-                    $("<button>")
-                        .addClass("btn btn-secondary")
-                        .text("Cerrar")
-                        .attr("data-dismiss", "modal")
-                );
-            modalContent.append(modalHeader, modalBody, modalFooter);
-            modalDialog.append(modalContent);
-            modal.append(modalDialog);
-            $("#threadModal").remove();
-            $("body").append(modal);
-
-            $("#threadModal").modal("show");
         }
 
         renderCommunications();

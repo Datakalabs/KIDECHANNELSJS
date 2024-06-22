@@ -11,7 +11,7 @@
 //     listRetargetingOptions,
 //     listTriggerOptions,
 // } from "../src/graphql/queries.js";
-import { client } from "./amplifyConfig.js";
+import { client } from "../src/utils/amplifyConfig.js";
 import { getUserInfo } from "./authentication.js";
 
 const userInfo = await getUserInfo();
@@ -286,12 +286,12 @@ let clientId = userInfo.sub;
         const saveBtn = document.createElement("button");
         saveBtn.id = "saveBtn";
         saveBtn.className = "btn btn-primary";
-        saveBtn.textContent = "Guardar";
+        saveBtn.textContent = "Save";
 
         const cancelBtn = document.createElement("button");
         cancelBtn.id = "cancelCategory";
         cancelBtn.className = "btn btn-secondary";
-        cancelBtn.textContent = "Cancelar";
+        cancelBtn.textContent = "Cancel";
 
         editCategoriesBtn.addEventListener("click", function() {
             $("#myModal").modal("show");

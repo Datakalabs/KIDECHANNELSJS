@@ -15,7 +15,7 @@ import {
 // import {AWS_ACCESS_KEY,AWS_COGNITO_POOL_CLIENT_ID,AWS_COGNITO_POOL_ID,AWS_REGION,AWS_SECRET_ACCESS_KEY } from '../secrets'
 import { Amplify } from "aws-amplify";
 import backendConfig from "../src/amplifyconfiguration.json";
-import { client } from "./amplifyConfig.js";
+import { client } from "../src/utils/amplifyConfig.js";
 import { createGroup } from "../src/graphql/mutations.js";
 
 Amplify.configure(backendConfig);

@@ -1,7 +1,22 @@
 export const defaultCategories = [
-    { categoryName: "CategoryName1", color: "blue" },
-    { categoryName: "CategoryName2", color: "red" },
-    { categoryName: "CategoryName3", color: "yellow" },
+    {
+        categoryName: "CategoryName1",
+        color: "blue",
+        badgeClass: "badge-primary",
+    },
+    {
+        categoryName: "CategoryName2",
+        color: "red",
+        badgeClass: "badge-success",
+    },
+    {
+        categoryName: "CategoryName3",
+        color: "yellow",
+        badgeClass: "badge-warning",
+    },
+    // Leidos: "badge-danger",
+    // Recibidos: "badge-info",
+    // default: "badge-secondary",
 ];
 
 export const defaultCategiesConfiguration = {

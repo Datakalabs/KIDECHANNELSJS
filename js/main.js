@@ -124,7 +124,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
 
-                console.log(allGroups);
                 let allCommsCount = allCommunications.length;
 
                 renderGroupList(allGroups, allCommunications, allCommsCount);
@@ -246,9 +245,11 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
 
                 const communicationsCount = new Array(12).fill(0);
                 allCommunications.forEach((comm) => {
-                    const date = new Date(comm.dateTime);
-                    const month = date.getMonth();
-                    communicationsCount[month]++;
+                    if (comm.groupId === group.id) {
+                        const date = new Date(comm.dateTime);
+                        const month = date.getMonth();
+                        communicationsCount[month]++;
+                    }
                 });
 
                 const groupDataset = {
@@ -259,6 +260,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                     borderWidth: 0,
                     data: communicationsCount,
                 };
+                console.log(groupDataset);
 
                 a.classList.add("showTable");
                 icon.classList.add("fas", "fa-tags");
@@ -469,7 +471,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                             : comm[key]
                         : key === "groupId"
                         ? allGroups.find((g) => {
-                              console.log(g, "--", comm[key]);
                               return g.id === comm[key];
                           }).groupName
                         : comm[key];
@@ -485,7 +486,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 row.push(createButtonContainer("view3", "eye"));
                 row.push(createButtonContainer("edit", "pencil-alt", "full"));
 
-                console.log(row);
                 const currentCom = arrComsById.filter(
                     (c) => c.id === row[0]
                 )[0];
@@ -531,7 +531,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                                 },
                             }
                         );
-                        console.log(data);
                         renderCommunications();
                     }
                 });

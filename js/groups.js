@@ -75,8 +75,6 @@ import { fetchCommunications, fetchGroups } from "../src/utils";
                         "step2"
                     ).innerHTML = selectedGroupName;
                     a.href = `groups.html?${selectedGroupName}`;
-
-                    await renderCommunications();
                 });
             });
         }

@@ -3,6 +3,7 @@ const path = require("path");
 module.exports = {
     entry: {
         main: "./js/main.js",
+        index: "./js/index.js",
         loginLogout: "./js/auth/loginLogout.js",
         verifyMmail: "./js/auth/verifyMail.js",
         forgetPass: "./js/auth/forgetPass.js",

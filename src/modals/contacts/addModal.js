@@ -108,7 +108,7 @@ export async function openAddModal({
             $("#createForm").submit();
         });
 
-        $("body").on("submit", "#createForm", async function(event) {
+        $("#createForm").on("submit", async function(event) {
             event.preventDefault();
 
             let formData = {

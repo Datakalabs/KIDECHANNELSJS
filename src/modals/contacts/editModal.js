@@ -4,11 +4,7 @@ import {
     updateCommunication,
     updateContact,
 } from "../../graphql/mutations";
-import {
-    fetchCommunicationsByGroupId,
-    fetchCommunicationsContactName,
-    fetchContacts,
-} from "../../utils";
+import { fetchCommunications } from "../../utils";
 
 export async function openEditModal({
     data,
@@ -132,12 +128,12 @@ export async function openEditModal({
                     "Estas seguro de eliminar a " + data[0] + "?"
                 );
                 if (agree) {
-                    const allCommsByContactName = await fetchCommunicationsContactName(
-                        {
-                            clientId,
+                    const allCommsByContactName = await fetchCommunications({
+                        clientId,
+                        filters: {
                             contactName: data[0],
-                        }
-                    );
+                        },
+                    });
 
                     await Promise.all(
                         allCommsByContactName.map(async (item) => {
@@ -192,14 +188,20 @@ export async function openEditModal({
                 (c) => c.contactEmail === formData.contactEmail
             );
 
-            if (nameAlreadyExist.length !== 0) {
+            if (
+                formData.contactName !== data[0] &&
+                nameAlreadyExist.length !== 0
+            ) {
                 alert(
                     "ya existe un contacto con el nombre: " +
                         formData.contactName
                 );
                 return;
             }
-            if (emailAlreadyExist.length !== 0) {
+            if (
+                formData.contactEmail !== data[1] &&
+                emailAlreadyExist.length !== 0
+            ) {
                 alert(
                     "ya existe un contacto con el mail: " +
                         formData.contactEmail
@@ -207,31 +209,54 @@ export async function openEditModal({
                 return;
             }
 
-            const allCommsByContactName = await fetchCommunicationsContactName({
-                clientId,
-                contactName: data[0],
-            });
+            let allComms,
+                existsCommWithOldMail = false;
+
+            if (formData.contactEmail !== data[1]) {
+                allComms = await fetchCommunications({
+                    clientId,
+                    filters: {
+                        fromId: formData.contactEmail,
+                    },
+                    condition: "contains",
+                });
+
+                allComms.length === 0
+                    ? (allComms = await fetchCommunications(
+                          {
+                              clientId,
+                              filters: {
+                                  fromId: data[1],
+                              },
+                              condition: "contains",
+                          },
+                          (existsCommWithOldMail = true)
+                      ))
+                    : null;
+            } else {
+                allComms = await fetchCommunications({
+                    clientId,
+                    filters: {
+                        contactName: data[0],
+                    },
+                });
+            }
 
             await Promise.all(
-                allCommsByContactName.map(async (item) => {
-                    if (
-                        formData.groupId !==
-                            allGroups.find((g) => g.id === actions.groupId)
-                                .id ||
-                        formData.contactName !== data[0]
-                    ) {
-                        await client.graphql({
-                            query: updateCommunication,
-                            variables: {
-                                input: {
-                                    clientId,
-                                    id: item.id,
-                                    groupId: formData.groupId,
-                                    contactName: formData.contactName,
-                                },
+                allComms.map(async (item) => {
+                    await client.graphql({
+                        query: updateCommunication,
+                        variables: {
+                            input: {
+                                clientId,
+                                id: item.id,
+                                groupId: formData.groupId,
+                                contactName: existsCommWithOldMail
+                                    ? ""
+                                    : formData.contactName,
                             },
-                        });
-                    }
+                        },
+                    });
                 })
             );
 

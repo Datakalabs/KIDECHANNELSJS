@@ -74,20 +74,17 @@ export async function openEditModal(
                     .addClass("form-group1 col-md-6")
                     .append(
                         $("<label>").text("Group:"),
-                        $("<select>")
+                        $("<input>")
                             .addClass("form-control")
                             .attr("id", "group")
-                            .append(
-                                allGroups.map((group) =>
-                                    $("<option>")
-                                        .text(group.groupName)
-                                        .val(group.id)
-                                )
-                            )
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .attr("name", "group")
+
                             .val(
-                                allGroups.filter(
-                                    (g) => g.id === actions.groupId
-                                )[0].id
+                                allGroups.find((g) => g.id === actions.groupId)
+                                    .groupName
                             )
                     )
             )

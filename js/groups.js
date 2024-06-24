@@ -7,6 +7,7 @@ import { openEditModal } from "../src/modals/communications/editModal";
 import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
 import { defaultCategories } from "../src/utils/defaultCategories";
+import { fetchCommunications, fetchGroups } from "../src/utils";
 
 (async function($) {
     // USE STRICT
@@ -21,59 +22,25 @@ import { defaultCategories } from "../src/utils/defaultCategories";
         const { tokens } = await refreshAndGetTokens();
         let clientId = userInfo.userData.userId;
         let allCommunications, allGroups;
-        async function fetchCommunications() {
-            const variables = {
+
+        async function fetchCommunicationsToRender() {
+            allCommunications = await fetchCommunications({
                 clientId,
-                filter: {
-                    groupId: {
-                        eq: allGroups.filter(
-                            (g) => g.groupName === selectedGroupName
-                        )[0].id,
-                    },
+                filters: {
+                    groupId: allGroups.find(
+                        (g) => g.groupName === selectedGroupName
+                    ).id,
                 },
-            };
-
-            try {
-                const response = await client.graphql({
-                    query: listCommunications,
-                    variables,
-                });
-
-                allCommunications = response.data.listCommunications.items.map(
-                    (comm) => ({
-                        ...comm,
-                        dateTime: normalizeDate(comm.dateTime),
-                    })
-                );
-                return allCommunications;
-            } catch (error) {
-                console.error("Error fetching communications:", error);
-            }
-        }
-        async function fetchGroups() {
-            const variables = { clientId };
-
-            try {
-                const response = await client.graphql({
-                    query: listGroups,
-                    variables,
-                });
-
-                allGroups = response.data.listGroups.items;
-
-                return allGroups;
-            } catch (error) {
-                console.error("Error fetching groups:", error);
-            }
+            });
         }
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
-                await fetchGroups();
-                await fetchCommunications();
+                allGroups = await fetchGroups({ clientId });
+                await fetchCommunicationsToRender();
                 if (window.location.pathname.includes("/groups.html")) {
                     setInterval(async () => {
-                        await fetchCommunications();
+                        await fetchCommunicationsToRender();
                     }, 25000);
                 }
 

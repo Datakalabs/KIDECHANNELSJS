@@ -9,11 +9,19 @@ import {
 import { client } from "./amplifyConfig";
 import { normalizeDate } from "./normalizeDateTime";
 
-export const fetchGroups = async ({ clientId }) => {
+export const fetchGroups = async ({ clientId, filters, condition }) => {
     try {
+        let graphqlFilter = {};
+        if (filters) {
+            for (const key of Object.keys(filters)) {
+                graphqlFilter[key] = {
+                    [condition || "eq"]: filters[key],
+                };
+            }
+        }
         const response = await client.graphql({
             query: listGroups,
-            variables: { clientId },
+            variables: { clientId, filter: graphqlFilter },
         });
 
         return response.data.listGroups.items;
@@ -33,48 +41,15 @@ export async function fetchCommunications({ clientId, filters, condition }) {
                 };
             }
         }
-        console.log(graphqlFilter);
         const response = await client.graphql({
             query: listCommunications,
             variables: { clientId, filter: graphqlFilter },
         });
 
-        console.log(response);
         return response.data.listCommunications.items.map((comm) => ({
             ...comm,
             dateTime: normalizeDate(comm.dateTime),
         }));
-    } catch (error) {
-        console.error("Error fetching communications:", error);
-        throw error;
-    }
-}
-
-export async function fetchCommunicationsByGroupId({ clientId, groupId }) {
-    try {
-        const response = await client.graphql({
-            query: listCommunications,
-            variables: { clientId, filter: { groupId: { eq: groupId } } },
-        });
-        return response.data.listCommunications.items;
-    } catch (error) {
-        console.error("Error fetching communications:", error);
-        throw error;
-    }
-}
-export async function fetchCommunicationsContactName({
-    clientId,
-    contactName,
-}) {
-    try {
-        const response = await client.graphql({
-            query: listCommunications,
-            variables: {
-                clientId,
-                filter: { contactName: { eq: contactName } },
-            },
-        });
-        return response.data.listCommunications.items;
     } catch (error) {
         console.error("Error fetching communications:", error);
         throw error;

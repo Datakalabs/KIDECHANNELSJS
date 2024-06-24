@@ -1,6 +1,6 @@
 import { client } from "../../utils/amplifyConfig";
 import { createContact, updateCommunication } from "../../graphql/mutations";
-import { fetchCommunications, fetchContacts } from "../../utils";
+import { fetchCommunications } from "../../utils";
 
 export async function openAddModal({
     allContacts,

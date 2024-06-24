@@ -5,14 +5,13 @@ import {
     updateContact,
     updateGroup,
 } from "../src/graphql/mutations.js";
-import { listPreQuoteOptions } from "../src/graphql/queries.js";
 import { client } from "../src/utils/amplifyConfig.js";
 import {
     defaultCategories,
     defaultCategiesConfiguration,
 } from "../src/utils/defaultCategories.js";
 import {
-    fetchCommunicationsByGroupId,
+    fetchCommunications,
     fetchContacts,
     fetchGroups,
     fetchPreQuoteOptions,
@@ -361,8 +360,8 @@ let clientId = userInfo.userData.userId;
                             );
 
                             if (agree) {
-                                const allCommsByGroupUd = await fetchCommunicationsByGroupId(
-                                    { clientId, groupId: group.id }
+                                const allCommsByGroupId = await fetchCommunications(
+                                    { clientId, filters: { groupId: group.id } }
                                 );
 
                                 await Promise.all(
@@ -380,7 +379,7 @@ let clientId = userInfo.userData.userId;
                                     })
                                 );
                                 await Promise.all(
-                                    allCommsByGroupUd.map(async (item) => {
+                                    allCommsByGroupId.map(async (item) => {
                                         await client.graphql({
                                             query: updateCommunication,
                                             variables: {
@@ -424,8 +423,8 @@ let clientId = userInfo.userData.userId;
                             );
 
                             if (agree) {
-                                const allCommsByGroupUd = await fetchCommunicationsByGroupId(
-                                    { clientId, groupId: group.id }
+                                const allCommsByGroupId = await fetchCommunications(
+                                    { clientId, filters: { groupId: group.id } }
                                 );
                                 await Promise.all(
                                     allContactsByGroupId.map(async (item) => {
@@ -446,7 +445,7 @@ let clientId = userInfo.userData.userId;
                                     })
                                 );
                                 await Promise.all(
-                                    allCommsByGroupUd.map(async (item) => {
+                                    allCommsByGroupId.map(async (item) => {
                                         await client.graphql({
                                             query: updateCommunication,
                                             variables: {

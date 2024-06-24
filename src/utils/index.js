@@ -5,6 +5,4 @@ export {
     fetchTriggerOptions,
     fetchRetargetingOptions,
     fetchContacts,
-    fetchCommunicationsByGroupId,
-    fetchCommunicationsContactName,
 } from "./fetchFunctions";

@@ -343,7 +343,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                         borderColor: groupComm.color.group_line,
                         pointHoverBackgroundColor: groupComm.color.group_line,
                         data: groupComm.data,
-                        borderWidth: 1,
+                        borderWidth: 0,
                     };
                     window.myChart.data.datasets.push(dataset);
                 });
@@ -370,7 +370,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                         borderColor: colorObj.group_line,
                         pointHoverBackgroundColor: colorObj.group_line,
                         data: new Array(12).fill(0),
-                        borderWidth: 1,
+                        borderWidth: 0,
                     };
 
                     groupCommunications.forEach((comm) => {

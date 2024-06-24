@@ -1,13 +1,3 @@
-// import {
-//     updateCommunication,
-// } from "../src/graphql/mutations.js";
-// import {
-
-//     listCommunications,
-//     listPreQuoteOptions,
-//     listRetargetingOptions,
-//     listTriggerOptions,
-// } from "../src/graphql/queries.js";
 import {
     createGroup,
     deleteGroup,
@@ -23,7 +13,7 @@ import {
 } from "../src/utils/defaultCategories.js";
 import {
     fetchCommunicationsByGroupId,
-    fetchContact,
+    fetchContacts,
     fetchGroups,
     fetchPreQuoteOptions,
     fetchRetargetingOptions,
@@ -312,7 +302,7 @@ let clientId = userInfo.userData.userId;
         saveBtn.addEventListener("click", async function() {
             try {
                 let elementRepeted = [];
-                const allContacts = await fetchContact({ clientId });
+                const allContacts = await fetchContacts({ clientId });
 
                 async function handleNewGroups() {
                     for (let i = 0; i < newGroups.length; i++) {

@@ -15,13 +15,11 @@ import { defaultCategories } from "../src/utils/defaultCategories";
         let selectedGroupName = window.location.search
             .slice(1)
             .replace(/%20/g, " ");
-        let categories;
         document.getElementById("step2").innerHTML = selectedGroupName;
 
         let userInfo = await getUserInfo();
         const { tokens } = await refreshAndGetTokens();
         let clientId = userInfo.userData.userId;
-        const select1 = document.createElement("select");
         let allCommunications, allGroups;
         async function fetchCommunications() {
             const variables = {

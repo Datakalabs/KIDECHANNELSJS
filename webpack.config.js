@@ -9,7 +9,7 @@ module.exports = {
         authentication: "./js/authentication.js",
         authorizations: "./js/authorizations.js",
         groups: "./js/groups.js",
-        categoryConfig: "./js/categoriesConfig.js",
+        groupsConfig: "./js/groupsConfig.js",
         menuSidebar: "./js/menuSidebar.js",
         rightMenuSidebar: "./js/rightMenuSidebar.js",
     },

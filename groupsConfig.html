@@ -82,7 +82,7 @@
                             </a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="CategoriesConfig.html"> <i class="fas fa-cog"></i>Groups Config</a>
+                                    <a href="groupsConfig.html"> <i class="fas fa-cog"></i>Groups Config</a>
                                 </li>
                                 <li>
                                     <a href="Authorizations.html"> <i class="fas fa-lock"></i>Authorizations</a>
@@ -117,7 +117,7 @@
                                             <li class="list-inline-item seprate">
                                                 <span>/</span>
                                             </li>
-                                            <li class="list-inline-item">Categories configuration</li>
+                                            <li class="list-inline-item">Groups configuration</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -135,15 +135,17 @@
                         <div class="row justify-content-center">
                             <div class="col-md-10">
                                 <div class="row p-t-20 p-b-20">
-                                    <select class=" col-md-4 form-control text-center" id="selectOptionCategory">
-                                        <option value="Selecciona" disabled selected>Seleccionar Categoría</option>
+                                    <select class=" col-md-6 form-control text-center" id="selectOptionGroup">
+                                        <option value="Selecciona" disabled selected>Select Group</option>
                                     </select>
-                                    <div class="col-md-2">
-                                    </div>
+                               
                                     <div class="col-md-3">
-                                        <button class="btn btn-warning edit_categories btn-block" type="button">Edit
+                                        <button class="btn btn-warning edit_groups btn-block" type="button">Edit
                                             Groups</button>
-                                    </div>
+                                        </div>
+                                        <select class=" col-md-6 form-control text-center" id="selectOptionCategory" disabled>
+                                            <option value="Selecciona" disabled selected>Select Category</option>
+                                        </select>
                                 </div>
                             </div>
                             <div class="col-md-10" id="divCategory">
@@ -276,7 +278,7 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
     <!-- Main JS-->
-    <script src="dist/categoryConfig.bundle.js"></script>
+    <script src="dist/groupsConfig.bundle.js"></script>
     <script src="dist/main.bundle.js"></script>
     <script src="dist/loginLogout.bundle.js"></script>
     <script src="dist/verifyMmail.bundle.js"></script>

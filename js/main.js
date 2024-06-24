@@ -1,14 +1,12 @@
 import axios from "axios";
-import { listCommunications, listGroups } from "../src/graphql/queries";
 import { updateCommunication } from "../src/graphql/mutations";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { groupColors } from "../src/utils/groupColors";
-import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
-import { client } from "../src/utils/amplifyConfig";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
+import { fetchGroups, fetchCommunications } from "../src/utils";
 
 (function($) {
     try {
@@ -118,48 +116,11 @@ import { openThreadModal } from "../src/modals/communications/threadModal";
 
         // Función para obtener comunicaciones
         let allCommunications, allGroups;
-        async function fetchCommunications() {
-            const variables = { clientId };
 
-            try {
-                const response = await client.graphql({
-                    query: listCommunications,
-                    variables,
-                });
-
-                allCommunications = response.data.listCommunications.items.map(
-                    (comm) => ({
-                        ...comm,
-                        dateTime: normalizeDate(comm.dateTime),
-                    })
-                );
-
-                return allCommunications;
-            } catch (error) {
-                console.error("Error fetching communications:", error);
-            }
-        }
-
-        async function fetchGroups() {
-            const variables = { clientId };
-
-            try {
-                const response = await client.graphql({
-                    query: listGroups,
-                    variables,
-                });
-
-                allGroups = response.data.listGroups.items;
-
-                return allGroups;
-            } catch (error) {
-                console.error("Error fetching groups:", error);
-            }
-        }
         async function renderCommunications() {
             try {
-                await fetchCommunications();
-                await fetchGroups();
+                allCommunications = await fetchCommunications({ clientId });
+                allGroups = await fetchGroups({ clientId });
 
                 let allCommsCount = allCommunications.length;
 
@@ -684,236 +645,236 @@ import { openThreadModal } from "../src/modals/communications/threadModal";
             });
         }
 
-        async function openMessageModal(data) {
-            let message = await client.graphql({
-                query: messageDetails,
-                variables: {
-                    filter: {
-                        messageId: { eq: data[0] },
-                    },
-                },
-            });
-            message = message.data.listCommunications.items[0];
-            const normalizedDate = normalizeDate(message.dateTime);
+        // async function openMessageModal(data) {
+        //     let message = await client.graphql({
+        //         query: messageDetails,
+        //         variables: {
+        //             filter: {
+        //                 messageId: { eq: data[0] },
+        //             },
+        //         },
+        //     });
+        //     message = message.data.listCommunications.items[0];
+        //     const normalizedDate = normalizeDate(message.dateTime);
 
-            let form = $("<form>").attr("id", "messageForm");
+        //     let form = $("<form>").attr("id", "messageForm");
 
-            form.append(
-                $("<div>")
-                    .addClass("form-row")
-                    .append(
-                        $("<div>")
-                            .addClass("form-group2 col-md-6")
-                            .append(
-                                $("<label>").text("Category:"),
-                                $("<select>")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .val(message.category)
-                                    .append(
-                                        $("<option>")
-                                            .text(message.category)
-                                            .val(message.category)
-                                    )
-                            )
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-row")
-                    .append(
-                        $("<div>")
-                            .addClass("form-group2 col-md-6")
-                            .append($("<label>").text("From:"))
-                            .append(
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .val(message.fromId)
-                            )
-                    )
-                    .append(
-                        $("<div>")
-                            .addClass("form-group2 col-md-6")
-                            .append($("<label>").text("Datetime:"))
-                            .append(
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .val(normalizedDate)
-                            )
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group2")
-                    .append($("<label>").text("Message Summary:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(message.messagSummary)
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group2")
-                    .append($("<label>").text("Message Subjet:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(message.messageSubject)
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group2")
-                    .append($("<label>").text("Message Body:"))
-                    .append(
-                        $("<textarea>")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(message.messageBody)
-                    )
-            ); // Crea el modal con el formulario
-            let modal = $("<div>")
-                .addClass("modal fade")
-                .attr("id", "messageModal");
-            let modalDialog = $("<div>").addClass("modal-dialog modal-med");
-            let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>")
-                .addClass("modal-header headerCenter")
-                .append(
-                    $("<h3>")
-                        .addClass("modal-title")
-                        .attr("id", "myModalLabel")
-                        .text("Contenido de la comunicación")
-                );
-            let modalBody = $("<div>")
-                .addClass("modal-body")
-                .append(form);
-            let modalFooter = $("<div>")
-                .addClass("modal-footer")
-                .append(
-                    $("<button>")
-                        .addClass("btn btn-secondary")
-                        .text("Cerrar")
-                        .attr("data-dismiss", "modal")
-                );
-            modalContent.append(modalHeader, modalBody, modalFooter);
-            modalDialog.append(modalContent);
-            modal.append(modalDialog);
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-row")
+        //             .append(
+        //                 $("<div>")
+        //                     .addClass("form-group2 col-md-6")
+        //                     .append(
+        //                         $("<label>").text("Category:"),
+        //                         $("<select>")
+        //                             .addClass("form-control")
+        //                             .prop("disabled", true)
+        //                             .val(message.category)
+        //                             .append(
+        //                                 $("<option>")
+        //                                     .text(message.category)
+        //                                     .val(message.category)
+        //                             )
+        //                     )
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-row")
+        //             .append(
+        //                 $("<div>")
+        //                     .addClass("form-group2 col-md-6")
+        //                     .append($("<label>").text("From:"))
+        //                     .append(
+        //                         $("<input>")
+        //                             .attr("type", "text")
+        //                             .addClass("form-control")
+        //                             .prop("disabled", true)
+        //                             .val(message.fromId)
+        //                     )
+        //             )
+        //             .append(
+        //                 $("<div>")
+        //                     .addClass("form-group2 col-md-6")
+        //                     .append($("<label>").text("Datetime:"))
+        //                     .append(
+        //                         $("<input>")
+        //                             .attr("type", "text")
+        //                             .addClass("form-control")
+        //                             .prop("disabled", true)
+        //                             .val(normalizedDate)
+        //                     )
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group2")
+        //             .append($("<label>").text("Message Summary:"))
+        //             .append(
+        //                 $("<input>")
+        //                     .attr("type", "text")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(message.messagSummary)
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group2")
+        //             .append($("<label>").text("Message Subjet:"))
+        //             .append(
+        //                 $("<input>")
+        //                     .attr("type", "text")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(message.messageSubject)
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group2")
+        //             .append($("<label>").text("Message Body:"))
+        //             .append(
+        //                 $("<textarea>")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(message.messageBody)
+        //             )
+        //     ); // Crea el modal con el formulario
+        //     let modal = $("<div>")
+        //         .addClass("modal fade")
+        //         .attr("id", "messageModal");
+        //     let modalDialog = $("<div>").addClass("modal-dialog modal-med");
+        //     let modalContent = $("<div>").addClass("modal-content");
+        //     let modalHeader = $("<div>")
+        //         .addClass("modal-header headerCenter")
+        //         .append(
+        //             $("<h3>")
+        //                 .addClass("modal-title")
+        //                 .attr("id", "myModalLabel")
+        //                 .text("Contenido de la comunicación")
+        //         );
+        //     let modalBody = $("<div>")
+        //         .addClass("modal-body")
+        //         .append(form);
+        //     let modalFooter = $("<div>")
+        //         .addClass("modal-footer")
+        //         .append(
+        //             $("<button>")
+        //                 .addClass("btn btn-secondary")
+        //                 .text("Cerrar")
+        //                 .attr("data-dismiss", "modal")
+        //         );
+        //     modalContent.append(modalHeader, modalBody, modalFooter);
+        //     modalDialog.append(modalContent);
+        //     modal.append(modalDialog);
 
-            $("#messageModal").remove();
-            $("body").append(modal);
+        //     $("#messageModal").remove();
+        //     $("body").append(modal);
 
-            $("#messageModal").modal("show");
-        }
+        //     $("#messageModal").modal("show");
+        // }
 
-        async function openResponseModal(data) {
-            let response = await client.graphql({
-                query: responseDetails,
-                variables: {
-                    filter: {
-                        messageId: { eq: data[0] },
-                    },
-                },
-            });
-            response = response.data.listCommunications.items[0];
+        // async function openResponseModal(data) {
+        //     let response = await client.graphql({
+        //         query: responseDetails,
+        //         variables: {
+        //             filter: {
+        //                 messageId: { eq: data[0] },
+        //             },
+        //         },
+        //     });
+        //     response = response.data.listCommunications.items[0];
 
-            let form = $("<form>").attr("id", "responseForm");
+        //     let form = $("<form>").attr("id", "responseForm");
 
-            form.append(
-                $("<div>")
-                    .addClass("form-row")
-                    .append(
-                        $("<div>")
-                            .addClass("form-group3 col-md-6")
-                            .append(
-                                $("<label>").text("Response attachment"),
-                                $("<input>")
-                                    .attr("type", "text")
-                                    .addClass("form-control")
-                                    .prop("disabled", true)
-                                    .val(response.responseAttachment)
-                            )
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group3")
-                    .append($("<label>").text("Response AI:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(response.responseAi)
-                    )
-            );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-row")
+        //             .append(
+        //                 $("<div>")
+        //                     .addClass("form-group3 col-md-6")
+        //                     .append(
+        //                         $("<label>").text("Response attachment"),
+        //                         $("<input>")
+        //                             .attr("type", "text")
+        //                             .addClass("form-control")
+        //                             .prop("disabled", true)
+        //                             .val(response.responseAttachment)
+        //                     )
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group3")
+        //             .append($("<label>").text("Response AI:"))
+        //             .append(
+        //                 $("<input>")
+        //                     .attr("type", "text")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(response.responseAi)
+        //             )
+        //     );
 
-            form.append(
-                $("<div>")
-                    .addClass("form-group3")
-                    .append($("<label>").text("Response Subjet:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(response.responseSubject)
-                    )
-            );
-            form.append(
-                $("<div>")
-                    .addClass("form-group3")
-                    .append($("<label>").text("Response Body:"))
-                    .append(
-                        $("<textarea>")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .val(response.responseBody)
-                    )
-            );
-            // Crea el modal con el formulario
-            let modal = $("<div>")
-                .addClass("modal fade")
-                .attr("id", "responseModal");
-            let modalDialog = $("<div>").addClass("modal-dialog modal-med");
-            let modalContent = $("<div>").addClass("modal-content");
-            let modalHeader = $("<div>")
-                .addClass("modal-header headerCenter")
-                .append(
-                    $("<h3>")
-                        .addClass("modal-title")
-                        .attr("id", "myModalLabel")
-                        .text("Contenido de la respuesta")
-                );
-            let modalBody = $("<div>")
-                .addClass("modal-body")
-                .append(form);
-            let modalFooter = $("<div>")
-                .addClass("modal-footer")
-                .append(
-                    $("<button>")
-                        .addClass("btn btn-secondary")
-                        .text("Cerrar")
-                        .attr("data-dismiss", "modal")
-                );
-            modalContent.append(modalHeader, modalBody, modalFooter);
-            modalDialog.append(modalContent);
-            modal.append(modalDialog);
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group3")
+        //             .append($("<label>").text("Response Subjet:"))
+        //             .append(
+        //                 $("<input>")
+        //                     .attr("type", "text")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(response.responseSubject)
+        //             )
+        //     );
+        //     form.append(
+        //         $("<div>")
+        //             .addClass("form-group3")
+        //             .append($("<label>").text("Response Body:"))
+        //             .append(
+        //                 $("<textarea>")
+        //                     .addClass("form-control")
+        //                     .prop("disabled", true)
+        //                     .val(response.responseBody)
+        //             )
+        //     );
+        //     // Crea el modal con el formulario
+        //     let modal = $("<div>")
+        //         .addClass("modal fade")
+        //         .attr("id", "responseModal");
+        //     let modalDialog = $("<div>").addClass("modal-dialog modal-med");
+        //     let modalContent = $("<div>").addClass("modal-content");
+        //     let modalHeader = $("<div>")
+        //         .addClass("modal-header headerCenter")
+        //         .append(
+        //             $("<h3>")
+        //                 .addClass("modal-title")
+        //                 .attr("id", "myModalLabel")
+        //                 .text("Contenido de la respuesta")
+        //         );
+        //     let modalBody = $("<div>")
+        //         .addClass("modal-body")
+        //         .append(form);
+        //     let modalFooter = $("<div>")
+        //         .addClass("modal-footer")
+        //         .append(
+        //             $("<button>")
+        //                 .addClass("btn btn-secondary")
+        //                 .text("Cerrar")
+        //                 .attr("data-dismiss", "modal")
+        //         );
+        //     modalContent.append(modalHeader, modalBody, modalFooter);
+        //     modalDialog.append(modalContent);
+        //     modal.append(modalDialog);
 
-            $("#responseModal").remove();
-            $("body").append(modal);
+        //     $("#responseModal").remove();
+        //     $("body").append(modal);
 
-            $("#responseModal").modal("show");
-        }
+        //     $("#responseModal").modal("show");
+        // }
 
         renderCommunications();
     } catch (error) {

@@ -3,7 +3,9 @@ import { updateCommunication } from "../src/graphql/mutations";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { groupColors } from "../src/utils/groupColors";
+import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
+import { client } from "../src/utils/amplifyConfig";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { fetchGroups, fetchCommunications } from "../src/utils";
@@ -122,6 +124,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
 
+                console.log(allGroups);
                 let allCommsCount = allCommunications.length;
 
                 renderGroupList(allGroups, allCommunications, allCommsCount);
@@ -465,8 +468,10 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                             ? comm.contactName
                             : comm[key]
                         : key === "groupId"
-                        ? allGroups.filter((g) => g.id === comm[key])[0]
-                              .groupName
+                        ? allGroups.find((g) => {
+                              console.log(g, "--", comm[key]);
+                              return g.id === comm[key];
+                          }).groupName
                         : comm[key];
                 });
 
@@ -480,6 +485,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 row.push(createButtonContainer("view3", "eye"));
                 row.push(createButtonContainer("edit", "pencil-alt", "full"));
 
+                console.log(row);
                 const currentCom = arrComsById.filter(
                     (c) => c.id === row[0]
                 )[0];

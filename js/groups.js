@@ -109,7 +109,7 @@ import { defaultCategories } from "../src/utils/defaultCategories";
                     document.getElementById(
                         "step2"
                     ).innerHTML = selectedGroupName;
-                    a.href = `categories.html?${selectedGroupName}`;
+                    a.href = `groups.html?${selectedGroupName}`;
 
                     await renderCommunications();
                 });

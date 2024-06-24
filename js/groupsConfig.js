@@ -11,6 +11,7 @@
 import {
     createGroup,
     deleteGroup,
+    updateCommunication,
     updateContact,
     updateGroup,
 } from "../src/graphql/mutations.js";
@@ -21,6 +22,7 @@ import {
     defaultCategiesConfiguration,
 } from "../src/utils/defaultCategories.js";
 import {
+    fetchCommunicationsByGroupId,
     fetchContact,
     fetchGroups,
     fetchPreQuoteOptions,
@@ -369,6 +371,10 @@ let clientId = userInfo.userData.userId;
                             );
 
                             if (agree) {
+                                const allCommsByGroupUd = await fetchCommunicationsByGroupId(
+                                    { clientId, groupId: group.id }
+                                );
+
                                 await Promise.all(
                                     allContactsByGroupId.map(async (item) => {
                                         await client.graphql({
@@ -377,7 +383,21 @@ let clientId = userInfo.userData.userId;
                                                 input: {
                                                     clientId,
                                                     id: item.id,
-                                                    groupId: element.value,
+                                                    groupId: group.id,
+                                                },
+                                            },
+                                        });
+                                    })
+                                );
+                                await Promise.all(
+                                    allCommsByGroupUd.map(async (item) => {
+                                        await client.graphql({
+                                            query: updateCommunication,
+                                            variables: {
+                                                input: {
+                                                    clientId,
+                                                    id: item.id,
+                                                    groupId: group.id,
                                                 },
                                             },
                                         });
@@ -414,10 +434,31 @@ let clientId = userInfo.userData.userId;
                             );
 
                             if (agree) {
+                                const allCommsByGroupUd = await fetchCommunicationsByGroupId(
+                                    { clientId, groupId: group.id }
+                                );
                                 await Promise.all(
                                     allContactsByGroupId.map(async (item) => {
                                         await client.graphql({
                                             query: updateContact,
+                                            variables: {
+                                                input: {
+                                                    clientId,
+                                                    id: item.id,
+                                                    groupId: allGroups.find(
+                                                        (g) =>
+                                                            g.groupName ===
+                                                            "Ungroup"
+                                                    ).id,
+                                                },
+                                            },
+                                        });
+                                    })
+                                );
+                                await Promise.all(
+                                    allCommsByGroupUd.map(async (item) => {
+                                        await client.graphql({
+                                            query: updateCommunication,
                                             variables: {
                                                 input: {
                                                     clientId,

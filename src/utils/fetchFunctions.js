@@ -38,6 +38,20 @@ export async function fetchCommunications({ clientId }) {
     }
 }
 
+export async function fetchCommunicationsByGroupId({ clientId, groupId }) {
+    try {
+        const response = await client.graphql({
+            query: listCommunications,
+            variables: { clientId, filter: { groupId: { eq: groupId } } },
+        });
+
+        console.log("groupId:", groupId);
+        console.log("responseItems:", response.data.listCommunications.items);
+        return response.data.listCommunications.items;
+    } catch (error) {
+        console.error("Error fetching communications:", error);
+    }
+}
 export async function fetchPreQuoteOptions({ clientId }) {
     try {
         const response = await client.graphql({

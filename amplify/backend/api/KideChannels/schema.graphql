@@ -80,3 +80,11 @@ type Communication
     tagId: String
     contactName: String
 }
+
+type KideChannelUserKey {
+    cognitoUsername: String!
+}
+
+type Query {
+    getKideChannelUserKeys: [KideChannelUserKey]
+}

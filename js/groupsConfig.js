@@ -360,7 +360,7 @@ let clientId = userInfo.userData.userId;
 
                         if (allContactsByGroupId.length > 0) {
                             const agree = confirm(
-                                `Hay Contacts que pertenecen a "${group.groupName}", todas seran reagrupados a "${element.value}". Desea continuar?`
+                                `Hay Contactos que pertenecen a "${group.groupName}", todas seran reagrupados a "${element.value}". Desea continuar?`
                             );
 
                             if (agree) {
@@ -396,6 +396,8 @@ let clientId = userInfo.userData.userId;
                                         });
                                     })
                                 );
+                            } else {
+                                return;
                             }
                         }
 
@@ -466,6 +468,8 @@ let clientId = userInfo.userData.userId;
                                         });
                                     })
                                 );
+                            } else {
+                                return;
                             }
                         }
 
@@ -485,12 +489,12 @@ let clientId = userInfo.userData.userId;
                         .map((el) => el.value)
                         .join(", ");
                     alert(
-                        `Ya existen categorias con los nombres: ${repeatedNames}`
+                        `Ya existen grupos con los nombres: ${repeatedNames}`
                     );
+                } else {
+                    await handleOldGroups();
+                    await handleDeletedGroups();
                 }
-
-                await handleOldGroups();
-                await handleDeletedGroups();
 
                 location.reload();
             } catch (error) {

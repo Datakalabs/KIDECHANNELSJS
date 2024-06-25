@@ -5,4 +5,5 @@ export {
     fetchTriggerOptions,
     fetchRetargetingOptions,
     fetchContacts,
+    fetchTags,
 } from "./fetchFunctions";

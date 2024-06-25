@@ -2,14 +2,16 @@ import { client } from "../../utils/amplifyConfig";
 import { defaultCategories } from "../../utils/defaultCategories";
 import { updateCommunication } from "../../graphql/mutations";
 import { awsDateTimeFormat } from "../../../src/utils/normalizeDateTime";
+import { openEditTagModal } from "../tags/editModal";
 
-export async function openEditModal(
+export async function openEditModal({
     data,
     allCommunications,
     allGroups,
+    allTags,
     clientId,
-    renderCommunications
-) {
+    renderCommunications,
+}) {
     const actions = allCommunications.filter((c) => c.id === data[0])[0];
     let selectedCategory = defaultCategories.filter(
         (category) => category.categoryName === actions.category
@@ -37,6 +39,20 @@ export async function openEditModal(
             .append(
                 $("<div>")
                     .addClass("form-group1 col-md-6")
+                    .attr("id", "toId")
+                    .append($("<label>").text("To:"))
+                    .append(
+                        $("<input>")
+                            .attr("type", "text")
+                            .addClass("form-control")
+                            .prop("disabled", true)
+                            .attr("name", "toId")
+                            .val(actions.toId)
+                    )
+            )
+            .append(
+                $("<div>")
+                    .addClass("form-group1 col-md-6")
                     .attr("id", "dateTime")
                     .append($("<label>").text("Datetime:"))
                     .append(
@@ -46,6 +62,42 @@ export async function openEditModal(
                             .prop("disabled", true)
                             .attr("name", "dateTime")
                             .val(awsDateTimeFormat(actions.dateTime))
+                    )
+            )
+            .append(
+                $("<div>")
+                    .addClass("form-group1 col-md-6")
+                    .append($("<label>").text("Tag:"))
+                    .append(
+                        $("<select>")
+                            .attr("id", "tagId")
+                            .attr("name", "tagId")
+                            .addClass("form-control")
+                            .append(
+                                allTags.map((tag) =>
+                                    $("<option>")
+                                        .text(tag?.tagName)
+                                        .val(tag?.tagName)
+                                )
+                            )
+                            .val(
+                                allTags.find((t) => t.id === actions.tagId)
+                                    ?.tagName
+                            ),
+
+                        $("<button>")
+                            .addClass("btn")
+                            .attr("type", "button")
+                            .append(
+                                $("<i>")
+                                    .addClass("fa fa-times")
+                                    .css({
+                                        color: "red",
+                                    })
+                            )
+                            .on("click", function() {
+                                openEditTagModal({ allTags, clientId });
+                            })
                     )
             )
     );
@@ -76,11 +128,11 @@ export async function openEditModal(
                         $("<label>").text("Group:"),
                         $("<input>")
                             .addClass("form-control")
-                            .attr("id", "group")
+                            .attr("id", "groupId")
                             .attr("type", "text")
                             .addClass("form-control")
                             .prop("disabled", true)
-                            .attr("name", "group")
+                            .attr("name", "groupId")
 
                             .val(
                                 allGroups.find((g) => g.id === actions.groupId)
@@ -252,24 +304,24 @@ export async function openEditModal(
             .find(":input:disabled")
             .each(function() {
                 let name = $(this).attr("name");
-                if (name) {
+                if (name && name !== "groupId") {
                     formData[name] = $(this).val();
                 }
             });
-
+        console.log($("#tagId").val());
         formData = {
             ...formData,
             clientId,
             id: data[0],
             category: $("#category").val(),
-            groupId: $("#group").val(),
             responseAttachment: $("#responseAttachment input").val(),
             responseAi: $("#responseAi input").val(),
             responseSubject: $("#responseSubject input").val(),
             responseBody: $("#responseBody textarea").val(),
+            tagId: allTags.find((t) => t.tagName === $("#tagId").val())?.id,
             execute: actions.execute,
         };
-
+        console.log(formData);
         await client.graphql({
             query: updateCommunication,
             variables: {

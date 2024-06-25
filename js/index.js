@@ -9,7 +9,7 @@ import {
 import { URL_MS_GOOGLE } from "../secrets";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
-import { fetchGroups, fetchCommunications } from "../src/utils";
+import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
 
 (function($) {
     try {
@@ -117,12 +117,12 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
         const select1 = document.createElement("select");
 
         // Función para obtener comunicaciones
-        let allCommunications, allGroups;
-
+        let allCommunications, allGroups, allTags;
         async function renderCommunications() {
             try {
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
+                allTags = await fetchTags({ clientId });
 
                 let allCommsCount = allCommunications.length;
 
@@ -434,6 +434,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                     "id",
                     "channel",
                     "category",
+                    "tagId",
                     "dateTime",
                     "fromId",
                     "toId",
@@ -445,6 +446,12 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 ];
 
                 const values = keyArray.map((key) => {
+                    let tagName;
+                    if (key === "tagId") {
+                        tagName = allTags.find((t) => t.id === comm[key])
+                            ?.tagName;
+                    }
+
                     return key === "fromId"
                         ? comm.contactName
                             ? comm.contactName
@@ -453,6 +460,10 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                         ? allGroups.find((g) => {
                               return g.id === comm[key];
                           }).groupName
+                        : key === "tagId"
+                        ? tagName
+                            ? tagName
+                            : "Untagged"
                         : comm[key];
                 });
 
@@ -527,6 +538,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                         { title: "Com ID" },
                         { title: "Channel" },
                         { title: "Category" },
+                        { title: "Tag" },
                         { title: "Datetime" },
                         { title: "From" },
                         { title: "To" },
@@ -600,13 +612,14 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
         function initializeTableEvents(table) {
             table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
-                await openEditModal(
+                await openEditModal({
                     data,
                     allCommunications,
                     allGroups,
+                    allTags,
                     clientId,
-                    renderCommunications
-                );
+                    renderCommunications,
+                });
             });
 
             // table.on("click", "tbody .check", async function () {

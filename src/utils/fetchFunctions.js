@@ -4,6 +4,7 @@ import {
     listGroups,
     listPreQuoteOptions,
     listRetargetingOptions,
+    listTags,
     listTriggerOptions,
 } from "../graphql/queries";
 import { client } from "./amplifyConfig";
@@ -108,6 +109,25 @@ export async function fetchContacts({ clientId, filters }) {
         return response.data.listContacts.items;
     } catch (error) {
         console.log("Error fetching listContacts ", error);
+        throw error;
+    }
+}
+
+export async function fetchTags({ clientId, filters }) {
+    try {
+        let graphqlFilter = {};
+        if (filters) {
+            for (const key of Object.keys(filters)) {
+                graphqlFilter[key] = { eq: filters[key] };
+            }
+        }
+        const response = await client.graphql({
+            query: listTags,
+            variables: { clientId, filter: graphqlFilter },
+        });
+        return response.data.listTags.items;
+    } catch (error) {
+        console.log("Error fetching listTags ", error);
         throw error;
     }
 }

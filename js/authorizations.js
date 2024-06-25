@@ -1,12 +1,16 @@
 import axios from "axios";
-import { URL_MS_GOOGLE, X_API_KEY } from "../secrets";
+import { URL_MS_GOOGLE } from "../secrets";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
+import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
+import { fetchGroups } from "../src/utils";
 
+const { tokens, userSub } = await refreshAndGetTokens();
+
+let clientId = userSub;
 (async function($) {
     async function handleFormSubmit(event) {
         event.preventDefault();
         try {
-            const { tokens } = await refreshAndGetTokens();
             const { data } = await axios.get(
                 `${URL_MS_GOOGLE}/google-auth-webhook`,
                 {
@@ -58,8 +62,9 @@ import { getUserInfo, refreshAndGetTokens } from "./authentication";
             console.error("Error to handle windwow's close", error);
         }
     }
-
     document
         .getElementById("gmail-auth")
         .addEventListener("submit", handleFormSubmit);
+    const allGroups = await fetchGroups({ clientId });
+    renderGroupListInSidebar({ allGroups });
 })();

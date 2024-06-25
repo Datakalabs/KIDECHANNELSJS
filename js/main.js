@@ -1,15 +1,3 @@
-import axios from "axios";
-import { updateCommunication } from "../src/graphql/mutations";
-import { getUserInfo, refreshAndGetTokens } from "./authentication";
-import { defaultCategories } from "../src/utils/defaultCategories";
-import { groupColors } from "../src/utils/groupColors";
-import { normalizeDate } from "../src/utils/normalizeDateTime";
-import { URL_MS_GOOGLE } from "../secrets";
-import { client } from "../src/utils/amplifyConfig";
-import { openEditModal } from "../src/modals/communications/editModal";
-import { openThreadModal } from "../src/modals/communications/threadModal";
-import { fetchGroups, fetchCommunications } from "../src/utils";
-
 (function($) {
     // USE STRICT
     "use strict";

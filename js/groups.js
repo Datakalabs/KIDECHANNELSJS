@@ -1,6 +1,5 @@
-import { listCommunications, listGroups } from "../src/graphql/queries";
 import axios from "axios";
-import { getUserInfo, refreshAndGetTokens } from "./authentication";
+import { refreshAndGetTokens } from "./authentication";
 import { client } from "../src/utils/amplifyConfig";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { openEditModal } from "../src/modals/communications/editModal";
@@ -8,6 +7,7 @@ import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { fetchCommunications, fetchGroups } from "../src/utils";
+import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
 
 (async function($) {
     // USE STRICT
@@ -18,9 +18,8 @@ import { fetchCommunications, fetchGroups } from "../src/utils";
             .replace(/%20/g, " ");
         document.getElementById("step2").innerHTML = selectedGroupName;
 
-        let userInfo = await getUserInfo();
-        const { tokens } = await refreshAndGetTokens();
-        let clientId = userInfo.userData.userId;
+        const { tokens, userSub } = await refreshAndGetTokens();
+        let clientId = userSub;
         let allCommunications, allGroups;
 
         async function fetchCommunicationsToRender() {
@@ -44,39 +43,11 @@ import { fetchCommunications, fetchGroups } from "../src/utils";
                     }, 25000);
                 }
 
-                renderGroupList(allGroups);
+                renderGroupListInSidebar({ allGroups });
                 renderTable(allCommunications);
             } catch (error) {
                 console.error("Error rendering communications:", error);
             }
-        }
-
-        // Función para renderizar la lista de categorías
-        function renderGroupList(allGroups) {
-            const ul2 = document.querySelector(".js-sub-list");
-            ul2.innerHTML = "";
-
-            allGroups.forEach((group) => {
-                const li = document.createElement("li");
-                const a = document.createElement("a");
-                const icon = document.createElement("i");
-
-                a.classList.add("showTable");
-                icon.classList.add("fas", "fa-tags");
-                a.appendChild(icon);
-                a.appendChild(document.createTextNode(group.groupName));
-                li.appendChild(a);
-                ul2.appendChild(li);
-
-                a.addEventListener("click", async function(event) {
-                    event.preventDefault();
-                    selectedGroupName = group.groupName;
-                    document.getElementById(
-                        "step2"
-                    ).innerHTML = selectedGroupName;
-                    a.href = `groups.html?${selectedGroupName}`;
-                });
-            });
         }
 
         // Función para renderizar la tabla de comunicaciones
@@ -502,158 +473,6 @@ import { fetchCommunications, fetchGroups } from "../src/utils";
         }
 
         renderCommunications();
-    } catch (error) {
-        console.log(error);
-    }
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-    var navbars = ["header", "aside"];
-    var hrefSelector =
-        'a:not([target="_blank"]):not([href^="#"]):not([class^="chosen-single"])';
-    var linkElement = navbars
-        .map((element) => element + " " + hrefSelector)
-        .join(", ");
-    $(".animsition").animsition({
-        inClass: "fade-in",
-        outClass: "fade-out",
-        inDuration: 900,
-        outDuration: 900,
-        linkElement: linkElement,
-        loading: true,
-        loadingParentElement: "html",
-        loadingClass: "page-loader",
-        loadingInner: '<div class="page-loader__spin"></div>',
-        timeout: false,
-        timeoutCountdown: 5000,
-        onLoadEvent: true,
-        browser: ["animation-duration", "-webkit-animation-duration"],
-        overlay: false,
-        overlayClass: "animsition-overlay-slide",
-        overlayParentElement: "html",
-        transition: function(url) {
-            window.location.href = url;
-        },
-    });
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-
-    // Scroll Bar
-    try {
-        var jscr1 = $(".js-scrollbar1");
-        if (jscr1[0]) {
-            const ps1 = new PerfectScrollbar(".js-scrollbar1");
-        }
-
-        var jscr2 = $(".js-scrollbar2");
-        if (jscr2[0]) {
-            const ps2 = new PerfectScrollbar(".js-scrollbar2");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-
-    // Select 2
-    try {
-        $(".js-select2").each(function() {
-            $(this).select2({
-                minimumResultsForSearch: 20,
-                dropdownParent: $(this).next(".dropDownSelect2"),
-            });
-        });
-    } catch (error) {
-        console.log(error);
-    }
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-
-    try {
-        var showTablebutton = document.getElementsByClassName("showTable")[0];
-        var showstatisticbutton = document.getElementsByClassName(
-            "showstatistic"
-        );
-        var statistic = document.getElementById("statistics");
-        var table = document.getElementById("table");
-
-        showTablebutton.addEventListener("click", function() {
-            statistic.style.display = "none";
-            table.style.display = "block";
-        });
-        for (var i = 0; i < showstatisticbutton.length; i++) {
-            showstatisticbutton[i].addEventListener("click", function(event) {
-                statistic.style.display = "block";
-                table.style.display = "none";
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-
-    // Load more
-    try {
-        var list_load = $(".js-list-load");
-        if (list_load[0]) {
-            list_load.each(function() {
-                var that = $(this);
-                that.find(".js-load-item").hide();
-                var load_btn = that.find(".js-load-btn");
-                load_btn.on("click", function(e) {
-                    $(this)
-                        .text("Loading...")
-                        .delay(1500)
-                        .queue(function(next) {
-                            $(this).hide();
-                            that.find(".js-load-item").fadeToggle(
-                                "slow",
-                                "swing"
-                            );
-                        });
-                    e.preventDefault();
-                });
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})(jQuery);
-(function($) {
-    // USE STRICT
-    "use strict";
-
-    try {
-        $('[data-toggle="tooltip"]').tooltip();
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Chatbox
-    try {
-        var inbox_wrap = $(".js-inbox");
-        var message = $(".au-message__item");
-        message.each(function() {
-            var that = $(this);
-
-            that.on("click", function() {
-                $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .toggleClass("show-chat-box");
-            });
-        });
     } catch (error) {
         console.log(error);
     }

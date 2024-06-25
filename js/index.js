@@ -2,10 +2,11 @@ import axios from "axios";
 import { updateCommunication } from "../src/graphql/mutations";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
-import { groupColors } from "../src/utils/groupColors";
-import { normalizeDate } from "../src/utils/normalizeDateTime";
+import {
+    groupColors,
+    renderGroupListInSidebar,
+} from "../src/utils/groupsUtils";
 import { URL_MS_GOOGLE } from "../secrets";
-import { client } from "../src/utils/amplifyConfig";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { fetchGroups, fetchCommunications } from "../src/utils";
@@ -94,7 +95,8 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
     ("use strict");
     try {
         // Config de Amplify con la config del backend como prop
-        const { tokens } = await refreshAndGetTokens();
+        const { tokens, userSub } = await refreshAndGetTokens();
+        let clientId = userSub;
         // Se genera el cliente para las llamadas
         const monthNames = [
             "Enero",
@@ -111,8 +113,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
             "Diciembre",
         ].splice(0, new Date().getMonth() + 1);
 
-        let userInfo = await getUserInfo();
-        let clientId = userInfo.userData.userId;
         let selectedGroupName;
         const select1 = document.createElement("select");
 
@@ -127,6 +127,7 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                 let allCommsCount = allCommunications.length;
 
                 renderGroupList(allGroups, allCommunications, allCommsCount);
+                renderGroupListInSidebar({ allGroups });
                 renderTable();
 
                 if (window.location.pathname === "/index.html") {
@@ -138,8 +139,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
         }
 
         function renderGroupList(groups, allCommunications, allCommsCount) {
-            const ul2 = document.querySelector(".js-sub-list");
-            ul2.innerHTML = "";
             const chartRightRef = document.getElementById("chart-info__right");
 
             let select1, select2;
@@ -231,9 +230,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
             }
 
             groups.forEach((group, index) => {
-                const li = document.createElement("li");
-                const a = document.createElement("a");
-                const icon = document.createElement("i");
                 const commsByGroupCount = allCommunications.filter(
                     (comm) => comm.groupId === group.id
                 ).length;
@@ -261,13 +257,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                     data: communicationsCount,
                 };
 
-                a.classList.add("showTable");
-                icon.classList.add("fas", "fa-tags");
-                a.appendChild(icon);
-                a.appendChild(document.createTextNode(group.groupName));
-                li.appendChild(a);
-                ul2.appendChild(li);
-
                 const option = document.createElement("option");
                 option.value = group.groupName;
                 option.textContent = group.groupName;
@@ -278,12 +267,6 @@ import { fetchGroups, fetchCommunications } from "../src/utils";
                     renderChartInfo2(group, colorObj);
                     window.myChart.data.datasets.push(groupDataset);
                 }
-
-                a.addEventListener("click", async function(event) {
-                    event.preventDefault();
-                    selectedGroupName = group.groupName;
-                    a.href = `groups.html?${selectedGroupName}`;
-                });
             });
         }
 

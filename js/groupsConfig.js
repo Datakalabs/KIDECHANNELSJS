@@ -18,6 +18,7 @@ import {
     fetchRetargetingOptions,
     fetchTriggerOptions,
 } from "../src/utils/fetchFunctions.js";
+import { renderGroupListInSidebar } from "../src/utils/groupsUtils.js";
 import { getUserInfo } from "./authentication.js";
 
 const userInfo = await getUserInfo();
@@ -42,13 +43,16 @@ let clientId = userInfo.userData.userId;
             selectCategory.appendChild(option);
         });
 
-        allGroups = await fetchGroups(clientId);
+        allGroups = await fetchGroups({ clientId });
+
         allGroups.forEach((g) => {
             const option = document.createElement("option");
             option.value = g.groupName;
             option.innerHTML = g.groupName;
             selectGruop.appendChild(option);
         });
+        //Funcion para renderizar groups en sidebar
+        renderGroupListInSidebar({ allGroups });
 
         selectGruop.addEventListener("change", async (e) => {
             if (e.target.value !== "Selecciona") {

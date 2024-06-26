@@ -37,14 +37,14 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
         event.preventDefault();
         const newTag = document.createElement("div");
         newTag.className = "form-tag row";
-        newTag.dataset.key = count; // Use data attribute for the key
+        newTag.dataset.key = count;
 
         const inputWrapper = document.createElement("div");
         inputWrapper.className = "col-10";
         const input = document.createElement("input");
         input.type = "text";
         input.className = "form-control";
-        input.id = `tag-${count}`; // Adjust the ID to include 'tag-'
+        input.id = `tag-${count}`;
         inputWrapper.appendChild(input);
 
         const deleteBtnWrapper = document.createElement("div");
@@ -62,7 +62,7 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
         newTag.appendChild(deleteBtnWrapper);
         newTags.push({ id: count });
         tagForm.appendChild(newTag);
-        input.focus(); // Enfocar en el nuevo campo de entrada
+        input.focus();
         count += 1;
     });
 
@@ -104,7 +104,7 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
                     const tag = oldTags[i];
                     const element = document.getElementById(`tag-${tag.id}`);
 
-                    if (!element || element.value === tag.tagName) continue; // Skip if the element does not exist or hasn't changed
+                    if (!element || element.value === tag.tagName) continue;
 
                     const allCommsByTagId = await fetchCommunications({
                         clientId,
@@ -196,7 +196,11 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
                 const repeatedNames = elementRepeted
                     .map((el) => el.value)
                     .join(", ");
-                alert(`Ya existen Tags con los nombres: ${repeatedNames}`);
+                alert(
+                    repeatedNames.length > 1
+                        ? `Ya existen un Tag con el nombre: ${repeatedNames}`
+                        : `Ya existen Tags con los nombres: ${repeatedNames}`
+                );
             } else {
                 await handleOldTags();
                 await handleDeletedTags();
@@ -238,12 +242,13 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
 
     const modalContent = document.createElement("div");
     modalContent.className = "modal-content";
-    modalContent.style.zIndex = "1051"; // Ensure higher z-index than communication edit modal
+    modalContent.style.zIndex = "1051";
     modalContent.appendChild(modalBody);
 
     const modalDialog = document.createElement("div");
     modalDialog.className = "modal-dialog modal-lg";
     modalDialog.appendChild(modalContent);
+    modalDialog.style = "max-width: 800px;";
 
     const modalWrapper = document.createElement("div");
     modalWrapper.className = "modal fade mx-auto";
@@ -251,7 +256,7 @@ export const openEditTagModal = async ({ allTags, clientId }) => {
     modalWrapper.tabIndex = "-1";
     modalWrapper.role = "dialog";
     modalWrapper.ariaHidden = "true";
-    modalWrapper.style.zIndex = "1050"; // Ensure higher z-index than communication edit modal
+    modalWrapper.style.zIndex = "1050";
     modalWrapper.appendChild(modalDialog);
 
     document.body.appendChild(modalWrapper);

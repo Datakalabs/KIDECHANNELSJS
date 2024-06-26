@@ -1,4 +1,17 @@
-export const openEditModal = async () => {
+import {
+    createGroup,
+    deleteGroup,
+    updateCommunication,
+    updateGroup,
+} from "../../graphql/mutations";
+import {
+    fetchCommunications,
+    fetchContacts,
+    defaultCategiesConfiguration,
+} from "../../utils";
+
+import { client } from "../../utils/amplifyConfig";
+export const openEditGroupModal = async ({ allGroups, clientId }) => {
     const editGroupsBtn = document.querySelector(".edit_groups");
     const groupForm = document.createElement("form");
     let newGroups = [];
@@ -17,12 +30,10 @@ export const openEditModal = async () => {
     saveBtn.id = "saveBtn";
     saveBtn.className = "btn btn-primary";
     saveBtn.textContent = "Save";
-
     const cancelBtn = document.createElement("button");
     cancelBtn.id = "cancelCategory";
     cancelBtn.className = "btn btn-secondary";
     cancelBtn.textContent = "Cancel";
-
     editGroupsBtn.addEventListener("click", function() {
         $("#myModal").modal("show");
     });
@@ -31,9 +42,8 @@ export const openEditModal = async () => {
     addGroupBtn.addEventListener("click", function() {
         const newGroup = document.createElement("div");
         newGroup.className = "form-group row";
-        newGroup.dataset.key = count; // Use data attribute for the key
+        newGroup.dataset.key = count;
 
-        // Color Picker Wrapper
         const colorPickerWrapper = document.createElement("div");
         colorPickerWrapper.className = "col-2";
         const colorPicker = document.createElement("input");
@@ -47,7 +57,7 @@ export const openEditModal = async () => {
         const input = document.createElement("input");
         input.type = "text";
         input.className = "form-control";
-        input.id = `group-${count}`; // Adjust the ID to include 'group-'
+        input.id = `group-${count}`;
         inputWrapper.appendChild(input);
 
         const deleteBtnWrapper = document.createElement("div");
@@ -66,10 +76,12 @@ export const openEditModal = async () => {
         newGroup.appendChild(deleteBtnWrapper);
         newGroups.push({ id: count });
         groupForm.appendChild(newGroup);
+        input.focus();
         count += 1;
     });
 
-    saveBtn.addEventListener("click", async function() {
+    saveBtn.addEventListener("click", async function(event) {
+        event.preventDefault();
         try {
             let elementRepeted = [];
             const allContacts = await fetchContacts({ clientId });
@@ -86,7 +98,7 @@ export const openEditModal = async () => {
                         const groupElement = document.getElementById(
                             `group-${group.id}`
                         );
-                        return groupElement.value === element.value;
+                        return groupElement?.value === element.value;
                     });
 
                     if (isRepeated) {
@@ -119,13 +131,15 @@ export const openEditModal = async () => {
                         `color-${group.id}`
                     );
 
+                    if (!element || element.value === group.groupName) continue;
+
                     const allContactsByGroupId = allContacts.filter(
                         (c) => c.groupId === group.id
                     );
 
                     if (allContactsByGroupId.length > 0) {
                         const agree = confirm(
-                            `Hay Contacts que pertenecen a "${group.groupName}", todas seran reagrupados a "${element.value}". Desea continuar?`
+                            `Hay Contacts que pertenecen a "${group.groupName}", se cambiarán a "${element.value}". ¿Desea continuar?`
                         );
 
                         if (agree) {
@@ -164,6 +178,8 @@ export const openEditModal = async () => {
                                     });
                                 })
                             );
+                        } else {
+                            return;
                         }
                     }
 
@@ -191,7 +207,7 @@ export const openEditModal = async () => {
 
                     if (allContactsByGroupId.length > 0) {
                         const agree = confirm(
-                            `Hay Contactos que pertenecen a "${group.groupName}", todas seran reagrupados a "Ungroup". Desea continuar?`
+                            `Hay Contactos que pertenecen a "${group.groupName}", todas seran reagrupados a "Ungroup". ¿Desea continuar?`
                         );
 
                         if (agree) {
@@ -237,6 +253,8 @@ export const openEditModal = async () => {
                                     });
                                 })
                             );
+                        } else {
+                            return;
                         }
                     }
 
@@ -256,12 +274,14 @@ export const openEditModal = async () => {
                     .map((el) => el.value)
                     .join(", ");
                 alert(
-                    `Ya existen categorias con los nombres: ${repeatedNames}`
+                    repeatedNames.length > 1
+                        ? `Ya existen un grupo con el nombre: ${repeatedNames}`
+                        : `Ya existen grupos con los nombres: ${repeatedNames}`
                 );
+            } else {
+                await handleOldGroups();
+                await handleDeletedGroups();
             }
-
-            await handleOldGroups();
-            await handleDeletedGroups();
 
             location.reload();
         } catch (error) {
@@ -272,7 +292,8 @@ export const openEditModal = async () => {
         }
     });
 
-    cancelBtn.addEventListener("click", function() {
+    cancelBtn.addEventListener("click", function(event) {
+        event.preventDefault();
         $("#myModal").modal("hide");
     });
 
@@ -321,7 +342,7 @@ export const openEditModal = async () => {
         if (group.groupName !== "Ungroup") {
             const newGroup = document.createElement("div");
             newGroup.className = "form-group row";
-            newGroup.dataset.key = group.id; // Use data attribute for the key
+            newGroup.dataset.key = group.id;
 
             const colorPickerWrapper = document.createElement("div");
             colorPickerWrapper.className = "col-2";
@@ -337,7 +358,7 @@ export const openEditModal = async () => {
             const input = document.createElement("input");
             input.type = "text";
             input.className = "form-control";
-            input.id = `group-${group.id}`; // Adjust the ID to include 'group-'
+            input.id = `group-${group.id}`;
             input.value = group.groupName;
             inputWrapper.appendChild(input);
 

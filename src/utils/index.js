@@ -7,3 +7,5 @@ export {
     fetchContacts,
     fetchTags,
 } from "./fetchFunctions";
+
+export { defaultCategiesConfiguration } from "./defaultCategories";

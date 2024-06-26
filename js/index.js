@@ -94,10 +94,8 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
     // USE STRICT
     ("use strict");
     try {
-        // Config de Amplify con la config del backend como prop
         const { tokens, userSub } = await refreshAndGetTokens();
         let clientId = userSub;
-        // Se genera el cliente para las llamadas
         const monthNames = [
             "Enero",
             "Febrero",
@@ -485,13 +483,13 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 button.type = "button";
 
                 if (currentCom.status === "Answered") {
-                    button.style.backgroundColor = "#d3d3d3"; // Gris para "Answered"
-                    button.style.borderColor = "#d3d3d3"; // Borde gris para "Answered"
-                    button.disabled = true; // Deshabilitar botón para "Answered"
+                    button.style.backgroundColor = "#d3d3d3";
+                    button.style.borderColor = "#d3d3d3";
+                    button.disabled = true;
                     button.style.cursor = "not-allowed";
                 } else {
-                    button.style.backgroundColor = "#00ad5f"; // Verde para otros estados
-                    button.style.borderColor = "#00ad5f"; // Borde verde para otros estados
+                    button.style.backgroundColor = "#00ad5f";
+                    button.style.borderColor = "#00ad5f";
                 }
 
                 const iTag = document.createElement("i");
@@ -554,6 +552,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                         { title: "Response" },
                     ],
                     data: dataSet,
+                    order: [[4, "desc"]],
                     layout: {
                         topStart: {
                             buttons: ["csv", "excel", "pdf", "print"],

@@ -168,6 +168,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         { title: "View & Edit" },
                         { title: "Response" },
                     ],
+                    order: [[3, "desc"]],
                     data: dataSet,
                     layout: {
                         topStart: {

@@ -178,15 +178,15 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
 
                 const option2_1 = document.createElement("option");
                 option2_1.selected = true;
-                option2_1.textContent = "Mes y dia";
+                option2_1.textContent = "Mes";
 
                 const option2_2 = document.createElement("option");
                 option2_2.value = "mes";
-                option2_2.textContent = "Por mes";
+                option2_2.textContent = "Todos los meses";
 
                 const option2_3 = document.createElement("option");
                 option2_3.value = "dia";
-                option2_3.textContent = "Por día";
+                option2_3.textContent = "Mes actual";
 
                 select2.appendChild(option2_1);
                 select2.appendChild(option2_2);
@@ -553,7 +553,10 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                                 },
                             }
                         );
-                        renderCommunications();
+                        allCommunications = await fetchCommunications({
+                            clientId,
+                        });
+                        renderTable();
                     }
                 });
 
@@ -634,16 +637,6 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
             }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
             return container;
         }
-
-        // Función para crear el contenedor de acciones
-        // function createActionButtonContainer() {
-        //     const container = document.createElement("div");
-        //     container.className = "headerCenter"
-        //     container.innerHTML = `
-        // <button class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
-        // <button class="check btn btn-success" style="background-color: #00ad5f;"><i class="fas fa-check"></i></button>`;
-        //     return container;
-        // }
 
         // Función para crear una div con contenido
         function createDiv(content) {

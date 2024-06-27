@@ -61,6 +61,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         { title: "Group" },
                         { title: "" },
                     ],
+                    order: [[0, "asc"]],
                     data: dataSet,
                     layout: {
                         topStart: {

@@ -129,7 +129,12 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 renderTable();
 
                 if (window.location.pathname === "/index.html") {
-                    setInterval(renderTable, 30000);
+                    setInterval(async () => {
+                        allCommunications = await fetchCommunications({
+                            clientId,
+                        });
+                        renderTable();
+                    }, 30000);
                 }
             } catch (error) {
                 console.error("Error rendering communications:", error);
@@ -470,6 +475,34 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
             dataSet.forEach((row) => {
                 row[2] = createBadge(row[2]);
                 row[3] = createDiv(row[3]);
+                const notesContainer = document.createElement("div"),
+                    rowParsed = JSON.parse(row[11]);
+                Object.keys(rowParsed).forEach((note) => {
+                    const noteDiv = document.createElement("div");
+                    noteDiv.textContent = note; // Aquí asigna el contenido de cada nota
+                    console.log(rowParsed[note]);
+                    if (rowParsed[note]?.executed) {
+                        // Aplica estilos para que se parezca a una nota
+                        noteDiv.style.backgroundColor = "#d3d3d3"; // Fondo verde
+                        noteDiv.style.padding = "10px"; // Espaciado interno
+                        noteDiv.style.marginBottom = "5px"; // Margen inferior
+                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
+                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
+                        noteDiv.style.boxShadow =
+                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
+                    } else {
+                        noteDiv.style.backgroundColor = "#00ad5f"; // Fondo verde
+                        noteDiv.style.padding = "10px"; // Espaciado interno
+                        noteDiv.style.marginBottom = "5px"; // Margen inferior
+                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
+                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
+                        noteDiv.style.boxShadow =
+                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
+                    }
+
+                    notesContainer.appendChild(noteDiv);
+                });
+                row[11] = notesContainer;
                 // row.push(createButtonContainer("view1", "eye"));
                 // row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
@@ -551,6 +584,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                         { title: "View & Edit" },
                         { title: "Response" },
                     ],
+                    scrollX: true,
                     data: dataSet,
                     order: [[4, "desc"]],
                     layout: {

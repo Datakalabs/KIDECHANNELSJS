@@ -66,38 +66,46 @@ export async function openEditModal({
             )
             .append(
                 $("<div>")
-                    .addClass("form-group1 col-md-6")
-                    .append($("<label>").text("Tag:"))
+                    .addClass(
+                        "form-group1 col-md-6 d-flex justify-content-between align-items-end p-0"
+                    )
                     .append(
-                        $("<select>")
-                            .attr("id", "tagId")
-                            .attr("name", "tagId")
-                            .addClass("form-control")
+                        $("<div>")
+                            .addClass("col-10 p-0")
+                            .append($("<label>").text("Tag:"))
                             .append(
-                                allTags.map((tag) =>
-                                    $("<option>")
-                                        .text(tag?.tagName)
-                                        .val(tag?.tagName)
-                                )
+                                $("<select>")
+                                    .attr("id", "tagId")
+                                    .attr("name", "tagId")
+                                    .addClass("form-control")
+                                    .append(
+                                        allTags.map((tag) =>
+                                            $("<option>")
+                                                .text(tag?.tagName)
+                                                .val(tag?.tagName)
+                                        )
+                                    )
+                                    .val(
+                                        allTags.find(
+                                            (t) => t.id === actions.tagId
+                                        )?.tagName
+                                    )
                             )
-                            .val(
-                                allTags.find((t) => t.id === actions.tagId)
-                                    ?.tagName
-                            ),
-
-                        $("<button>")
-                            .addClass("btn")
-                            .attr("type", "button")
+                    )
+                    .append(
+                        $("<div>")
+                            .addClass("d-flex justify-content-end p-0")
                             .append(
-                                $("<i>")
-                                    .addClass("fa fa-times")
-                                    .css({
-                                        color: "red",
+                                $("<button>")
+                                    .addClass("btn btn-outline-primary")
+                                    .attr("type", "button")
+                                    .append(
+                                        $("<i>").addClass("fa fa-pencil-alt")
+                                    )
+                                    .on("click", function() {
+                                        openEditTagModal({ allTags, clientId });
                                     })
                             )
-                            .on("click", function() {
-                                openEditTagModal({ allTags, clientId });
-                            })
                     )
             )
     );

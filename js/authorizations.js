@@ -43,25 +43,11 @@ let clientId = userSub;
         const chequeoVentana = setInterval(async () => {
             if (nuevaVentana.closed) {
                 clearInterval(chequeoVentana);
-                await handleWindowClosed();
                 location.reload();
             }
         }, 1000);
     }
 
-    async function handleWindowClosed() {
-        try {
-            const button = document.getElementById("gmailButton");
-            if (button) {
-                const info = await getUserInfo();
-                if (info.gmailAuthorization) {
-                    button.innerHTML = "GMAIL AUTHORIZED";
-                }
-            }
-        } catch (error) {
-            console.error("Error to handle windwow's close", error);
-        }
-    }
     document
         .getElementById("gmail-auth")
         .addEventListener("submit", handleFormSubmit);

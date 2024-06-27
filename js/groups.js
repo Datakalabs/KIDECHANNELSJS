@@ -40,7 +40,8 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                 if (window.location.pathname.includes("/groups.html")) {
                     setInterval(async () => {
                         await fetchCommunicationsToRender();
-                    }, 25000);
+                        renderTable(allCommunications);
+                    }, 30000);
                 }
 
                 renderGroupListInSidebar({ allGroups });
@@ -170,6 +171,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                     ],
                     order: [[3, "desc"]],
                     data: dataSet,
+                    scrollX: true,
                     layout: {
                         topStart: {
                             buttons: ["csv", "excel", "pdf", "print"],

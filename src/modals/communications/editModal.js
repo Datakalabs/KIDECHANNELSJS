@@ -12,6 +12,7 @@ export async function openEditModal({
     clientId,
     renderCommunications,
 }) {
+    console.log(allCommunications);
     const actions = allCommunications.filter((c) => c.id === data[0])[0];
     let selectedCategory = defaultCategories.filter(
         (category) => category.categoryName === actions.category

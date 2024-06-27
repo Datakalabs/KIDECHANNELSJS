@@ -6,7 +6,7 @@ import { openEditModal } from "../src/modals/communications/editModal";
 import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { URL_MS_GOOGLE } from "../secrets";
 import { defaultCategories } from "../src/utils/defaultCategories";
-import { fetchCommunications, fetchGroups } from "../src/utils";
+import { fetchCommunications, fetchGroups, fetchTags } from "../src/utils";
 import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
 
 (async function($) {
@@ -20,7 +20,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
 
         const { tokens, userSub } = await refreshAndGetTokens();
         let clientId = userSub;
-        let allCommunications, allGroups;
+        let allCommunications, allGroups, allTags;
 
         async function fetchCommunicationsToRender() {
             allCommunications = await fetchCommunications({
@@ -36,23 +36,24 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
         async function renderCommunications() {
             try {
                 allGroups = await fetchGroups({ clientId });
+                allTags = await fetchTags({ clientId });
                 await fetchCommunicationsToRender();
                 if (window.location.pathname.includes("/groups.html")) {
                     setInterval(async () => {
                         await fetchCommunicationsToRender();
-                        renderTable(allCommunications);
+                        renderTable();
                     }, 30000);
                 }
 
                 renderGroupListInSidebar({ allGroups });
-                renderTable(allCommunications);
+                renderTable();
             } catch (error) {
                 console.error("Error rendering communications:", error);
             }
         }
 
         // Función para renderizar la tabla de comunicaciones
-        function renderTable(allCommunications) {
+        function renderTable() {
             let arrComsById = [];
             const dataSet = allCommunications.map((comm) => {
                 arrComsById.push(comm);
@@ -60,6 +61,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                     "id",
                     "channel",
                     "category",
+                    "tagId",
                     "dateTime",
                     "fromId",
                     "toId",
@@ -71,6 +73,12 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                 ];
 
                 const values = keyArray.map((key) => {
+                    let tagName;
+                    if (key === "tagId") {
+                        tagName = allTags.find((t) => t.id === comm[key])
+                            ?.tagName;
+                    }
+
                     return key === "fromId"
                         ? comm.contactName
                             ? comm.contactName
@@ -78,16 +86,48 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         : key === "groupId"
                         ? allGroups.filter((g) => g.id === comm[key])[0]
                               .groupName
+                        : key === "tagId"
+                        ? tagName
+                            ? tagName
+                            : "Untagged"
                         : comm[key];
                 });
 
-                values.splice(7, 1);
+                values.splice(8, 1);
 
                 return values;
             });
             dataSet.forEach((row) => {
                 row[2] = createBadge(row[2]);
                 row[3] = createDiv(row[3]);
+                const notesContainer = document.createElement("div"),
+                    rowParsed = JSON.parse(row[10]);
+                Object.keys(rowParsed).forEach((note) => {
+                    const noteDiv = document.createElement("div");
+                    noteDiv.textContent = note; // Aquí asigna el contenido de cada nota
+                    console.log(rowParsed[note]);
+                    if (rowParsed[note]?.executed) {
+                        // Aplica estilos para que se parezca a una nota
+                        noteDiv.style.backgroundColor = "#d3d3d3"; // Fondo verde
+                        noteDiv.style.padding = "10px"; // Espaciado interno
+                        noteDiv.style.marginBottom = "5px"; // Margen inferior
+                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
+                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
+                        noteDiv.style.boxShadow =
+                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
+                    } else {
+                        noteDiv.style.backgroundColor = "#00ad5f"; // Fondo verde
+                        noteDiv.style.padding = "10px"; // Espaciado interno
+                        noteDiv.style.marginBottom = "5px"; // Margen inferior
+                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
+                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
+                        noteDiv.style.boxShadow =
+                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
+                    }
+
+                    notesContainer.appendChild(noteDiv);
+                });
+                row[10] = notesContainer;
                 // row.push(createButtonContainer("view1", "eye"));
                 // row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
@@ -101,13 +141,13 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                 button.type = "button";
 
                 if (currentCom.status === "Answered") {
-                    button.style.backgroundColor = "#d3d3d3"; // Gris para "Answered"
-                    button.style.borderColor = "#d3d3d3"; // Borde gris para "Answered"
-                    button.disabled = true; // Deshabilitar botón para "Answered"
+                    button.style.backgroundColor = "#d3d3d3";
+                    button.style.borderColor = "#d3d3d3";
+                    button.disabled = true;
                     button.style.cursor = "not-allowed";
                 } else {
-                    button.style.backgroundColor = "#00ad5f"; // Verde para otros estados
-                    button.style.borderColor = "#00ad5f"; // Borde verde para otros estados
+                    button.style.backgroundColor = "#00ad5f";
+                    button.style.borderColor = "#00ad5f";
                 }
 
                 const iTag = document.createElement("i");
@@ -138,8 +178,10 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                                 },
                             }
                         );
-                        console.log(data);
-                        renderCommunications();
+                        allCommunications = await fetchCommunications({
+                            clientId,
+                        });
+                        renderTable();
                     }
                 });
 
@@ -156,6 +198,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         { title: "Channel" },
                         { title: "Category" },
                         { title: "Datetime" },
+                        { title: "Tag" },
                         { title: "From" },
                         { title: "To" },
                         { title: "Status" },
@@ -174,7 +217,28 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                     scrollX: true,
                     layout: {
                         topStart: {
-                            buttons: ["csv", "excel", "pdf", "print"],
+                            buttons: [
+                                "csv",
+                                "excel",
+                                "pdf",
+                                "print",
+                                {
+                                    text: "⟲",
+                                    action: async function(
+                                        e,
+                                        dt,
+                                        node,
+                                        config
+                                    ) {
+                                        allCommunications = await fetchCommunications(
+                                            {
+                                                clientId,
+                                            }
+                                        );
+                                        renderTable();
+                                    },
+                                },
+                            ],
                         },
                     },
                 });
@@ -219,13 +283,14 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
         function initializeTableEvents(table) {
             table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();
-                await openEditModal(
+                await openEditModal({
                     data,
                     allCommunications,
                     allGroups,
+                    allTags,
                     clientId,
-                    renderCommunications
-                );
+                    renderCommunications,
+                });
             });
 
             table.on("click", "tbody .view1", async function() {

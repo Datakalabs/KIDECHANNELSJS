@@ -12,10 +12,9 @@ import {
     confirmUserAttribute,
     getCurrentUser,
 } from "@aws-amplify/auth";
-import { client } from "../src/utils/amplifyConfig.js";
-import { createGroup } from "../src/graphql/mutations.js";
-import { getDefaultCategoriesConfiguration } from "../src/utils/defaultCategories.js";
 import { openVerifyMailModal } from "../src/modals/auth/verifyMail.js";
+import { openFirstLoginModal } from "../src/modals/auth/firstLogin.js";
+import { openRecoveryPasswordModal } from "../src/modals/auth/recoveryPassword.js";
 
 export async function login({ username, password }) {
     const params = {
@@ -30,7 +29,7 @@ export async function login({ username, password }) {
             data.nextStep.signInStep ===
             "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
         ) {
-            return await confirmSignInWithNewPassword();
+            return confirmSignInWithNewPassword();
         } else if (data.nextStep.signInStep === "DONE") {
             return `Successfully logged in`;
         }
@@ -46,43 +45,8 @@ export async function logout() {
     }
 }
 
-const confirmSignInWithNewPassword = async () => {
-    const newPassword = prompt("Please enter a new password:"),
-        name = prompt("Indica tu nombre"),
-        family_name = prompt("Indica tu apellido");
-    try {
-        const data = await confirmSignIn({
-                challengeResponse: newPassword,
-                options: {
-                    userAttributes: {
-                        name,
-                        family_name,
-                    },
-                    friendlyDeviceName: "kideChannel",
-                },
-            }),
-            userData = await getCurrentUser();
-        if (data) {
-            await client.graphql({
-                query: createGroup,
-                variables: {
-                    input: {
-                        clientId: userData.userId,
-                        groupName: "Ungroup",
-                        categoriesConfig: JSON.stringify(
-                            getDefaultCategoriesConfiguration()
-                        ),
-                        color: "#00000",
-                    },
-                },
-            });
-        }
-
-        return "Successfully logged in";
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error to set new password:${error}`);
-    }
+const confirmSignInWithNewPassword = () => {
+    openFirstLoginModal({ confirmSignIn, getCurrentUser });
 };
 
 export const refreshAndGetTokens = async () => {
@@ -92,10 +56,7 @@ export const refreshAndGetTokens = async () => {
 export const recoveryPassword = async ({ username }) => {
     try {
         const CodeDeliveryDetails = await resetPassword({ username });
-        console.log(CodeDeliveryDetails);
-        const confirmationCode = prompt(`Coloca el codigo recibido`);
-        const newPassword = prompt(`Coloca tu nueva contraseña`);
-        await confirmResetPassword({ username, confirmationCode, newPassword });
+        openRecoveryPasswordModal({ confirmResetPassword, username });
         return "Successfully Reset Password";
     } catch (error) {
         console.error("Error during password recovery:", error);

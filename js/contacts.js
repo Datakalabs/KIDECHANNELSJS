@@ -8,8 +8,6 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
     // USE STRICT
     "use strict";
     try {
-        let buttonNewContact = document.getElementById("buttonNewContact");
-
         let userInfo = await getUserInfo();
         let clientId = userInfo.userData.userId;
         let allGroups, allContacts;
@@ -67,6 +65,26 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         topStart: {
                             buttons: ["csv", "excel", "pdf", "print"],
                         },
+                        topCenter: {
+                            buttons: [
+                                {
+                                    text: "New Contact",
+                                    action: async function(
+                                        e,
+                                        dt,
+                                        node,
+                                        config
+                                    ) {
+                                        await openAddModal({
+                                            allContacts,
+                                            allGroups,
+                                            clientId,
+                                            renderContacts,
+                                        });
+                                    },
+                                },
+                            ],
+                        },
                     },
                 });
                 initializeTableEvents(table);
@@ -103,15 +121,6 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
             });
         }
         renderContacts();
-
-        buttonNewContact.addEventListener("click", async () => {
-            await openAddModal({
-                allContacts,
-                allGroups,
-                clientId,
-                renderContacts,
-            });
-        });
     } catch (error) {
         console.log(error);
     }

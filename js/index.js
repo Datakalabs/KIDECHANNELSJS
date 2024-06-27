@@ -587,9 +587,31 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     scrollX: true,
                     data: dataSet,
                     order: [[4, "desc"]],
+                    autoWidth: true,
                     layout: {
                         topStart: {
-                            buttons: ["csv", "excel", "pdf", "print"],
+                            buttons: [
+                                "csv",
+                                "excel",
+                                "pdf",
+                                "print",
+                                {
+                                    text: "⟲",
+                                    action: async function(
+                                        e,
+                                        dt,
+                                        node,
+                                        config
+                                    ) {
+                                        allCommunications = await fetchCommunications(
+                                            {
+                                                clientId,
+                                            }
+                                        );
+                                        renderTable();
+                                    },
+                                },
+                            ],
                         },
                     },
                 });

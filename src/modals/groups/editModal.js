@@ -7,7 +7,7 @@ import {
 import {
     fetchCommunications,
     fetchContacts,
-    defaultCategiesConfiguration,
+    getDefaultCategoriesConfiguration,
 } from "../../utils";
 
 import { client } from "../../utils/amplifyConfig";
@@ -111,7 +111,7 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
                                     clientId,
                                     groupName: element.value,
                                     categoriesConfig: JSON.stringify(
-                                        defaultCategiesConfiguration
+                                        getDefaultCategoriesConfiguration()
                                     ),
                                     color: elementColor.value,
                                 },

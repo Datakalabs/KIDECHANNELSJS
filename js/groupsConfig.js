@@ -3,7 +3,7 @@ import { openEditGroupModal } from "../src/modals/groups/editModal.js";
 import { client } from "../src/utils/amplifyConfig.js";
 import {
     defaultCategories,
-    defaultCategiesConfiguration,
+    getDefaultCategoriesConfiguration,
 } from "../src/utils/defaultCategories.js";
 import {
     fetchGroups,
@@ -186,10 +186,9 @@ let clientId = userInfo.userData.userId;
                 if (auth === "si") {
                     groupSelected.categoriesConfig = JSON.stringify({
                         ...JSON.parse(groupSelected.categoriesConfig),
-                        [categorySelected.categoryName]:
-                            defaultCategiesConfiguration[
-                                categorySelected.categoryName
-                            ],
+                        [categorySelected.categoryName]: getDefaultCategoriesConfiguration()[
+                            categorySelected.categoryName
+                        ],
                     });
                     await client.graphql({
                         query: updateGroup,
@@ -197,10 +196,9 @@ let clientId = userInfo.userData.userId;
                             input: groupSelected,
                         },
                     });
-                    const params =
-                        defaultCategiesConfiguration[
-                            categorySelected.categoryName
-                        ];
+                    const params = getDefaultCategoriesConfiguration()[
+                        categorySelected.categoryName
+                    ];
                     for (const key in params) {
                         let elem = document.getElementById(key);
                         switch (elem.type) {

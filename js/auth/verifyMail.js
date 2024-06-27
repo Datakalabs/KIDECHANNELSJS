@@ -12,8 +12,6 @@ const { verifyEmail, getUserInfo } = require("../authentication");
                 verifyButton.addEventListener("click", async (e) => {
                     e.preventDefault();
                     await verifyEmail();
-                    alert("Email has been verified");
-                    location.reload();
                 });
             }
         } catch (error) {

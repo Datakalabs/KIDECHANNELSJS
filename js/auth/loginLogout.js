@@ -22,11 +22,11 @@ const { logout, login, getUserInfo } = require("../authentication");
                             window.location.href = "/index.html";
                         }
                     } catch (error) {
+                        console.log(error);
                         window.alert(error.message);
                     }
                 });
             }
-            // }
         }
         if (logoutButton) {
             logoutButton.addEventListener("click", async (e) => {

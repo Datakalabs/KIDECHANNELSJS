@@ -8,4 +8,4 @@ export {
     fetchTags,
 } from "./fetchFunctions";
 
-export { defaultCategiesConfiguration } from "./defaultCategories";
+export { getDefaultCategoriesConfiguration } from "./defaultCategories";

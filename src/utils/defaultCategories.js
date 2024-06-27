@@ -19,6 +19,25 @@ export const defaultCategories = [
     // default: "badge-secondary",
 ];
 
+export const getDefaultCategoriesConfiguration = () => {
+    const defaultCategoriesConfig = {};
+    defaultCategories.forEach((c) => {
+        defaultCategoriesConfig[c.categoryName] = {
+            autoTrigger: false,
+            triggerOption: {},
+            redirectTo: [],
+            autoResponse: false,
+            autoRedirect: false,
+            autoRetargeting: false,
+            retargetingOption: {},
+            retargetingTime: "",
+            autoQuote: false,
+            quoteOption: {},
+        };
+    });
+    return defaultCategoriesConfig;
+};
+
 export const defaultCategiesConfiguration = {
     CategoryName2: {
         autoTrigger: false,

@@ -157,7 +157,6 @@ export async function openFirstLoginModal({ confirmSignIn, getCurrentUser }) {
                     });
                     window.location.href = "/index.html";
                 }
-                return "Successfully logged in";
             } catch (error) {
                 console.error("Error:", error);
                 throw new Error(`Error setting new password: ${error}`);

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { URL_MS_GOOGLE } from "../secrets";
-import { getUserInfo, refreshAndGetTokens } from "./authentication";
+import { URL_KIDECHANNELS } from "../secrets";
+import { refreshAndGetTokens } from "./authentication";
 import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
 import { fetchGroups } from "../src/utils";
 
@@ -12,16 +12,15 @@ let clientId = userSub;
         event.preventDefault();
         try {
             const { data } = await axios.get(
-                `${URL_MS_GOOGLE}/google-auth-webhook`,
+                `${URL_KIDECHANNELS}/google-auth-webhook`,
                 {
                     headers: {
                         "X-Cognito-Auth": tokens.idToken,
                     },
                 }
             );
-
-            if (data.url) {
-                openAuthorizationWindow(data.url);
+            if (data.message) {
+                openAuthorizationWindow(data.message);
             } else {
                 console.error(
                     "URL de Gmail no encontrada en la respuesta",
@@ -34,6 +33,7 @@ let clientId = userSub;
     }
 
     function openAuthorizationWindow(url) {
+        console.log(url);
         const nuevaVentana = window.open(
             url,
             "Authorizacion",

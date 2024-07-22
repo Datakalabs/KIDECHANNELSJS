@@ -6,7 +6,7 @@ import {
     groupColors,
     renderGroupListInSidebar,
 } from "../src/utils/groupsUtils";
-import { URL_MS_GOOGLE } from "../secrets";
+import { URL_KIDECHANNELS, URL_MS_GOOGLE } from "../secrets";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
@@ -592,12 +592,11 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     order: [[4, "desc"]],
                     autoWidth: true,
                     layout: {
-                        topStart: {
+                        bottomStart: {
+                            buttons: ["csv", "excel", "pdf", "print"],
+                        },
+                        topCenter: {
                             buttons: [
-                                "csv",
-                                "excel",
-                                "pdf",
-                                "print",
                                 {
                                     text: "⟲",
                                     action: async function(
@@ -612,6 +611,25 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                                             }
                                         );
                                         renderTable();
+                                    },
+                                },
+                                {
+                                    text: "Send Message",
+                                    action: async function(
+                                        e,
+                                        dt,
+                                        node,
+                                        config
+                                    ) {
+                                        try {
+                                            const nuevaVentana = window.open(
+                                                "https://mail.google.com/mail/?view=cm&fs=1",
+                                                "Send Message",
+                                                "width=800,height=600,_blank"
+                                            );
+                                        } catch (error) {
+                                            throw error;
+                                        }
                                     },
                                 },
                             ],

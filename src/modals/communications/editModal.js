@@ -159,6 +159,10 @@ export async function openEditModal({
             .append(
                 $("<input>")
                     .attr("type", "text")
+                    .attr(
+                        "disabled",
+                        actions.status === "Answered" ? true : false
+                    )
                     .addClass("form-control")
                     .val(actions.responseAi)
             )
@@ -237,6 +241,10 @@ export async function openEditModal({
             .append(
                 $("<input>")
                     .attr("type", "text")
+                    .attr(
+                        "disabled",
+                        actions.status === "Answered" ? true : false
+                    )
                     .addClass("form-control")
                     .val(actions.responseSubject)
             )
@@ -248,6 +256,10 @@ export async function openEditModal({
             .append($("<label>").text("Response Body:"))
             .append(
                 $("<textarea>")
+                    .attr(
+                        "disabled",
+                        actions.status === "Answered" ? true : false
+                    )
                     .addClass("form-control")
                     .val(actions.responseBody)
             )
@@ -317,7 +329,6 @@ export async function openEditModal({
                     formData[name] = $(this).val();
                 }
             });
-        console.log($("#tagId").val());
         formData = {
             ...formData,
             clientId,

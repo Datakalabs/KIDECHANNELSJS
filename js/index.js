@@ -95,6 +95,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
     ("use strict");
     try {
         const { tokens, userSub } = await refreshAndGetTokens();
+        window.getUserName();
         let clientId = userSub;
         const monthNames = [
             "Enero",
@@ -436,16 +437,16 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 const keyArray = [
                     "id",
                     "channel",
-                    "category",
-                    "tagId",
+                    // "category",
+                    // "tagId",
                     "dateTime",
                     "fromId",
                     "toId",
-                    "status",
+                    // "status",
                     "groupId",
-                    "responseAi",
-                    "responseAttachment",
-                    "actions",
+                    // "responseAi",
+                    // "responseAttachment",
+                    "messageBody",
                 ];
 
                 const values = keyArray.map((key) => {
@@ -473,95 +474,21 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 return values;
             });
             dataSet.forEach((row) => {
-                row[2] = createBadge(row[2]);
-                row[3] = createDiv(row[3]);
-                const notesContainer = document.createElement("div"),
-                    rowParsed = JSON.parse(row[11]);
-                Object.keys(rowParsed).forEach((note) => {
-                    const noteDiv = document.createElement("div");
-                    noteDiv.textContent = note; // Aquí asigna el contenido de cada nota
-                    console.log(rowParsed[note]);
-                    if (rowParsed[note]?.executed) {
-                        // Aplica estilos para que se parezca a una nota
-                        noteDiv.style.backgroundColor = "#d3d3d3"; // Fondo verde
-                        noteDiv.style.padding = "10px"; // Espaciado interno
-                        noteDiv.style.marginBottom = "5px"; // Margen inferior
-                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
-                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
-                        noteDiv.style.boxShadow =
-                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
-                    } else {
-                        noteDiv.style.backgroundColor = "#00ad5f"; // Fondo verde
-                        noteDiv.style.padding = "10px"; // Espaciado interno
-                        noteDiv.style.marginBottom = "5px"; // Margen inferior
-                        noteDiv.style.border = "1px solid #ccc"; // Borde ligero
-                        noteDiv.style.borderRadius = "0"; // Elimina el borde redondeado
-                        noteDiv.style.boxShadow =
-                            "2px 2px 5px rgba(0, 0, 0, 0.1)"; // Sombra ligera para destacar
-                    }
-
-                    notesContainer.appendChild(noteDiv);
-                });
-                row[11] = notesContainer;
+                // row[2] = createBadge(row[2]);
+                // row[3] = createDiv(row[3]);
                 // row.push(createButtonContainer("view1", "eye"));
                 // row.push(createButtonContainer("view2", "eye"));
                 row.push(createButtonContainer("view3", "eye"));
-                row.push(createButtonContainer("edit", "pencil-alt", "full"));
+                var buttonContainer = createDiv(`
+                    <button  class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
+                  <button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>
+                `);
+
+                row.push(buttonContainer);
 
                 const currentCom = arrComsById.filter(
                     (c) => c.id === row[0]
                 )[0];
-                const button = document.createElement("button");
-                button.className = `form-control btn-success`;
-                button.type = "button";
-
-                if (currentCom.status === "Answered") {
-                    button.style.backgroundColor = "#d3d3d3";
-                    button.style.borderColor = "#d3d3d3";
-                    button.disabled = true;
-                    button.style.cursor = "not-allowed";
-                } else {
-                    button.style.backgroundColor = "#00ad5f";
-                    button.style.borderColor = "#00ad5f";
-                }
-
-                const iTag = document.createElement("i");
-                iTag.className = "fas fa-check";
-                button.addEventListener("click", async function() {
-                    if (row[6] !== "Answered") {
-                        const { data } = await axios.post(
-                            `${URL_MS_GOOGLE}/communication/send`,
-                            {
-                                clientId,
-                                id: row[0],
-                                messageId: currentCom.messageId,
-                                threadId: currentCom.threadId,
-                                channel: currentCom.channel,
-                                fromId: currentCom.fromId,
-                                toId: currentCom.toId,
-                                responseAi: currentCom.responseAi,
-                                responseBody: currentCom.responseBody,
-                                responseSubject: currentCom.responseSubject,
-                                responseAttachment:
-                                    currentCom.responseAttachment,
-                                actions: currentCom.actions,
-                                groupId: currentCom.groupId,
-                            },
-                            {
-                                headers: {
-                                    "X-Cognito-Auth": tokens.idToken,
-                                },
-                            }
-                        );
-                        allCommunications = await fetchCommunications({
-                            clientId,
-                        });
-                        renderTable();
-                    }
-                });
-
-                button.appendChild(iTag);
-                row.push(button);
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
@@ -571,31 +498,39 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     columns: [
                         { title: "Com ID" },
                         { title: "Channel" },
-                        { title: "Category" },
-                        { title: "Tag" },
+                        // { title: "Category" },
+                        // { title: "Tag" },
                         { title: "Datetime" },
                         { title: "From" },
                         { title: "To" },
-                        { title: "Status" },
+                        // { title: "Status" },
                         ...(selectedGroupName ? [] : [{ title: "Group" }]),
-                        { title: "Response AI" },
-                        { title: "Response Attachment" },
-                        { title: "Actions" },
-                        // { title: "Message Content" },
+                        // { title: "Response AI" },
+                        // { title: "Response Attachment" },
+                        {
+                            title: "Message Content",
+                            render: function(data, type, row) {
+                                if (type === "display" && data.length > 50) {
+                                    return data.substr(0, 50) + "…";
+                                }
+                                return data;
+                            },
+                        },
                         // { title: "Response Content" },
                         { title: "Thread" },
-                        { title: "View & Edit" },
-                        { title: "Response" },
+                        { title: "Actions" },
+                        // { title: "View & Edit" },
+                        // { title: "Response" },
                     ],
                     scrollX: true,
                     data: dataSet,
-                    order: [[4, "desc"]],
+                    order: [[2, "desc"]],
                     autoWidth: true,
                     layout: {
                         bottomStart: {
                             buttons: ["csv", "excel", "pdf", "print"],
                         },
-                        topCenter: {
+                        topStart: {
                             buttons: [
                                 {
                                     text: "⟲",
@@ -706,6 +641,46 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
             table.on("click", "tbody .view3", async function() {
                 const data = table.row($(this).closest("tr")).data();
                 await openThreadModal(data, allCommunications);
+            });
+
+            table.on("click", "tbody .validate", async function() {
+                const data = table.row($(this).closest("tr")).data();
+                console.log(data);
+                let communication = allCommunications.filter(
+                    (c) => c.id === data[0]
+                )[0];
+
+                if (communication.status !== "Answered") {
+                    // const { data } = await axios.post(
+                    //     `${URL_MS_GOOGLE}/communication/send`,
+                    //     {
+                    //         clientId,
+                    //         id: row[0],
+                    //         messageId: communication.messageId,
+                    //         threadId: communication.threadId,
+                    //         channel: communication.channel,
+                    //         fromId: communication.fromId,
+                    //         toId: communication.toId,
+                    //         responseAi: communication.responseAi,
+                    //         responseBody: communication.responseBody,
+                    //         responseSubject: communication.responseSubject,
+                    //         responseAttachment:
+                    //         communication.responseAttachment,
+                    //         actions: communication.actions,
+                    //         groupId: communication.groupId,
+                    //     },
+                    //     {
+                    //         headers: {
+                    //             "X-Cognito-Auth": tokens.idToken,
+                    //         },
+                    //     }
+                    // );
+                    // allCommunications = await fetchCommunications({
+                    //     clientId,
+                    // });
+                    console.log("respuesta enviada");
+                    renderTable();
+                }
             });
         }
 

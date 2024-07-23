@@ -1,0 +1,90 @@
+type Tag @model @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    tagName: String!
+}
+
+type Group @model @auth(rules: [{ allow: public }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    groupName: String!
+    categoriesConfig: AWSJSON
+    color: String
+}
+
+type PreQuoteOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
+type TriggerOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
+type RetargetingOption
+    @model
+    @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    optionName: String!
+    detail: String
+}
+
+type Contact @model @auth(rules: [{ allow: public }, { allow: private }]) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    contactName: String
+    contactEmail: String!
+    groupId: String
+}
+
+type Communication
+    @model
+    @auth(
+        rules: [
+            { allow: public }
+            { allow: private, operations: [read, update, delete] }
+        ]
+    ) {
+    clientId: String! @primaryKey(sortKeyFields: ["id"])
+    id: ID!
+    messageId: String
+    channel: String
+    category: String
+    dateTime: AWSDateTime!
+    fromId: String
+    toId: String
+    responseAi: String
+    messageSubject: String
+    messageBody: String
+    messagSummary: String
+    messageAttachment: String
+    responseBody: String
+    responseSubject: String
+    responseAttachment: String
+    execute: Boolean
+    threadId: String
+    thread: AWSJSON
+    actions: AWSJSON
+    status: String
+    groupId: String
+    tagId: String
+    contactName: String
+}
+
+type KideChannelUserKey {
+    cognitoUsername: String!
+}
+
+type Query {
+    getKideChannelUserKeys: [KideChannelUserKey]
+}

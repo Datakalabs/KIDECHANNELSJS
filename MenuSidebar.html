@@ -9,18 +9,21 @@
             <div class="image img-cir img-120">
                 <img src="images/icon/avatar-big-01.jpg" alt="NOMBRE CLIENTE" />
             </div>
-            <h4 class="name">NOMBRE CLIENTE</h4>
-            <a href="#">Salir</a>
+            <form action="" method="post" id="desktopLogout" >
+
+                <h4 class="name" >NOMBRE CLIENTE</h4>
+                <button type="submit" id="logout-button">Logout</a>
+            </form>
         </div>
         <nav class="navbar-sidebar2">
             <ul class="list-unstyled navbar__list">
                 <li>
-                    <a href="index.html"> <i class="fas fa-chart-bar showTable"></i>Comunicaciones</a>
-                    <span class="inbox-num">3</span>
+                    <a href="index.html"> <i class="fas fa-chart-bar showTable"></i>Communications</a>
+                    <!-- <span class="inbox-num">3</span> -->
                 </li>
                 <li class="has-sub">
                     <a class="js-arrow" href="#">
-                        <i class="fas fa-tags"></i>Categorías
+                        <i class="fas fa-tags"></i>Groups
                         <span class="arrow">
                             <i class="fas fa-angle-down"></i>
                         </span>
@@ -29,17 +32,20 @@
                 </li>
                 <li class="has-sub">
                     <a class="js-arrow" href="#">
-                        <i class="fas fa-cog"></i>Configuración
+                        <i class="fas fa-cog"></i>Settings
                         <span class="arrow">
                             <i class="fas fa-angle-down"></i>
                         </span>
                     </a>
                     <ul class="list-unstyled navbar__sub-list js-sub-list">
                         <li>
-                            <a href="CategoriesConfig.html"> <i class="fas fa-cog"></i>Configurar Categorías</a>
+                            <a href="groupsConfig.html"> <i class="fas fa-cog"></i>Groups Config</a>
                         </li>
                         <li>
-                            <a href="Authorizations.html"> <i class="fas fa-lock"></i>Autorizaciones</a>
+                            <a href="contacts.html"> <i class="fas fa-cog"></i>Contacts</a>
+                        </li>
+                        <li>
+                            <a href="/Authorizations.html"> <i class="fas fa-lock"></i>Authorizations</a>
                         </li>
                     </ul>
                 </li>

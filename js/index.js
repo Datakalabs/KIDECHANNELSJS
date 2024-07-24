@@ -437,8 +437,8 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 const keyArray = [
                     "id",
                     "channel",
-                    // "category",
-                    // "tagId",
+                    "category",
+                    "tagId",
                     "dateTime",
                     "fromId",
                     // "toId",
@@ -474,7 +474,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 return values;
             });
             dataSet.forEach((row) => {
-                // row[2] = createBadge(row[2]);
+                row[2] = createBadge(row[2]);
                 // row[3] = createDiv(row[3]);
                 // row.push(createButtonContainer("view1", "eye"));
                 // row.push(createButtonContainer("view2", "eye"));
@@ -485,10 +485,6 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 `);
 
                 row.push(buttonContainer);
-
-                const currentCom = arrComsById.filter(
-                    (c) => c.id === row[0]
-                )[0];
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
@@ -498,13 +494,13 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     columns: [
                         { title: "Com ID" },
                         { title: "Channel" },
-                        // { title: "Category" },
-                        // { title: "Tag" },
+                        { title: "Category" },
+                        { title: "Tag" },
                         { title: "Datetime" },
                         { title: "From" },
                         // { title: "To" },
                         // { title: "Status" },
-                        ...(selectedGroupName ? [] : [{ title: "Group" }]),
+                        { title: "Group" },
                         // { title: "Response AI" },
                         // { title: "Response Attachment" },
                         {
@@ -524,7 +520,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     ],
                     scrollX: true,
                     data: dataSet,
-                    order: [[2, "desc"]],
+                    order: [[4, "desc"]],
                     autoWidth: true,
                     layout: {
                         bottomStart: {

@@ -40,6 +40,7 @@ export const renderGroupListInSidebar = ({ allGroups }) => {
     const ul2 = document.querySelector(".js-sub-list");
     ul2.innerHTML = "";
     allGroups.forEach((g) => {
+        console.log(allGroups);
         const li = document.createElement("li");
         const a = document.createElement("a");
         const icon = document.createElement("i");

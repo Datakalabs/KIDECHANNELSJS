@@ -1,31 +1,30 @@
 import { getUserInfo } from "./authentication";
 
-(function($) {
-    document.addEventListener("DOMContentLoaded", () => {
-        fetch("MenuSidebar.html")
-            .then((response) => response.text())
-            .then((data) => {
-                document.getElementById("sideBar").innerHTML = data;
-            })
-            .catch((error) => console.error("Error loading content:", error));
-    });
-
-    async function getUserName() {
-        try {
-            // document.addEventListener('DOMContentLoaded', async () => {
+(async function($) {
+    fetch("menuSidebar.html")
+        .then((response) => response.text())
+        .then(async (data) => {
+            document.getElementById("sideBar").innerHTML = data;
             const response = await getUserInfo();
             if (response) {
                 const userNameElements = document.querySelectorAll(".name");
                 userNameElements?.forEach((element) => {
                     element.innerHTML = `${response.name} ${response.family_name}`;
                 });
-                return response;
             }
-            // })
-        } catch (error) {
-            console.log(error);
-        }
-    }
+
+            function getInitials() {
+                const initials = `${response.name} ${response.family_name}`
+                    .split(" ")
+                    .map((word) => word.charAt(0))
+                    .join("");
+                return initials.toUpperCase();
+            }
+            const dynamicIcon = document.getElementById("dynamic-icon");
+            dynamicIcon.textContent = getInitials();
+        })
+        .catch((error) => console.error("Error loading content:", error));
+
     function setCommunicationsCount({ allCommunications }) {
         try {
             const span = document.querySelector(".inbox-num");
@@ -36,6 +35,5 @@ import { getUserInfo } from "./authentication";
             console.log(error);
         }
     }
-    window.getUserName = getUserName;
     window.setCommunicationsCount = setCommunicationsCount;
 })();

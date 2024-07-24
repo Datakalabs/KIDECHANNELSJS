@@ -115,7 +115,6 @@
             "RightMenuSidebar.html",
             "right-menu-sidebar",
             function() {
-                window.getUserName();
                 initializeMenu();
             }
         );

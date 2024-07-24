@@ -95,7 +95,6 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
     ("use strict");
     try {
         const { tokens, userSub } = await refreshAndGetTokens();
-        window.getUserName();
         let clientId = userSub;
         const monthNames = [
             "Enero",

@@ -1,6 +1,10 @@
 import { getUserInfo } from "./authentication";
 import { openEditModal } from "../src/modals/contacts/editModal";
-import { fetchContacts, fetchGroups } from "../src/utils/fetchFunctions";
+import {
+    fetchContacts,
+    fetchGroups,
+    fetchCommunications,
+} from "../src/utils/fetchFunctions";
 import { openAddModal } from "../src/modals/contacts/addModal";
 import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
 
@@ -11,7 +15,8 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
         let userInfo = await getUserInfo();
         let clientId = userInfo.userData.userId;
         let allGroups, allContacts;
-
+        const allCommunications = await fetchCommunications({ clientId });
+        window.setCommunicationsCount({ allCommunications });
         async function renderContacts() {
             try {
                 allContacts = await fetchContacts({ clientId });

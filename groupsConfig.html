@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="au theme template" />
+    <meta name="author" content="Hau Nguyen" />
+    <meta name="keywords" content="au theme template" />
+
+    <!-- Title Page-->
+    <title>KIDE CHANNELS</title>
+
+    <!-- Fontfaces CSS-->
+    <link href="css/font-face.css" rel="stylesheet" media="all" />
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all" />
+
+    <!-- Bootstrap CSS-->
+    <link href="vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all" />
+
+    <!-- Vendor CSS-->
+    <link href="vendor/animsition/animsition.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/wow/animate.css" rel="stylesheet" media="all" />
+    <link href="vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/slick/slick.css" rel="stylesheet" media="all" />
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all" />
+    <link href="vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all" />
+    <link href="vendor/vector-map/jqvmap.min.css" rel="stylesheet" media="all" />
+    <link
+        href="https://cdn.datatables.net/v/bs4/dt-2.0.7/af-2.7.0/b-3.0.2/b-html5-3.0.2/b-print-3.0.2/date-1.5.2/kt-2.12.0/r-3.0.2/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+        rel="stylesheet" />
+    <link href="css/timeline.css" rel="stylesheet" media="all" />
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet" />
+    <!-- Main CSS-->
+    <link href="css/theme.css" rel="stylesheet" media="all" />
+</head>
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- MENU SIDEBAR-->
+        <aside class="menu-sidebar2" id="sideBar">
+        </aside>
+        <!-- END MENU SIDEBAR-->
+
+        <!-- PAGE CONTAINER-->
+        <div class="page-container2">
+            <!-- HEADER DESKTOP-->
+            <div id="right-menu-sidebar"></div>
+            <!-- END HEADER DESKTOP-->
+
+            <!-- BREADCRUMB-->
+            <section class="au-breadcrumb m-t-75">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="au-breadcrumb-content">
+                                    <div class="au-breadcrumb-left">
+                                        <span class="au-breadcrumb-span">You are here:</span>
+                                        <ul class="list-unstyled list-inline au-breadcrumb__list">
+                                            <li class="list-inline-item active">
+                                                <a href="#">Configuration</a>
+                                            </li>
+                                            <li class="list-inline-item seprate">
+                                                <span>/</span>
+                                            </li>
+                                            <li class="list-inline-item">Groups configuration</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- END BREADCRUMB-->
+
+
+            <section>
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid form-group">
+                        <div class="row justify-content-center">
+                            <div class="col-md-12">
+                                <div class="row" style="margin-bottom: 20px">
+                                    <select class="form-control text-center" id="selectOptionGroup">
+                                        <option value="Selecciona" disabled selected>Select Group</option>
+                                    </select>
+                                    <select class="form-control text-center" id="selectOptionCategory" disabled>
+                                        <option value="Selecciona" disabled selected>Select Category</option>
+                                    </select>
+                                </div>
+                                <div class="row" style="margin-bottom: 20px">
+                                    <div class="col">
+                                        <h4>Auto Response:</h4>
+                                    </div>
+                                    <div class="col">
+                                        <input type="checkbox" id="autoResponse" data-toggle="toggle" data-on="Enabled" data-off="Disabled" />
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row" style="margin-bottom: 20px">
+                                    <div class="col">
+                                        <h4>Redirect:</h4>
+                                    </div>
+                                    <div class="col">
+                                        <input type="checkbox" id="autoRedirect" data-toggle="toggle" data-on="Enabled" data-off="Disabled" />
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="redirectTo" />
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-bottom: 20px">
+                                    <div class="col">
+                                        <h4>Pre-quote:</h4>
+                                    </div>
+                                    <div class="col">
+                                        <!-- <input type="checkbox" ckecked="true" id="autoQuote" /> -->
+                                        <input type="checkbox" id="autoQuote" data-toggle="toggle" data-on="Enabled" data-off="Disabled" />
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col">
+                                        <select class="form-control" type="select" id="quoteOption">
+                                            <option value="" disabled selected>Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-bottom: 20px">
+                                    <div class="col">
+                                        <h4>Trigger:</h4>
+                                    </div>
+                                    <div class="col">
+                                        <!-- <input type="checkbox" id="autoTrigger" /> -->
+                                        <input type="checkbox" id="autoTrigger" data-toggle="toggle" data-on="Enabled" data-off="Disabled" />
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col">
+                                        <select class="form-control" type="select" id="triggerOption">
+                                            <option value="" disabled selected>Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-bottom: 20px">
+                                    <div class="col">
+                                        <h4>Retargeting:</h4>
+                                    </div>
+                                    <div class="col">
+                                        <!-- <input type="checkbox" type="select" id="autoRetargeting" /> -->
+                                        <input type="checkbox" id="autoRetargeting"  data-toggle="toggle" data-on="Enabled" data-off="Disabled" />
+                                    </div>
+                                    <div class="col">
+                                        <input type="number" class="form-control" id="retargetingTime" />
+                                        <label for="retargetingTime">Delay in hours</label>
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" type="select" id="retargetingOption">
+                                            <option value="" disabled selected>Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-3">
+                                        <button class="btn btn-warning edit_groups btn-block" type="button">Edit
+                                            Groups
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-danger btn-block" type="button"
+                                            id="resetDefault">Restaurar
+                                            valores
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary btn-block" type="button" id="saveChange">Save
+                                            Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="copyright">
+                                <p>Copyright © 2024 DATAKA. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- END PAGE CONTAINER-->
+        </div>
+    </div>
+
+    <!-- Jquery JS-->o09
+    <script src="vendor/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap JS-->
+    <script src="vendor/bootstrap-4.1/popper.min.js"></script>
+    <script src="vendor/bootstrap-4.1/bootstrap.min.js"></script>
+    <!-- Vendor JS       -->
+    <script src="vendor/slick/slick.min.js"></script>
+    <script src="vendor/wow/wow.min.js"></script>
+    <script src="vendor/animsition/animsition.min.js"></script>
+    <script src="vendor/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="vendor/counter-up/jquery.waypoints.min.js"></script>
+    <script src="vendor/counter-up/jquery.counterup.min.js"></script>
+    <script src="vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="vendor/chartjs/Chart.bundle.min.js"></script>
+    <script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/vector-map/jquery.vmap.js"></script>
+    <script src="vendor/vector-map/jquery.vmap.min.js"></script>
+    <script src="vendor/vector-map/jquery.vmap.sampledata.js"></script>
+    <script src="vendor/vector-map/jquery.vmap.world.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script
+        src="https://cdn.datatables.net/v/bs4/dt-2.0.7/af-2.7.0/b-3.0.2/b-html5-3.0.2/b-print-3.0.2/date-1.5.2/kt-2.12.0/r-3.0.2/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <!-- Main JS-->
+    <script src="dist/groupsConfig.bundle.js"></script>
+    <script src="dist/main.bundle.js"></script>
+    <script src="dist/loginLogout.bundle.js"></script>
+    <script src="dist/verifyMmail.bundle.js"></script>
+    <script src="dist/menuSidebar.bundle.js"></script>
+    <script src="dist/rightMenuSidebar.bundle.js"></script>
+</body>
+
+</html>
+<!-- end document-->

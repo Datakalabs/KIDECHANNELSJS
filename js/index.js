@@ -124,6 +124,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 allTags = await fetchTags({ clientId });
 
                 let allCommsCount = allCommunications.length;
+                window.setCommunicationsCount({ allCommunications });
 
                 renderGroupList(allGroups, allCommunications, allCommsCount);
                 renderGroupListInSidebar({ allGroups });

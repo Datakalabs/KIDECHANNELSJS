@@ -67,11 +67,11 @@ export async function openEditModal({
             .append(
                 $("<div>")
                     .addClass(
-                        "form-group1 col-md-6 d-flex justify-content-between align-items-end p-0"
+                        "form-group1 col-md-6 d-flex justify-content-between align-items-end p-0 "
                     )
                     .append(
                         $("<div>")
-                            .addClass("col-10 p-0")
+                            .addClass("col-10 p-0 ml-1")
                             .append($("<label>").text("Tag:"))
                             .append(
                                 $("<select>")
@@ -94,7 +94,7 @@ export async function openEditModal({
                     )
                     .append(
                         $("<div>")
-                            .addClass("d-flex justify-content-end p-0")
+                            .addClass("d-flex justify-content-end p-0  mr-1")
                             .append(
                                 $("<button>")
                                     .addClass("btn btn-outline-primary")

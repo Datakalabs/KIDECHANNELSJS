@@ -4,7 +4,7 @@ module.exports = {
     entry: {
         main: "./js/main.js",
         index: "./js/index.js",
-        loginLogout: "./js/auth/loginLogout.js",
+        login: "./js/auth/login.js",
         verifyMmail: "./js/auth/verifyMail.js",
         forgetPass: "./js/auth/forgetPass.js",
         authentication: "./js/authentication.js",

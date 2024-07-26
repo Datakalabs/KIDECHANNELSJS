@@ -14805,3 +14805,30 @@ section {
 #buttonNewContact:hover {
     background-color: #0056b3; /* Change background color on hover */
 }
+
+.modal-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-flex {
+    display: flex;
+    flex-direction: row; /* Muestra los elementos uno al lado del otro */
+    width: 100%; /* Ajusta el ancho según sea necesario */
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: row; /* Alinea los elementos en una fila */
+    gap: 20px; /* Espacio entre el hilo y el formulario */
+}
+
+.thread-container {
+    flex: 1; /* Toma el espacio disponible */
+    overflow-y: auto; /* Permite el desplazamiento si el contenido es largo */
+}
+
+.form-container {
+    flex: 1; /* Toma el espacio disponible */
+}

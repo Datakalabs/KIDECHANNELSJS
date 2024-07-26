@@ -1,10 +1,23 @@
-import { getUserInfo } from "./authentication";
+import { getUserInfo, logout } from "./authentication";
 
 (async function($) {
     fetch("menuSidebar.html")
         .then((response) => response.text())
         .then(async (data) => {
             document.getElementById("sideBar").innerHTML = data;
+            const logoutButton = document.getElementById("logout-button");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", async (e) => {
+                    e.preventDefault();
+
+                    try {
+                        await logout();
+                        window.location.href = "/login.html";
+                    } catch (error) {
+                        console.error("Error during logout:", error);
+                    }
+                });
+            }
             const response = await getUserInfo();
             if (response) {
                 const userNameElements = document.querySelectorAll(".name");

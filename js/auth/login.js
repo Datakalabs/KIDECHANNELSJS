@@ -1,8 +1,7 @@
-const { logout, login, getUserInfo } = require("../authentication");
+const { login, getUserInfo } = require("../authentication");
 
 (async () => {
     document.addEventListener("DOMContentLoaded", async () => {
-        const logoutButton = document.getElementById("logout-button");
         const loginForm = document.getElementById("login-form");
         try {
             const userData = await getUserInfo();
@@ -27,19 +26,6 @@ const { logout, login, getUserInfo } = require("../authentication");
                     }
                 });
             }
-        }
-        if (logoutButton) {
-            logoutButton.addEventListener("click", async (e) => {
-                e.preventDefault();
-                console.log(e);
-
-                try {
-                    await logout();
-                    window.location.href = "/login.html";
-                } catch (error) {
-                    console.error("Error during logout:", error);
-                }
-            });
         }
     });
 })();

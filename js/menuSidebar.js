@@ -1,6 +1,6 @@
 import { getUserInfo, logout } from "./authentication";
 
-(async function($) {
+(async function ($) {
     fetch("menuSidebar.html")
         .then((response) => response.text())
         .then(async (data) => {
@@ -36,7 +36,10 @@ import { getUserInfo, logout } from "./authentication";
             const dynamicIcon = document.getElementById("dynamic-icon");
             dynamicIcon.textContent = getInitials();
         })
-        .catch((error) => console.error("Error loading content:", error));
+        .catch((error) => {
+            window.location.href = "/login.html";
+            console.error("Error loading content:", error);
+        });
 
     function setCommunicationsCount({ allCommunications }) {
         try {

@@ -15,7 +15,7 @@ export async function openAddModal({
                 .addClass("form-row")
                 .append(
                     $("<div>")
-                        .addClass("form-group1 col-md-6")
+                        .addClass("form-group1 col-md-12")
                         .attr("id", "nameDiv")
                         .append($("<label>").text("Name:"))
                         .append(
@@ -27,7 +27,7 @@ export async function openAddModal({
                 )
                 .append(
                     $("<div>")
-                        .addClass("form-group1 col-md-6")
+                        .addClass("form-group1 col-md-12")
                         .attr("id", "emailDiv")
                         .append($("<label>").text("Email:"))
                         .append(
@@ -37,22 +37,21 @@ export async function openAddModal({
                                 .attr("id", "email")
                         )
                 )
-        );
-
-        form.append(
-            $("<div>")
-                .addClass("form-group1 col-md-6")
                 .append(
-                    $("<label>").text("Group:"),
-                    $("<select>")
-                        .addClass("form-control")
-                        .attr("id", "group")
+                    $("<div>")
+                        .addClass("form-group1 col-md-12")
                         .append(
-                            allGroups.map((group) =>
-                                $("<option>")
-                                    .text(group.groupName)
-                                    .val(group.id)
-                            )
+                            $("<label>").text("Group:"),
+                            $("<select>")
+                                .addClass("form-control")
+                                .attr("id", "group")
+                                .append(
+                                    allGroups.map((group) =>
+                                        $("<option>")
+                                            .text(group.groupName)
+                                            .val(group.id)
+                                    )
+                                )
                         )
                 )
         );
@@ -76,9 +75,7 @@ export async function openAddModal({
                     .attr("id", "createModalLabel")
                     .text("Create Contact")
             );
-        let modalBody = $("<div>")
-            .addClass("modal-body")
-            .append(form);
+        let modalBody = $("<div>").addClass("modal-body").append(form);
         let modalFooter = $("<div>")
             .addClass("modal-footer")
             .append(
@@ -104,11 +101,11 @@ export async function openAddModal({
 
         $("#createModal").modal("show");
 
-        $("#saveBtn").on("click", function() {
+        $("#saveBtn").on("click", function () {
             $("#createForm").submit();
         });
 
-        $("#createForm").on("submit", async function(event) {
+        $("#createForm").on("submit", async function (event) {
             event.preventDefault();
 
             let formData = {

@@ -14805,3 +14805,10 @@ section {
 #buttonNewContact:hover {
     background-color: #0056b3; /* Change background color on hover */
 }
+
+/* Estilo para el botón deshabilitado */
+.btn-disabled {
+    background-color: #d3d3d3; /* Gris claro */
+    color: #a9a9a9; /* Gris más oscuro para el texto */
+    opacity: 0.6; /* Para un efecto de deshabilitado */
+}

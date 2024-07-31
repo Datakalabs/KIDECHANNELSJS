@@ -129,7 +129,10 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 renderGroupListInSidebar({ allGroups });
                 renderTable();
 
-                if (window.location.pathname === "/index.html") {
+                if (
+                    window.location.pathname === "/index.html" ||
+                    window.location.pathname === "/"
+                ) {
                     setInterval(async () => {
                         allCommunications = await fetchCommunications({
                             clientId,

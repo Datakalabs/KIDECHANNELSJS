@@ -268,6 +268,7 @@ export const createCommunication = /* GraphQL */ `
             groupId
             tagId
             contactName
+            messageHeaderId
         }
     }
 `;
@@ -301,6 +302,7 @@ export const updateCommunication = /* GraphQL */ `
             groupId
             tagId
             contactName
+            messageHeaderId
         }
     }
 `;

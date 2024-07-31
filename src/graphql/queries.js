@@ -256,6 +256,7 @@ export const getCommunication = /* GraphQL */ `
             groupId
             tagId
             contactName
+            messageHeaderId
         }
     }
 `;
@@ -301,6 +302,7 @@ export const listCommunications = /* GraphQL */ `
                 groupId
                 tagId
                 contactName
+                messageHeaderId
             }
         }
     }

@@ -79,6 +79,7 @@ type Communication
     groupId: String
     tagId: String
     contactName: String
+    messageHeaderId: String
 }
 
 type KideChannelUserKey {

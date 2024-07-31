@@ -350,6 +350,7 @@ export async function openEditModal({
                     formData[name] = $(this).val();
                 }
             });
+        console.log($("#category").val() == actions.category);
         formData = {
             ...formData,
             clientId,
@@ -361,8 +362,11 @@ export async function openEditModal({
             responseBody: $("#responseBody textarea").val(),
             tagId: allTags.find((t) => t.tagName === $("#tagId").val())?.id,
             execute: actions.execute,
+            status:
+                $("#category").val() == actions.category
+                    ? actions.status
+                    : "Processing",
         };
-        console.log(formData);
         await client.graphql({
             query: updateCommunication,
             variables: {

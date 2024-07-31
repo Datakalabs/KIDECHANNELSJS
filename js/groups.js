@@ -4,7 +4,6 @@ import { client } from "../src/utils/amplifyConfig";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { normalizeDate } from "../src/utils/normalizeDateTime";
-import { URL_MS_GOOGLE } from "../secrets";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { fetchCommunications, fetchGroups, fetchTags } from "../src/utils";
 import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
@@ -262,6 +261,7 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                     allTags,
                     clientId,
                     renderCommunications,
+                    tokens,
                 });
             });
 

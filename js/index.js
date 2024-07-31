@@ -619,6 +619,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     allTags,
                     clientId,
                     renderCommunications,
+                    tokens,
                 });
             });
 

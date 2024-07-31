@@ -3,6 +3,8 @@ import { defaultCategories } from "../../utils/defaultCategories";
 import { updateCommunication } from "../../graphql/mutations";
 import { awsDateTimeFormat } from "../../../src/utils/normalizeDateTime";
 import { openEditTagModal } from "../tags/editModal";
+import axios from "axios";
+import { URL_KIDECHANNELS } from "../../../secrets";
 
 export async function openEditModal({
     data,
@@ -11,6 +13,7 @@ export async function openEditModal({
     allTags,
     clientId,
     renderCommunications,
+    tokens,
 }) {
     const actions = allCommunications.filter((c) => c.id === data[0])[0];
     let selectedCategory = defaultCategories.filter(
@@ -291,6 +294,13 @@ export async function openEditModal({
         .append(
             $("<button>")
                 .addClass("btn btn-primary")
+                .text("Edit at GMAIL")
+                .attr("type", "button")
+                .attr("id", "gmailEditBtn")
+        )
+        .append(
+            $("<button>")
+                .addClass("btn btn-primary")
                 .text("Save")
                 .attr("type", "button")
                 .attr("id", "saveBtn")
@@ -311,6 +321,18 @@ export async function openEditModal({
 
     $("#actionModal").modal("show");
 
+    $("#gmailEditBtn").on("click", async function() {
+        const { data } = await axios.post(
+            `${URL_KIDECHANNELS}/communication/send-mail-url`,
+            actions,
+            {
+                headers: {
+                    "X-Cognito-Auth": tokens.idToken,
+                },
+            }
+        );
+        window.open(data.message, "EditAtGmail");
+    });
     $("#saveBtn").on("click", function() {
         $("#actionForm").submit();
     });

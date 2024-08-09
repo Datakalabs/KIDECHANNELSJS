@@ -11,9 +11,13 @@ import {
     fetchRetargetingOptions,
     fetchTriggerOptions,
     fetchCommunications,
+    fetchTags,
 } from "../src/utils/fetchFunctions.js";
 import { getUserInfo } from "./authentication.js";
-import { renderGroupListInSidebar } from "./menuSidebar.js";
+import {
+    renderGroupListInSidebar,
+    renderTagListInSidebar,
+} from "./menuSidebar.js";
 
 const userInfo = await getUserInfo();
 let clientId = userInfo.userData.userId;
@@ -28,7 +32,7 @@ let clientId = userInfo.userData.userId;
         var selectCategory = document.getElementById("selectOptionCategory"),
             selectGruop = document.getElementById("selectOptionGroup");
         let categorySelected, groupSelected, categorySelectedConfig;
-        let allGroups;
+        let allGroups, allTags;
 
         defaultCategories.forEach((c) => {
             const option = document.createElement("option");
@@ -41,6 +45,7 @@ let clientId = userInfo.userData.userId;
         window.setCommunicationsCount({ allCommunications });
 
         allGroups = await fetchGroups({ clientId });
+        allTags = await fetchTags({ clientId });
         allGroups.forEach((g) => {
             const option = document.createElement("option");
             option.value = g.groupName;
@@ -49,6 +54,7 @@ let clientId = userInfo.userData.userId;
         });
         //Funcion para renderizar groups en sidebar
         renderGroupListInSidebar({ allGroups });
+        renderTagListInSidebar({ allTags });
 
         selectGruop.addEventListener("change", async (e) => {
             if (e.target.value !== "Selecciona") {
@@ -80,12 +86,7 @@ let clientId = userInfo.userData.userId;
                 if (element && key !== "__typename") {
                     switch (element.type) {
                         case "checkbox":
-                            element.checked = value;
-                            var $checkbox = $(this).find(`id = ${key}`);
-                            $checkbox.bootstrapToggle("toggle");
-                            e.preventDefault();
-                            // $(key).bootstrapToggle();
-                            // $(key).bootstrapToggle("on");
+                            $(`#${key}`).bootstrapToggle(value ? "on" : "off");
                             break;
                         case "select-one":
                             element.value = value?.optionId
@@ -182,11 +183,11 @@ let clientId = userInfo.userData.userId;
         });
         resetButton.addEventListener("click", async (e) => {
             if (categorySelected) {
-                const auth = prompt(
+                const auth = confirm(
                     "Estas seguro de volver a los valores por defecto?"
                 );
 
-                if (auth === "si") {
+                if (auth) {
                     groupSelected.categoriesConfig = JSON.stringify({
                         ...JSON.parse(groupSelected.categoriesConfig),
                         [categorySelected.categoryName]: getDefaultCategoriesConfiguration()[
@@ -206,7 +207,9 @@ let clientId = userInfo.userData.userId;
                         let elem = document.getElementById(key);
                         switch (elem.type) {
                             case "checkbox":
-                                elem.checked = params[key];
+                                $(`#${key}`).bootstrapToggle(
+                                    params[key] ? "on" : "off"
+                                );
                                 break;
                             case "select-one":
                                 elem.value = params[key]?.optionId

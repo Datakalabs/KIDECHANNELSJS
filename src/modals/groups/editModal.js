@@ -2,6 +2,7 @@ import {
     createGroup,
     deleteGroup,
     updateCommunication,
+    updateContact,
     updateGroup,
 } from "../../graphql/mutations";
 import {
@@ -216,6 +217,7 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
                                     filters: { groupId: group.id },
                                 }
                             );
+                            console.log(allCommsByGroupId);
                             await Promise.all(
                                 allContactsByGroupId.map(async (item) => {
                                     await client.graphql({
@@ -247,6 +249,7 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
                                                         g.groupName ===
                                                         "Ungroup"
                                                 ).id,
+                                                status: "Processing",
                                             },
                                         },
                                     });

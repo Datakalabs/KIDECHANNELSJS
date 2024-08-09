@@ -92,7 +92,9 @@ export async function openEditModal({
                     .attr("id", "actionModalLabel")
                     .text("Edit")
             );
-        let modalBody = $("<div>").addClass("modal-body").append(form);
+        let modalBody = $("<div>")
+            .addClass("modal-body")
+            .append(form);
         let modalFooter = $("<div>")
             .addClass("modal-footer")
             .append(
@@ -126,7 +128,7 @@ export async function openEditModal({
 
         $("#actionModal").modal("show");
 
-        $("#deleteBtn").on("click", async function () {
+        $("#deleteBtn").on("click", async function() {
             try {
                 const agree = confirm(
                     "Estas seguro de eliminar a " + data[0] + "?"
@@ -168,11 +170,11 @@ export async function openEditModal({
                 throw error;
             }
         });
-        $("#saveBtn").on("click", function () {
+        $("#saveBtn").on("click", function() {
             $("#actionForm").submit();
         });
 
-        $("body").on("submit", "#actionForm", async function (event) {
+        $("body").on("submit", "#actionForm", async function(event) {
             event.preventDefault();
 
             let formData = {};
@@ -255,6 +257,7 @@ export async function openEditModal({
                                 clientId,
                                 id: item.id,
                                 groupId: formData.groupId,
+                                status: "Processing",
                                 contactName: existsCommWithOldMail
                                     ? ""
                                     : formData.contactName,

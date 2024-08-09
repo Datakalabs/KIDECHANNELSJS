@@ -15,12 +15,16 @@ export async function openEditModal({
     renderCommunications,
     tokens,
 }) {
-    const actions = allCommunications.filter((c) => c.id === data[0])[0];
-    let selectedCategory = defaultCategories.filter(
-        (category) => category.categoryName === actions.category
-    );
+    $("#actionModal")
+        .off()
+        .remove();
 
+    const communication = allCommunications.filter((c) => c.id === data[0])[0];
+    let selectedCategory = defaultCategories.filter(
+        (category) => category.categoryName === communication.category
+    );
     selectedCategory = selectedCategory[0];
+
     let form = $("<form>").attr("id", "actionForm");
     form.append(
         $("<div>")
@@ -36,7 +40,7 @@ export async function openEditModal({
                             .addClass("form-control")
                             .prop("disabled", true)
                             .attr("name", "fromId")
-                            .val(actions.fromId)
+                            .val(communication.fromId)
                     )
             )
             .append(
@@ -50,7 +54,7 @@ export async function openEditModal({
                             .addClass("form-control")
                             .prop("disabled", true)
                             .attr("name", "toId")
-                            .val(actions.toId)
+                            .val(communication.toId)
                     )
             )
             .append(
@@ -64,7 +68,7 @@ export async function openEditModal({
                             .addClass("form-control")
                             .prop("disabled", true)
                             .attr("name", "dateTime")
-                            .val(awsDateTimeFormat(actions.dateTime))
+                            .val(awsDateTimeFormat(communication.dateTime))
                     )
             )
             .append(
@@ -90,7 +94,7 @@ export async function openEditModal({
                                     )
                                     .val(
                                         allTags.find(
-                                            (t) => t.id === actions.tagId
+                                            (t) => t.id === communication.tagId
                                         )?.tagName
                                     )
                             )
@@ -146,8 +150,9 @@ export async function openEditModal({
                             .attr("name", "groupId")
 
                             .val(
-                                allGroups.find((g) => g.id === actions.groupId)
-                                    .groupName
+                                allGroups.find(
+                                    (g) => g.id === communication.groupId
+                                ).groupName
                             )
                     )
             )
@@ -163,10 +168,10 @@ export async function openEditModal({
                     .attr("type", "text")
                     .attr(
                         "disabled",
-                        actions.status === "Answered" ? true : false
+                        communication.status === "Answered" ? true : false
                     )
                     .addClass("form-control")
-                    .val(actions.responseAi)
+                    .val(communication.responseAi)
             )
     );
 
@@ -182,7 +187,7 @@ export async function openEditModal({
                         $("<input>")
                             .attr("type", "text")
                             .addClass("form-control")
-                            .val(actions.responseAttachment)
+                            .val(communication.responseAttachment)
                             .prop("readonly", true),
                         $("<div>")
                             .addClass("input-group-append")
@@ -219,7 +224,7 @@ export async function openEditModal({
                     .addClass("form-control")
                     .prop("disabled", true)
                     .attr("name", "messageSubject")
-                    .val(actions.messageSubject)
+                    .val(communication.messageSubject)
             )
     );
     form.append(
@@ -232,7 +237,7 @@ export async function openEditModal({
                     .addClass("form-control")
                     .prop("disabled", true)
                     .attr("name", "messageBody")
-                    .val(actions.messageBody)
+                    .val(communication.messageBody)
             )
     ); // Crea el modal con el formulario
     form.append(
@@ -245,10 +250,10 @@ export async function openEditModal({
                     .attr("type", "text")
                     .attr(
                         "disabled",
-                        actions.status === "Answered" ? true : false
+                        communication.status === "Answered" ? true : false
                     )
                     .addClass("form-control")
-                    .val(actions.responseSubject)
+                    .val(communication.responseSubject)
             )
     );
     form.append(
@@ -260,10 +265,10 @@ export async function openEditModal({
                 $("<textarea>")
                     .attr(
                         "disabled",
-                        actions.status === "Answered" ? true : false
+                        communication.status === "Answered" ? true : false
                     )
                     .addClass("form-control")
-                    .val(actions.responseBody)
+                    .val(communication.responseBody)
             )
     );
 
@@ -316,7 +321,6 @@ export async function openEditModal({
     modalDialog.append(modalContent);
     modal.append(modalDialog);
 
-    $("#actionModal").remove();
     $("body").append(modal);
 
     $("#actionModal").modal("show");
@@ -324,7 +328,7 @@ export async function openEditModal({
     $("#gmailEditBtn").on("click", async function() {
         const { data } = await axios.post(
             `${URL_KIDECHANNELS}/communication/send-mail-url`,
-            actions,
+            communication,
             {
                 headers: {
                     "X-Cognito-Auth": tokens.idToken,
@@ -333,11 +337,12 @@ export async function openEditModal({
         );
         window.open(data.message, "EditAtGmail");
     });
-    $("#saveBtn").on("click", function() {
+    $("#saveBtn").on("click", function(event) {
+        event.preventDefault();
         $("#actionForm").submit();
     });
 
-    $("body").on("submit", "#actionForm", async function(event) {
+    $("body").one("submit", "#actionForm", async function(event) {
         event.preventDefault();
 
         let formData = {};
@@ -350,7 +355,6 @@ export async function openEditModal({
                     formData[name] = $(this).val();
                 }
             });
-        console.log($("#category").val() == actions.category);
         formData = {
             ...formData,
             clientId,
@@ -361,20 +365,23 @@ export async function openEditModal({
             responseSubject: $("#responseSubject input").val(),
             responseBody: $("#responseBody textarea").val(),
             tagId: allTags.find((t) => t.tagName === $("#tagId").val())?.id,
-            execute: actions.execute,
+            execute: communication.execute,
             status:
-                $("#category").val() == actions.category
-                    ? actions.status
+                $("#category").val() == communication.category
+                    ? communication.status
                     : "Processing",
         };
-        await client.graphql({
-            query: updateCommunication,
-            variables: {
-                input: formData,
-            },
-        });
-
-        $("#actionModal").modal("hide");
-        renderCommunications();
+        try {
+            await client.graphql({
+                query: updateCommunication,
+                variables: {
+                    input: formData,
+                },
+            });
+            $("#actionModal").modal("hide");
+            renderCommunications();
+        } catch (error) {
+            console.error("Error updating communication:", error);
+        }
     });
 }

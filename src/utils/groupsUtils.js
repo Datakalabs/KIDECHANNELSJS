@@ -1,41 +1,3 @@
-export const groupColors = [
-    {
-        group_line: "rgba(0,181,233,0.9)",
-        bg: "rgba(0,181,233,0.2)",
-        class: "dot dot--blue",
-    },
-    {
-        group_line: "rgba(0,173,95,0.9)",
-        bg: "rgba(0,173,95,0.2)",
-        class: "dot dot--green",
-    },
-    {
-        group_line: "rgba(255,99,132,0.9)",
-        bg: "rgba(255,99,132,0.2)",
-        class: "dot dot--red",
-    },
-    {
-        group_line: "rgba(255,159,64,0.9)",
-        bg: "rgba(255,159,64,0.2)",
-        class: "dot dot--orange",
-    },
-    {
-        group_line: "rgba(75,192,192,0.9)",
-        bg: "rgba(75,192,192,0.2)",
-        class: "dot dot--turquoise",
-    },
-    {
-        group_line: "rgba(153,102,255,0.9)",
-        bg: "rgba(153,102,255,0.2)",
-        class: "dot dot--purple",
-    },
-    {
-        group_line: "rgba(255,205,86,0.9)",
-        bg: "rgba(255,205,86,0.2)",
-        class: "dot dot--yellow",
-    },
-];
-
 export const renderGroupListInSidebar = ({ allGroups }) => {
     const ul2 = document.querySelector(".js-sub-list");
     ul2.innerHTML = "";
@@ -55,4 +17,27 @@ export const renderGroupListInSidebar = ({ allGroups }) => {
             a.href = `groups.html?${selectedGroupName}`;
         });
     });
+};
+
+export const getColorObj = (hex) => {
+    // Convierte el color de 5 dígitos a 6 dígitos
+    console.log("HEX", hex);
+    if (hex.length === 6) {
+        hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
+    }
+
+    let percent = 0.77; // Porcentaje para aclarar el color
+    let r = parseInt(hex.substring(1, 3), 16);
+    let g = parseInt(hex.substring(3, 5), 16);
+    let b = parseInt(hex.substring(5, 7), 16);
+
+    r = Math.min(255, Math.floor(r + (255 - r) * percent));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent));
+
+    return {
+        group_line: hex,
+        bg: `rgba(${r}, ${g}, ${b}, 1)`,
+        class: "dot",
+    };
 };

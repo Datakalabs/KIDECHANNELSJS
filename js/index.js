@@ -3,7 +3,7 @@ import { updateCommunication } from "../src/graphql/mutations";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import {
-    groupColors,
+    getColorObj,
     renderGroupListInSidebar,
 } from "../src/utils/groupsUtils";
 import { URL_KIDECHANNELS, URL_MS_GOOGLE } from "../secrets";
@@ -244,8 +244,6 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                     ((commsByGroupCount * 100) / allCommsCount).toFixed(2)
                 );
 
-                const colorObj = groupColors[index];
-
                 const communicationsCount = new Array(12).fill(0);
                 allCommunications.forEach((comm) => {
                     if (comm.groupId === group.id) {
@@ -254,7 +252,12 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                         communicationsCount[month]++;
                     }
                 });
+                let groupColor = group.color;
+                if (group.color === "#00000") {
+                    groupColor = "#00FFFF";
+                }
 
+                const colorObj = getColorObj(groupColor);
                 const groupDataset = {
                     label: group.groupName,
                     backgroundColor: colorObj.bg,
@@ -306,10 +309,15 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
 
                 // Inicializar estructura para almacenar comunicaciones por grupo y día
                 groups.forEach((group, index) => {
+                    let groupColor = group.color;
+                    if (group.color === "#00000") {
+                        groupColor = "#00FFFF";
+                    }
+
                     communicationsByDay[group.id] = {
                         name: group.groupName,
                         data: new Array(31).fill(0),
-                        color: groupColors[index],
+                        color: getColorObj(groupColor),
                     };
                 });
 
@@ -347,11 +355,15 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
                 });
 
                 groups.forEach((group, index) => {
+                    let groupColor = group.color;
+                    if (group.color === "#00000") {
+                        groupColor = "#00FFFF";
+                    }
                     const groupCommunications = filteredCommunications.filter(
                         (comm) => comm.groupId === group.id
                     );
 
-                    const colorObj = groupColors[index];
+                    const colorObj = getColorObj(groupColor);
 
                     const dataset = {
                         label: group.groupName,
@@ -386,7 +398,7 @@ import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
 
             const colorSpan = document.createElement("span");
             colorSpan.className = colorObj.class;
-
+            colorSpan.style = `background: ${colorObj.group_line}`;
             const labelSpan = document.createElement("span");
             labelSpan.textContent = group.groupName;
 

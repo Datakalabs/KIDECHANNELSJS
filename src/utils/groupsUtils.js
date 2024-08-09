@@ -1,24 +1,3 @@
-export const renderGroupListInSidebar = ({ allGroups }) => {
-    const ul2 = document.querySelector(".js-sub-list");
-    ul2.innerHTML = "";
-    allGroups.forEach((g) => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        const icon = document.createElement("i");
-        a.classList.add("showTable");
-        icon.classList.add("fas", "fa-tags");
-        a.appendChild(icon);
-        a.appendChild(document.createTextNode(g.groupName));
-        li.appendChild(a);
-        ul2.appendChild(li);
-        a.addEventListener("click", async function(event) {
-            event.preventDefault();
-            const selectedGroupName = g.groupName;
-            a.href = `groups.html?${selectedGroupName}`;
-        });
-    });
-};
-
 export const getColorObj = (hex) => {
     // Convierte el color de 5 dígitos a 6 dígitos
     console.log("HEX", hex);

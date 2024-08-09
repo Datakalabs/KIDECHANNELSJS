@@ -6,30 +6,41 @@ import { openEditModal } from "../src/modals/communications/editModal";
 import { normalizeDate } from "../src/utils/normalizeDateTime";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { fetchCommunications, fetchGroups, fetchTags } from "../src/utils";
-import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
+import {
+    renderTagListInSidebar,
+    renderGroupListInSidebar,
+} from "./menuSidebar";
 
 (async function($) {
     // USE STRICT
     "use strict";
     try {
-        let selectedGroupName = window.location.search
-            .slice(1)
+        let selectedName = window.location.search
+            .split("?")[2]
             .replace(/%20/g, " ");
-        console.log(selectedGroupName);
-        document.getElementById("step2").innerHTML = selectedGroupName;
+        let page = window.location.search.split("?")[1];
+        document.getElementById("step1").innerHTML = page;
+        document.getElementById("step2").innerHTML = selectedName;
 
         const { tokens, userSub } = await refreshAndGetTokens();
         let clientId = userSub;
         let allCommunications, allGroups, allTags;
 
         async function fetchCommunicationsToRender() {
+            let filters =
+                page == "Groups"
+                    ? {
+                          groupId: allGroups.find(
+                              (g) => g.groupName === selectedName
+                          ).id,
+                      }
+                    : {
+                          tagId: allTags.find((t) => t.tagName === selectedName)
+                              .id,
+                      };
             allCommunications = await fetchCommunications({
                 clientId,
-                filters: {
-                    groupId: allGroups.find(
-                        (g) => g.groupName === selectedGroupName
-                    ).id,
-                },
+                filters,
             });
         }
         // Función para renderizar las comunicaciones y categorías
@@ -38,14 +49,16 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                 allGroups = await fetchGroups({ clientId });
                 allTags = await fetchTags({ clientId });
                 await fetchCommunicationsToRender();
-                if (window.location.pathname.includes("/groups.html")) {
+                if (window.location.pathname.includes("/tables.html")) {
                     setInterval(async () => {
                         await fetchCommunicationsToRender();
                         renderTable();
                     }, 30000);
                 }
+                window.setCommunicationsCount({ allCommunications });
 
                 renderGroupListInSidebar({ allGroups });
+                renderTagListInSidebar({ allTags });
                 renderTable();
             } catch (error) {
                 console.error("Error rendering communications:", error);
@@ -61,12 +74,11 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                     "id",
                     "channel",
                     "category",
-                    "tagId",
+                    page == "Groups" ? "tagId" : "groupId",
                     "dateTime",
                     "fromId",
                     // "toId",
                     // "status",
-                    // "groupId",
                     // "responseAi",
                     // "responseAttachment",
                     "messageBody",
@@ -120,7 +132,9 @@ import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
                         { title: "Com ID" },
                         { title: "Channel" },
                         { title: "Category" },
-                        { title: "Tag" },
+                        page == "Groups"
+                            ? { title: "Tag" }
+                            : { title: "Group" },
                         { title: "Datetime" },
                         { title: "From" },
                         // { title: "To" },

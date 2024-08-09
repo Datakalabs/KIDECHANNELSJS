@@ -6,7 +6,7 @@ import {
     fetchCommunications,
 } from "../src/utils/fetchFunctions";
 import { openAddModal } from "../src/modals/contacts/addModal";
-import { renderGroupListInSidebar } from "../src/utils/groupsUtils";
+import { renderGroupListInSidebar } from "./menuSidebar";
 
 (async function($) {
     // USE STRICT

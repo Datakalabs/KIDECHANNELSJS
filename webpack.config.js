@@ -9,7 +9,7 @@ module.exports = {
         forgetPass: "./js/auth/forgetPass.js",
         authentication: "./js/authentication.js",
         authorizations: "./js/authorizations.js",
-        groups: "./js/groups.js",
+        tables: "./js/tables.js",
         contacts: "./js/contacts.js",
         groupsConfig: "./js/groupsConfig.js",
         menuSidebar: "./js/menuSidebar.js",

@@ -1,6 +1,6 @@
 import { getUserInfo, logout } from "./authentication";
 
-(async function ($) {
+(async function($) {
     fetch("menuSidebar.html")
         .then((response) => response.text())
         .then(async (data) => {
@@ -53,3 +53,45 @@ import { getUserInfo, logout } from "./authentication";
     }
     window.setCommunicationsCount = setCommunicationsCount;
 })();
+
+export const renderTagListInSidebar = ({ allTags }) => {
+    const ul2 = document.querySelector(".taglist");
+    ul2.innerHTML = "";
+    allTags.forEach((t) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        const icon = document.createElement("i");
+        a.classList.add("showTable");
+        icon.classList.add("fas", "fa-tags");
+        a.appendChild(icon);
+        a.appendChild(document.createTextNode(t.tagName));
+        li.appendChild(a);
+        ul2.appendChild(li);
+        a.addEventListener("click", async function(event) {
+            event.preventDefault();
+            const selectedGroupName = t.tagName;
+            a.href = `tables.html?Tags?${selectedGroupName}`;
+        });
+    });
+};
+
+export const renderGroupListInSidebar = ({ allGroups }) => {
+    const ul2 = document.querySelector(".grouplist");
+    ul2.innerHTML = "";
+    allGroups.forEach((g) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        const icon = document.createElement("i");
+        a.classList.add("showTable");
+        icon.classList.add("fas", "fa-tags");
+        a.appendChild(icon);
+        a.appendChild(document.createTextNode(g.groupName));
+        li.appendChild(a);
+        ul2.appendChild(li);
+        a.addEventListener("click", async function(event) {
+            event.preventDefault();
+            const selectedGroupName = g.groupName;
+            a.href = `tables.html?Groups?${selectedGroupName}`;
+        });
+    });
+};

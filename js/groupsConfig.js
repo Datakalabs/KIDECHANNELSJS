@@ -12,8 +12,8 @@ import {
     fetchTriggerOptions,
     fetchCommunications,
 } from "../src/utils/fetchFunctions.js";
-import { renderGroupListInSidebar } from "../src/utils/groupsUtils.js";
 import { getUserInfo } from "./authentication.js";
+import { renderGroupListInSidebar } from "./menuSidebar.js";
 
 const userInfo = await getUserInfo();
 let clientId = userInfo.userData.userId;

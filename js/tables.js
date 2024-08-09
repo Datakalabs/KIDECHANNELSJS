@@ -24,23 +24,18 @@ import {
 
         const { tokens, userSub } = await refreshAndGetTokens();
         let clientId = userSub;
-        let allCommunications, allGroups, allTags;
+        let allCommunications, allCommunicationsCount, allGroups, allTags;
 
         async function fetchCommunicationsToRender() {
-            let filters =
-                page == "Groups"
-                    ? {
-                          groupId: allGroups.find(
-                              (g) => g.groupName === selectedName
-                          ).id,
-                      }
-                    : {
-                          tagId: allTags.find((t) => t.tagName === selectedName)
-                              .id,
-                      };
-            allCommunications = await fetchCommunications({
+            allCommunicationsCount = await fetchCommunications({
                 clientId,
-                filters,
+            });
+            allCommunications = allCommunicationsCount.filter((c) => {
+                return page === "Groups"
+                    ? c.groupId ===
+                          allGroups.find((g) => g.groupName === selectedName).id
+                    : c.tagId ===
+                          allTags.find((t) => t.tagName === selectedName).id;
             });
         }
         // Función para renderizar las comunicaciones y categorías
@@ -49,13 +44,18 @@ import {
                 allGroups = await fetchGroups({ clientId });
                 allTags = await fetchTags({ clientId });
                 await fetchCommunicationsToRender();
+                window.setCommunicationsCount({
+                    allCommunications: allCommunicationsCount,
+                });
                 if (window.location.pathname.includes("/tables.html")) {
                     setInterval(async () => {
                         await fetchCommunicationsToRender();
+                        window.setCommunicationsCount({
+                            allCommunications: allCommunicationsCount,
+                        });
                         renderTable();
                     }, 30000);
                 }
-                window.setCommunicationsCount({ allCommunications });
 
                 renderGroupListInSidebar({ allGroups });
                 renderTagListInSidebar({ allTags });

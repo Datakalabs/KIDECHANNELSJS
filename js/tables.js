@@ -35,14 +35,14 @@ import {
                     ? c.groupId ===
                           allGroups.find((g) => g.groupName === selectedName).id
                     : c.tagId ===
-                          allTags.find((t) => t.tagName === selectedName).id;
+                          allTags.find((t) => t.name === selectedName).id;
             });
         }
         // Función para renderizar las comunicaciones y categorías
         async function renderCommunications() {
             try {
                 allGroups = await fetchGroups({ clientId });
-                allTags = await fetchTags({ clientId });
+                allTags = await fetchTags({ tokens });
                 await fetchCommunicationsToRender();
                 window.setCommunicationsCount({
                     allCommunications: allCommunicationsCount,

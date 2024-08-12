@@ -87,8 +87,7 @@ import {
                 const values = keyArray.map((key) => {
                     let tagName;
                     if (key === "tagId") {
-                        tagName = allTags.find((t) => t.id === comm[key])
-                            ?.tagName;
+                        tagName = allTags.find((t) => t.id === comm[key])?.name;
                     }
 
                     return key === "fromId"

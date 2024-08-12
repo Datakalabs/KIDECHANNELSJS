@@ -5,10 +5,10 @@ import { fetchCommunications } from "../../utils";
 
 export async function openEditTagModal({ data, allTags, tokens, renderTags }) {
     try {
+        $("#actionModal").remove();
+        $("#createModal").remove();
         const tagSelected = allTags.find((t) => t.id === data[0]),
             { sub: clientId } = tokens;
-        console.log(tagSelected);
-        console.log(data);
         let form = $("<form>").attr("id", "actionForm");
         form.append(
             $("<div>")
@@ -83,6 +83,13 @@ export async function openEditTagModal({ data, allTags, tokens, renderTags }) {
 
         $("#actionModal").modal("show");
 
+        $("#cancelBtn").on("click", function(event) {
+            event.preventDefault();
+            $("#actionModal").modal("hide");
+            $("body").off("submit", "#actionModal");
+            $("#deleteBtn").off("click");
+            return;
+        });
         $("#deleteBtn").on("click", async function() {
             try {
                 const agree = confirm(

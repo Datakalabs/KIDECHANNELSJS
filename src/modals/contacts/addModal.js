@@ -9,6 +9,8 @@ export async function openAddModal({
     renderContacts,
 }) {
     try {
+        $("#actionModal").remove();
+        $("#createModal").remove();
         let form = $("<form>").attr("id", "createForm");
         form.append(
             $("<div>")
@@ -75,7 +77,9 @@ export async function openAddModal({
                     .attr("id", "createModalLabel")
                     .text("Create Contact")
             );
-        let modalBody = $("<div>").addClass("modal-body").append(form);
+        let modalBody = $("<div>")
+            .addClass("modal-body")
+            .append(form);
         let modalFooter = $("<div>")
             .addClass("modal-footer")
             .append(
@@ -96,18 +100,24 @@ export async function openAddModal({
         modalDialog.append(modalContent);
         modal.append(modalDialog);
 
-        $("#createModal").remove();
         $("body").append(modal);
 
         $("#createModal").modal("show");
 
-        $("#saveBtn").on("click", function () {
+        $("#cancelBtn").on("click", function(event) {
+            event.preventDefault();
+            $("#createModal").modal("hide");
+            $("body").off("submit", "#createForm");
+            return;
+        });
+        $("#saveBtn").on("click", function(e) {
+            e.preventDefault();
             $("#createForm").submit();
         });
 
-        $("#createForm").on("submit", async function (event) {
+        $("#createForm").on("submit", async function(event) {
             event.preventDefault();
-
+            console.log(event);
             let formData = {
                 clientId,
                 contactName: $("#contactName").val(),
@@ -166,7 +176,8 @@ export async function openAddModal({
                 },
             });
             $("#createModal").modal("hide");
-            renderContacts();
+            $("body").off("submit", "#createModal");
+            await renderContacts();
         });
     } catch (error) {
         console.log(error);

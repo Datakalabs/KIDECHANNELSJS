@@ -28,19 +28,18 @@ import {
                 renderTagListInSidebar({ allTags });
                 renderTable(allTags.filter((t) => t.type === "user"));
             } catch (error) {
-                console.error("Error rendering contacts:", error);
+                console.error("Error rendering tags:", error);
             }
         }
 
-        // Función para renderizar la tabla de comunicaciones
+        // Función para renderizar la tabla de tags
         function renderTable(allTags) {
-            const dataSet = allTags.map((contact) => {
+            const dataSet = allTags.map((tag) => {
                 const keyArray = ["id", "name"];
 
                 const values = keyArray.map((key) => {
-                    return contact[key];
+                    return tag[key];
                 });
-                // values.splice(7, 1);
                 return values;
             });
             dataSet.forEach((row) => {
@@ -66,12 +65,7 @@ import {
                             buttons: [
                                 {
                                     text: "New Tag",
-                                    action: async function(
-                                        e,
-                                        dt,
-                                        node,
-                                        config
-                                    ) {
+                                    action: async function() {
                                         await openAddTagModal({
                                             allTags,
                                             tokens,

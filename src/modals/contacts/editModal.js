@@ -15,7 +15,8 @@ export async function openEditModal({
 }) {
     try {
         const actions = allContacts.find((c) => c.id === data[4]);
-
+        $("#actionModal").remove();
+        $("#createModal").remove();
         let form = $("<form>").attr("id", "actionForm");
         form.append(
             $("<div>")
@@ -123,10 +124,15 @@ export async function openEditModal({
         modalDialog.append(modalContent);
         modal.append(modalDialog);
 
-        $("#actionModal").remove();
         $("body").append(modal);
-
         $("#actionModal").modal("show");
+        $("#cancelBtn").on("click", function(event) {
+            event.preventDefault();
+            $("#actionModal").modal("hide");
+            $("body").off("submit", "#actionModal");
+            $("#deleteBtn").off("click");
+            return;
+        });
 
         $("#deleteBtn").on("click", async function() {
             try {
@@ -170,7 +176,8 @@ export async function openEditModal({
                 throw error;
             }
         });
-        $("#saveBtn").on("click", function() {
+        $("#saveBtn").on("click", function(e) {
+            e.preventDefault();
             $("#actionForm").submit();
         });
 
@@ -274,6 +281,8 @@ export async function openEditModal({
                 },
             });
             $("#actionModal").modal("hide");
+            $("body").off("submit", "#actionModal");
+            $("#deleteBtn").off("click");
             renderContacts();
         });
     } catch (error) {

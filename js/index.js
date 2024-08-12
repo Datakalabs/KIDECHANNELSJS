@@ -117,7 +117,7 @@ import {
 
         // Función para obtener comunicaciones
         let allCommunications, allGroups, allTags;
-        async function renderCommunications() {
+        async function renderCommunications({ reRender }) {
             try {
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
@@ -127,8 +127,13 @@ import {
 
                 let allCommsCount = allCommunications.length;
                 window.setCommunicationsCount({ allCommunications });
-
-                renderGroupList(allGroups, allCommunications, allCommsCount);
+                if (!reRender) {
+                    renderGroupList(
+                        allGroups,
+                        allCommunications,
+                        allCommsCount
+                    );
+                }
                 renderGroupListInSidebar({ allGroups });
                 renderTagListInSidebar({ allTags });
                 renderTable();
@@ -699,7 +704,7 @@ import {
             });
         }
 
-        renderCommunications();
+        renderCommunications({ reRender: false });
     } catch (error) {
         console.log(error);
     }

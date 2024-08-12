@@ -13,14 +13,14 @@ import {
     fetchCommunications,
     fetchTags,
 } from "../src/utils/fetchFunctions.js";
-import { getUserInfo } from "./authentication.js";
+import { refreshAndGetTokens } from "./authentication.js";
 import {
     renderGroupListInSidebar,
     renderTagListInSidebar,
 } from "./menuSidebar.js";
 
-const userInfo = await getUserInfo();
-let clientId = userInfo.userData.userId;
+const { tokens, userSub } = await refreshAndGetTokens();
+let clientId = userSub;
 
 (async function($) {
     // USE STRICT
@@ -45,7 +45,7 @@ let clientId = userInfo.userData.userId;
         window.setCommunicationsCount({ allCommunications });
 
         allGroups = await fetchGroups({ clientId });
-        allTags = await fetchTags({ clientId });
+        allTags = await fetchTags({ tokens });
         allGroups.forEach((g) => {
             const option = document.createElement("option");
             option.value = g.groupName;

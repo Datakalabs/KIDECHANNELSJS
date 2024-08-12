@@ -2,6 +2,8 @@ import { createTag } from "../../utils/postFunctions";
 
 export async function openAddTagModal({ allTags, tokens, renderTags }) {
     try {
+        $("#actionModal").remove();
+        $("#createModal").remove();
         let form = $("<form>").attr("id", "createForm");
         form.append(
             $("<div>")
@@ -66,7 +68,12 @@ export async function openAddTagModal({ allTags, tokens, renderTags }) {
         $("body").append(modal);
 
         $("#createModal").modal("show");
-
+        $("#cancelBtn").on("click", function(event) {
+            event.preventDefault();
+            $("#createModal").modal("hide");
+            $("body").off("submit", "#createForm");
+            return;
+        });
         $("#saveBtn").on("click", function() {
             $("#createForm").submit();
         });

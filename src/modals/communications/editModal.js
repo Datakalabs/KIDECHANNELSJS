@@ -2,7 +2,6 @@ import { client } from "../../utils/amplifyConfig";
 import { defaultCategories } from "../../utils/defaultCategories";
 import { updateCommunication } from "../../graphql/mutations";
 import { awsDateTimeFormat } from "../../../src/utils/normalizeDateTime";
-import { openEditTagModal } from "../tags/editModal";
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../../../secrets";
 
@@ -15,16 +14,12 @@ export async function openEditModal({
     renderCommunications,
     tokens,
 }) {
-    $("#actionModal")
-        .off()
-        .remove();
-
     const communication = allCommunications.filter((c) => c.id === data[0])[0];
     let selectedCategory = defaultCategories.filter(
         (category) => category.categoryName === communication.category
     );
     selectedCategory = selectedCategory[0];
-
+    $("#actionModal").remove();
     let form = $("<form>").attr("id", "actionForm");
     form.append(
         $("<div>")
@@ -304,6 +299,13 @@ export async function openEditModal({
 
     $("#actionModal").modal("show");
 
+    $("#cancelBtn").one("click", function(event) {
+        event.preventDefault();
+        $("#actionModal").modal("hide");
+        $("body").off("submit", "#actionForm");
+        $("#gmailEditBtn").off("click");
+        return;
+    });
     $("#gmailEditBtn").on("click", async function() {
         const { data } = await axios.post(
             `${URL_KIDECHANNELS}/communication/send-mail-url`,
@@ -316,14 +318,15 @@ export async function openEditModal({
         );
         window.open(data.message, "EditAtGmail");
     });
-    $("#saveBtn").on("click", function(event) {
+    $("#saveBtn").one("click", function(event) {
         event.preventDefault();
         $("#actionForm").submit();
     });
 
-    $("body").one("submit", "#actionForm", async function(event) {
+    $("body").on("submit", "#actionForm", async function(event) {
         event.preventDefault();
 
+        console.log(event);
         let formData = {};
 
         $("#actionForm")
@@ -351,14 +354,16 @@ export async function openEditModal({
                     : "Processing",
         };
         try {
-            await client.graphql({
-                query: updateCommunication,
-                variables: {
-                    input: formData,
-                },
-            });
+            // await client.graphql({
+            //     query: updateCommunication,
+            //     variables: {
+            //         input: formData,
+            //     },
+            // });
+            console.log(formData);
             $("#actionModal").modal("hide");
-            renderCommunications();
+            await renderCommunications({ reRender: true });
+            return;
         } catch (error) {
             console.error("Error updating communication:", error);
         }

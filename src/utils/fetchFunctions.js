@@ -129,7 +129,6 @@ export async function fetchTags({ tokens }) {
                 },
             }
         );
-        console.log("labels en fetchTags", labels);
         const labelsToIgnore = [
             "SENT",
             "CHAT",

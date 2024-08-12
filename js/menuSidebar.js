@@ -56,7 +56,6 @@ import { getUserInfo, logout } from "./authentication";
 
 export const renderTagListInSidebar = ({ allTags }) => {
     const ul2 = document.querySelector(".taglist");
-    console.log(allTags);
     ul2.innerHTML = "";
     allTags.forEach((t) => {
         const li = document.createElement("li");

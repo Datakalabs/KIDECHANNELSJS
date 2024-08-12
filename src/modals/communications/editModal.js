@@ -72,48 +72,49 @@ export async function openEditModal({
                     )
             )
             .append(
+                // $("<div>")
+                //     .addClass(
+                //         "form-group1 col-md-6 d-flex justify-content-between align-items-end p-0 "
+                //     )
+                //     .append(
                 $("<div>")
-                    .addClass(
-                        "form-group1 col-md-6 d-flex justify-content-between align-items-end p-0 "
-                    )
+                    // .addClass("col-10 p-0 ml-1")
+                    .addClass("form-group1 col-md-6")
+                    .append($("<label>").text("Tag:"))
                     .append(
-                        $("<div>")
-                            .addClass("col-10 p-0 ml-1")
-                            .append($("<label>").text("Tag:"))
+                        $("<select>")
+                            .attr("id", "tagId")
+                            .attr("name", "tagId")
+                            .addClass("form-control")
                             .append(
-                                $("<select>")
-                                    .attr("id", "tagId")
-                                    .attr("name", "tagId")
-                                    .addClass("form-control")
-                                    .append(
-                                        allTags.map((tag) =>
-                                            $("<option>")
-                                                .text(tag?.tagName)
-                                                .val(tag?.tagName)
-                                        )
-                                    )
-                                    .val(
-                                        allTags.find(
-                                            (t) => t.id === communication.tagId
-                                        )?.tagName
-                                    )
+                                allTags.map((tag) =>
+                                    $("<option>")
+                                        .text(tag?.name)
+                                        .val(tag?.name)
+                                )
+                            )
+                            .val(
+                                allTags.find(
+                                    (t) => t.id === communication.tagId
+                                )?.tagName
                             )
                     )
-                    .append(
-                        $("<div>")
-                            .addClass("d-flex justify-content-end p-0  mr-1")
-                            .append(
-                                $("<button>")
-                                    .addClass("btn btn-outline-primary")
-                                    .attr("type", "button")
-                                    .append(
-                                        $("<i>").addClass("fa fa-pencil-alt")
-                                    )
-                                    .on("click", function() {
-                                        openEditTagModal({ allTags, clientId });
-                                    })
-                            )
-                    )
+                // )
+                // .append(
+                //     $("<div>")
+                //         .addClass("d-flex justify-content-end p-0  mr-1")
+                //         .append(
+                //             $("<button>")
+                //                 .addClass("btn btn-outline-primary")
+                //                 .attr("type", "button")
+                //                 .append(
+                //                     $("<i>").addClass("fa fa-pencil-alt")
+                //                 )
+                //                 .on("click", function() {
+                //                     openEditTagModal({ allTags, clientId });
+                //                 })
+                //         )
+                // )
             )
     );
 
@@ -364,7 +365,7 @@ export async function openEditModal({
             responseAi: $("#responseAi input").val(),
             responseSubject: $("#responseSubject input").val(),
             responseBody: $("#responseBody textarea").val(),
-            tagId: allTags.find((t) => t.tagName === $("#tagId").val())?.id,
+            tagId: allTags.find((t) => t.name === $("#tagId").val())?.id,
             execute: communication.execute,
             status:
                 $("#category").val() == communication.category

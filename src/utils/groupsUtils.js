@@ -1,6 +1,4 @@
 export const getColorObj = (hex) => {
-    // Convierte el color de 5 dígitos a 6 dígitos
-    console.log("HEX", hex);
     if (hex.length === 6) {
         hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
     }

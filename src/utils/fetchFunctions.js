@@ -9,6 +9,8 @@ import {
 } from "../graphql/queries";
 import { client } from "./amplifyConfig";
 import { normalizeDate } from "./normalizeDateTime";
+import axios from "axios";
+import { URL_KIDECHANNELS } from "../../secrets";
 
 export const fetchGroups = async ({ clientId, filters, condition }) => {
     try {
@@ -113,19 +115,38 @@ export async function fetchContacts({ clientId, filters }) {
     }
 }
 
-export async function fetchTags({ clientId, filters }) {
+export async function fetchTags({ tokens }) {
     try {
-        let graphqlFilter = {};
-        if (filters) {
-            for (const key of Object.keys(filters)) {
-                graphqlFilter[key] = { eq: filters[key] };
+        const {
+            data: {
+                body: { labels },
+            },
+        } = await axios.get(
+            `${URL_KIDECHANNELS}/gmail/label-list/${tokens.idToken.payload.email}`,
+            {
+                headers: {
+                    "X-Cognito-Auth": tokens.idToken,
+                },
             }
-        }
-        const response = await client.graphql({
-            query: listTags,
-            variables: { clientId, filter: graphqlFilter },
+        );
+        console.log("labels en fetchTags", labels);
+        const labelsToIgnore = [
+            "SENT",
+            "CHAT",
+            "INBOX",
+            "DRAFT",
+            "CATEGORY_FORUMS",
+            "CATEGORY_UPDATES",
+            "CATEGORY_PERSONAL",
+            "CATEGORY_PROMOTIONS",
+            "CATEGORY_SOCIAL",
+            "STARRED",
+        ];
+        return labels.filter((l) => {
+            if (!labelsToIgnore.includes(l.name)) {
+                return l;
+            }
         });
-        return response.data.listTags.items;
     } catch (error) {
         console.log("Error fetching listTags ", error);
         throw error;

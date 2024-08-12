@@ -12,6 +12,7 @@ module.exports = {
         tables: "./js/tables.js",
         contacts: "./js/contacts.js",
         groupsConfig: "./js/groupsConfig.js",
+        tagsConfig: "./js/tagsConfig.js",
         menuSidebar: "./js/menuSidebar.js",
         rightMenuSidebar: "./js/rightMenuSidebar.js",
     },

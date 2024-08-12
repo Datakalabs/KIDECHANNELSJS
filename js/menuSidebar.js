@@ -56,6 +56,7 @@ import { getUserInfo, logout } from "./authentication";
 
 export const renderTagListInSidebar = ({ allTags }) => {
     const ul2 = document.querySelector(".taglist");
+    console.log(allTags);
     ul2.innerHTML = "";
     allTags.forEach((t) => {
         const li = document.createElement("li");
@@ -64,12 +65,12 @@ export const renderTagListInSidebar = ({ allTags }) => {
         a.classList.add("showTable");
         icon.classList.add("fas", "fa-tags");
         a.appendChild(icon);
-        a.appendChild(document.createTextNode(t.tagName));
+        a.appendChild(document.createTextNode(t.name));
         li.appendChild(a);
         ul2.appendChild(li);
         a.addEventListener("click", async function(event) {
             event.preventDefault();
-            const selectedGroupName = t.tagName;
+            const selectedGroupName = t.name;
             a.href = `tables.html?Tags?${selectedGroupName}`;
         });
     });

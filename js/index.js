@@ -121,7 +121,9 @@ import {
             try {
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
-                allTags = await fetchTags({ clientId });
+                allTags = await fetchTags({
+                    tokens,
+                });
 
                 let allCommsCount = allCommunications.length;
                 window.setCommunicationsCount({ allCommunications });
@@ -469,8 +471,7 @@ import {
                 const values = keyArray.map((key) => {
                     let tagName;
                     if (key === "tagId") {
-                        tagName = allTags.find((t) => t.id === comm[key])
-                            ?.tagName;
+                        tagName = allTags.find((t) => t.id === comm[key])?.name;
                     }
 
                     return key === "fromId"

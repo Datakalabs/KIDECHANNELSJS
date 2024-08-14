@@ -1,5 +1,7 @@
 export async function openThreadModal(data, allCommunications) {
-    let communication = allCommunications.filter((c) => c.id === data[0])[0];
+    let communication = allCommunications.filter(
+        (c) => c.id === data[data.length - 1]
+    )[0];
 
     const thread = JSON.parse(communication.thread);
 

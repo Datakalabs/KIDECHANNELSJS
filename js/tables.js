@@ -68,21 +68,19 @@ import { executeResponse } from "../src/utils/postFunctions";
 
         // Función para renderizar la tabla de comunicaciones
         function renderTable() {
-            let arrComsById = [];
             const dataSet = allCommunications.map((comm) => {
-                arrComsById.push(comm);
                 const keyArray = [
-                    "id",
                     "channel",
                     "category",
                     page == "Groups" ? "tagId" : "groupId",
                     "dateTime",
                     "fromId",
                     // "toId",
-                    // "status",
+                    "status",
                     // "responseAi",
                     // "responseAttachment",
                     "messageBody",
+                    "id",
                 ];
 
                 const values = keyArray.map((key) => {
@@ -104,24 +102,34 @@ import { executeResponse } from "../src/utils/postFunctions";
                             : "Untagged"
                         : comm[key];
                 });
-
                 values.splice(8, 1);
 
                 return values;
             });
             dataSet.forEach((row) => {
-                row[2] = createBadge(row[2]);
+                row[1] = createBadge(row[1]);
                 // row[3] = createDiv(row[3]);
 
                 // row.push(createButtonContainer("view1", "eye"));
                 // row.push(createButtonContainer("view2", "eye"));
+                const rowId = row[7];
+
                 row.push(createButtonContainer("view3", "eye"));
                 var buttonContainer = createDiv(`
                     <button  class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
-                  <button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>
-                `);
-
+                    ${
+                        row[5] !== "Answered"
+                            ? '<button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>'
+                            : ""
+                    }
+                    `);
+                row.splice(5, 1);
+                row.splice(6, 1);
+                buttonContainer.style.display = "flex";
+                buttonContainer.style.justifyContent = "center";
+                buttonContainer.style.alignItems = "center";
                 row.push(buttonContainer);
+                row.push(rowId);
             });
 
             if ($.fn.DataTable.isDataTable("#tabla")) {
@@ -129,7 +137,6 @@ import { executeResponse } from "../src/utils/postFunctions";
             } else {
                 const table = new DataTable("#tabla", {
                     columns: [
-                        { title: "Com ID" },
                         { title: "Channel" },
                         { title: "Category" },
                         page == "Groups"
@@ -155,7 +162,7 @@ import { executeResponse } from "../src/utils/postFunctions";
                         // { title: "View & Edit" },
                         // { title: "Response" },
                     ],
-                    order: [[4, "desc"]],
+                    order: [[3, "desc"]],
                     data: dataSet,
                     scrollX: true,
                     layout: {
@@ -299,7 +306,9 @@ import { executeResponse } from "../src/utils/postFunctions";
                 let {
                     status,
                     ...communicationToResponse
-                } = allCommunications.filter((c) => c.id === dataTable[0])[0];
+                } = allCommunications.filter(
+                    (c) => c.id === dataTable[dataTable.length - 1]
+                )[0];
 
                 if (status !== "Answered") {
                     const response = await executeResponse({

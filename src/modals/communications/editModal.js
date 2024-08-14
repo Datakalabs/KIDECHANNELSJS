@@ -14,7 +14,9 @@ export async function openEditModal({
     renderCommunications,
     tokens,
 }) {
-    const communication = allCommunications.filter((c) => c.id === data[0])[0];
+    const communication = allCommunications.filter(
+        (c) => c.id === data[data.length - 1]
+    )[0];
     let selectedCategory = defaultCategories.filter(
         (category) => category.categoryName === communication.category
     );

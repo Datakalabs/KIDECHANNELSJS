@@ -312,7 +312,7 @@ export async function openEditModal({
             communication,
             {
                 headers: {
-                    "X-Cognito-Auth": tokens.idToken,
+                    Authorization: tokens.idToken,
                 },
             }
         );

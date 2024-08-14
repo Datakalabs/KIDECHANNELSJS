@@ -3,6 +3,7 @@ import { URL_KIDECHANNELS } from "../secrets";
 import { refreshAndGetTokens } from "./authentication";
 import { fetchGroups, fetchCommunications } from "../src/utils";
 import { renderGroupListInSidebar } from "./menuSidebar";
+import { getSync } from "../src/utils/fetchFunctions";
 
 const { tokens, userSub } = await refreshAndGetTokens();
 
@@ -11,19 +12,7 @@ let clientId = userSub;
     try {
         const allCommunications = await fetchCommunications({ clientId });
 
-        const {
-            data: {
-                body: { alreadySync },
-            },
-        } = await axios.get(
-            `${URL_KIDECHANNELS}/google/check-sync/${tokens.idToken.payload.email}`,
-            {
-                headers: {
-                    "X-Cognito-Auth": tokens.idToken,
-                },
-            }
-        );
-        console.log(alreadySync);
+        const alreadySync = await getSync({ tokens });
         const gmailForm = document.getElementById("gmail-auth");
         const gmailButton = document.getElementById("gmailButton");
         if (alreadySync) {
@@ -49,7 +38,7 @@ let clientId = userSub;
                     },
                     {
                         headers: {
-                            "X-Cognito-Auth": tokens.idToken,
+                            Authorization: tokens.idToken,
                         },
                     }
                 );
@@ -69,7 +58,7 @@ let clientId = userSub;
                     `${URL_KIDECHANNELS}/google-auth-webhook`,
                     {
                         headers: {
-                            "X-Cognito-Auth": tokens.idToken,
+                            Authorization: tokens.idToken,
                         },
                     }
                 );

@@ -10,7 +10,7 @@ export async function deleteTag({ tokens, labelId }) {
         },
         {
             headers: {
-                "X-Cognito-Auth": tokens.idToken,
+                Authorization: tokens.idToken,
             },
         }
     );
@@ -26,7 +26,7 @@ export async function modifyTag({ tokens, labelId, newLabelName }) {
         },
         {
             headers: {
-                "X-Cognito-Auth": tokens.idToken,
+                Authorization: tokens.idToken,
             },
         }
     );
@@ -41,8 +41,54 @@ export async function createTag({ tokens, labelName }) {
         },
         {
             headers: {
-                "X-Cognito-Auth": tokens.idToken,
+                Authorization: tokens.idToken,
             },
         }
     );
+}
+
+export async function executeResponse({
+    tokens,
+    communicationToResponse: {
+        id,
+        messageId,
+        messageHeaderId,
+        messageSubject,
+        channel,
+        fromId,
+        toId,
+        threadId,
+        responseAi,
+        responseBody,
+        responseAttachment,
+        actions,
+        groupId,
+    },
+    clientId,
+}) {
+    const { data } = await axios.post(
+        `${URL_KIDECHANNELS}/communication/send`,
+        {
+            clientId,
+            id,
+            messageId,
+            messageHeaderId,
+            messageSubject,
+            threadId,
+            channel,
+            fromId,
+            toId,
+            responseAi,
+            responseBody,
+            responseAttachment,
+            actions,
+            groupId,
+        },
+        {
+            headers: {
+                Authorization: tokens.idToken,
+            },
+        }
+    );
+    return data;
 }

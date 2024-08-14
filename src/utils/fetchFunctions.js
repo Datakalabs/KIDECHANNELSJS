@@ -125,7 +125,7 @@ export async function fetchTags({ tokens }) {
             `${URL_KIDECHANNELS}/gmail/label-list/${tokens.idToken.payload.email}`,
             {
                 headers: {
-                    "X-Cognito-Auth": tokens.idToken,
+                    Authorization: tokens.idToken,
                 },
             }
         );
@@ -151,4 +151,20 @@ export async function fetchTags({ tokens }) {
         console.log("Error fetching listTags ", error);
         throw error;
     }
+}
+
+export async function getSync({ tokens }) {
+    const {
+        data: {
+            body: { alreadySync },
+        },
+    } = await axios.get(
+        `${URL_KIDECHANNELS}/google/check-sync/${tokens.idToken.payload.email}`,
+        {
+            headers: {
+                Authorization: tokens.idToken,
+            },
+        }
+    );
+    return alreadySync;
 }

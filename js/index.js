@@ -3,7 +3,7 @@ import { updateCommunication } from "../src/graphql/mutations";
 import { getUserInfo, refreshAndGetTokens } from "./authentication";
 import { defaultCategories } from "../src/utils/defaultCategories";
 import { getColorObj } from "../src/utils/groupsUtils";
-import { URL_KIDECHANNELS, URL_MS_GOOGLE } from "../secrets";
+import { URL_KIDECHANNELS } from "../secrets";
 import { openEditModal } from "../src/modals/communications/editModal";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { fetchGroups, fetchCommunications, fetchTags } from "../src/utils";
@@ -11,6 +11,8 @@ import {
     renderTagListInSidebar,
     renderGroupListInSidebar,
 } from "./menuSidebar";
+import { getSync } from "../src/utils/fetchFunctions";
+import { executeResponse } from "../src/utils/postFunctions";
 
 (function($) {
     try {
@@ -121,9 +123,12 @@ import {
             try {
                 allCommunications = await fetchCommunications({ clientId });
                 allGroups = await fetchGroups({ clientId });
-                allTags = await fetchTags({
-                    tokens,
-                });
+                const alreadySync = await getSync({ tokens });
+
+                alreadySync &&
+                    (allTags = await fetchTags({
+                        tokens,
+                    }));
 
                 let allCommsCount = allCommunications.length;
                 window.setCommunicationsCount({ allCommunications });
@@ -135,7 +140,7 @@ import {
                     );
                 }
                 renderGroupListInSidebar({ allGroups });
-                renderTagListInSidebar({ allTags });
+                alreadySync && renderTagListInSidebar({ allTags });
                 renderTable();
 
                 if (
@@ -466,7 +471,7 @@ import {
                     "dateTime",
                     "fromId",
                     // "toId",
-                    // "status",
+                    "status",
                     "groupId",
                     // "responseAi",
                     // "responseAttachment",
@@ -504,9 +509,16 @@ import {
                 row.push(createButtonContainer("view3", "eye"));
                 var buttonContainer = createDiv(`
                     <button  class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
-                  <button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>
+                  ${
+                      row[6] !== "Answered"
+                          ? '<button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>'
+                          : ""
+                  }
                 `);
-
+                row.splice(6, 1);
+                buttonContainer.style.display = "flex";
+                buttonContainer.style.justifyContent = "center";
+                buttonContainer.style.alignItems = "center";
                 row.push(buttonContainer);
             });
 
@@ -664,41 +676,24 @@ import {
             });
 
             table.on("click", "tbody .validate", async function() {
-                const data = table.row($(this).closest("tr")).data();
-                console.log(data);
-                let communication = allCommunications.filter(
-                    (c) => c.id === data[0]
-                )[0];
+                const dataTable = table.row($(this).closest("tr")).data();
+                let {
+                    status,
+                    ...communicationToResponse
+                } = allCommunications.filter((c) => c.id === dataTable[0])[0];
 
-                if (communication.status !== "Answered") {
-                    // const { data } = await axios.post(
-                    //     `${URL_MS_GOOGLE}/communication/send`,
-                    //     {
-                    //         clientId,
-                    //         id: row[0],
-                    //         messageId: communication.messageId,
-                    //         threadId: communication.threadId,
-                    //         channel: communication.channel,
-                    //         fromId: communication.fromId,
-                    //         toId: communication.toId,
-                    //         responseAi: communication.responseAi,
-                    //         responseBody: communication.responseBody,
-                    //         responseSubject: communication.responseSubject,
-                    //         responseAttachment:
-                    //         communication.responseAttachment,
-                    //         actions: communication.actions,
-                    //         groupId: communication.groupId,
-                    //     },
-                    //     {
-                    //         headers: {
-                    //             "X-Cognito-Auth": tokens.idToken,
-                    //         },
-                    //     }
-                    // );
-                    // allCommunications = await fetchCommunications({
-                    //     clientId,
-                    // });
-                    console.log("respuesta enviada");
+                if (status !== "Answered") {
+                    const response = await executeResponse({
+                        tokens,
+                        communicationToResponse,
+                        clientId,
+                    });
+                    response &&
+                        response.message === "Answered" &&
+                        alert("Respuesta enviada");
+                    allCommunications = await fetchCommunications({
+                        clientId,
+                    });
                     renderTable();
                 }
             });

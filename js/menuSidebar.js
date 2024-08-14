@@ -33,8 +33,12 @@ import { getUserInfo, logout } from "./authentication";
                     .join("");
                 return initials.toUpperCase();
             }
-            const dynamicIcon = document.getElementById("dynamic-icon");
-            dynamicIcon.textContent = getInitials();
+            const dynamicIconElements = document.querySelectorAll(
+                "#dynamic-icon"
+            );
+            dynamicIconElements?.forEach((element) => {
+                element.textContent = getInitials();
+            });
         })
         .catch((error) => {
             window.location.href = "/login.html";
@@ -43,10 +47,12 @@ import { getUserInfo, logout } from "./authentication";
 
     function setCommunicationsCount({ allCommunications }) {
         try {
-            const span = document.querySelector(".inbox-num");
-            span.innerHTML = allCommunications.filter(
-                (c) => c.status !== "Answered"
-            ).length;
+            const spanElements = document.querySelectorAll(".inbox-num");
+            spanElements?.forEach((element) => {
+                element.innerHTML = allCommunications.filter(
+                    (c) => c.status !== "Answered"
+                ).length;
+            });
         } catch (error) {
             console.log(error);
         }
@@ -55,43 +61,45 @@ import { getUserInfo, logout } from "./authentication";
 })();
 
 export const renderTagListInSidebar = ({ allTags }) => {
-    const ul2 = document.querySelector(".taglist");
-    ul2.innerHTML = "";
-    allTags.forEach((t) => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        const icon = document.createElement("i");
-        a.classList.add("showTable");
-        icon.classList.add("fas", "fa-tags");
-        a.appendChild(icon);
-        a.appendChild(document.createTextNode(t.name));
-        li.appendChild(a);
-        ul2.appendChild(li);
-        a.addEventListener("click", async function(event) {
-            event.preventDefault();
-            const selectedGroupName = t.name;
-            a.href = `tables.html?Tags?${selectedGroupName}`;
+    const ul2Elements = document.querySelectorAll(".taglist");
+    ul2Elements?.forEach((element) => {
+        element.innerHTML = "";
+        allTags.forEach((t) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            const icon = document.createElement("i");
+            a.classList.add("showTable");
+            icon.classList.add("fas", "fa-tags");
+            a.appendChild(icon);
+            a.appendChild(document.createTextNode(t.name));
+            li.appendChild(a);
+            element.appendChild(li);
+            a.addEventListener("click", async function(event) {
+                const selectedGroupName = t.name;
+                a.href = `tables.html?Tags?${selectedGroupName}`;
+            });
         });
     });
 };
 
 export const renderGroupListInSidebar = ({ allGroups }) => {
-    const ul2 = document.querySelector(".grouplist");
-    ul2.innerHTML = "";
-    allGroups.forEach((g) => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        const icon = document.createElement("i");
-        a.classList.add("showTable");
-        icon.classList.add("fas", "fa-tags");
-        a.appendChild(icon);
-        a.appendChild(document.createTextNode(g.groupName));
-        li.appendChild(a);
-        ul2.appendChild(li);
-        a.addEventListener("click", async function(event) {
-            event.preventDefault();
-            const selectedGroupName = g.groupName;
-            a.href = `tables.html?Groups?${selectedGroupName}`;
+    const ul2Elements = document.querySelectorAll(".grouplist");
+    ul2Elements?.forEach((element) => {
+        element.innerHTML = "";
+        allGroups.forEach((g) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            const icon = document.createElement("i");
+            a.classList.add("showTable");
+            icon.classList.add("fas", "fa-tags");
+            a.appendChild(icon);
+            a.appendChild(document.createTextNode(g.groupName));
+            li.appendChild(a);
+            element.appendChild(li);
+            a.addEventListener("click", function(event) {
+                const selectedGroupName = g.groupName;
+                a.href = `tables.html?Groups?${selectedGroupName}`;
+            });
         });
     });
 };

@@ -4,6 +4,7 @@ import { updateCommunication } from "../../graphql/mutations";
 import { awsDateTimeFormat } from "../../../src/utils/normalizeDateTime";
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../../../secrets";
+import { hideLoader, showLoader } from "../../utils";
 
 export async function openEditModal({
     data,
@@ -213,7 +214,7 @@ export async function openEditModal({
         $("<div>")
             .addClass("form-group1")
             .attr("id", "messageSubject")
-            .append($("<label>").text("Message subjet:"))
+            .append($("<label>").text("Message subject:"))
             .append(
                 $("<input>")
                     .attr("type", "text")
@@ -236,22 +237,22 @@ export async function openEditModal({
                     .val(communication.messageBody)
             )
     ); // Crea el modal con el formulario
-    form.append(
-        $("<div>")
-            .addClass("form-group1")
-            .attr("id", "responseSubject")
-            .append($("<label>").text("Response Subjet:"))
-            .append(
-                $("<input>")
-                    .attr("type", "text")
-                    .attr(
-                        "disabled",
-                        communication.status === "Answered" ? true : false
-                    )
-                    .addClass("form-control")
-                    .val(communication.responseSubject)
-            )
-    );
+    // form.append(
+    //     $("<div>")
+    //         .addClass("form-group1")
+    //         .attr("id", "responseSubject")
+    //         .append($("<label>").text("Response Subjet:"))
+    //         .append(
+    //             $("<input>")
+    //                 .attr("type", "text")
+    //                 .attr(
+    //                     "disabled",
+    //                     communication.status === "Answered" ? true : false
+    //                 )
+    //                 .addClass("form-control")
+    //                 .val(communication.responseSubject)
+    //         )
+    // );
     form.append(
         $("<div>")
             .addClass("form-group1")
@@ -347,35 +348,17 @@ export async function openEditModal({
 
     $("body").on("submit", "#actionForm", async function(event) {
         event.preventDefault();
-
-        console.log(event);
-        let formData = {};
-
-        $("#actionForm")
-            .find(":input:disabled")
-            .each(function() {
-                let name = $(this).attr("name");
-                if (name && name !== "groupId") {
-                    formData[name] = $(this).val();
-                }
-            });
-        formData = {
-            ...formData,
+        const formData = {
             clientId,
-            id: data[0],
-            category: $("#category").val(),
+            id: data[data.length - 1],
             responseAttachment: $("#responseAttachment input").val(),
             responseAi: $("#responseAi input").val(),
-            responseSubject: $("#responseSubject input").val(),
             responseBody: $("#responseBody textarea").val(),
             tagId: allTags.find((t) => t.name === $("#tagId").val())?.id,
-            execute: communication.execute,
-            status:
-                $("#category").val() == communication.category
-                    ? communication.status
-                    : "Processing",
+            execute: communication.execute, // deprecated
         };
         try {
+            showLoader();
             await client.graphql({
                 query: updateCommunication,
                 variables: {
@@ -383,10 +366,14 @@ export async function openEditModal({
                 },
             });
             $("#actionModal").modal("hide");
+            $("body").off("submit", "#actionForm");
+            $("#gmailEditBtn").off("click");
             await renderCommunications({ reRender: true });
             return;
         } catch (error) {
             console.error("Error updating communication:", error);
+        } finally {
+            hideLoader();
         }
     });
 }

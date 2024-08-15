@@ -5,6 +5,8 @@ import {
     fetchCommunications,
     fetchTags,
     modifyTag,
+    hideLoader,
+    showLoader,
 } from "../src/utils";
 import { openAddTagModal } from "../src/modals/tags/addModal";
 import {
@@ -15,6 +17,7 @@ import {
 (async function($) {
     // USE STRICT
     "use strict";
+    showLoader();
     try {
         let { tokens, userSub } = await refreshAndGetTokens();
         let clientId = userSub;
@@ -30,6 +33,8 @@ import {
                 renderTable(allTags.filter((t) => t.type === "user"));
             } catch (error) {
                 console.error("Error rendering tags:", error);
+            } finally {
+                hideLoader();
             }
         }
 

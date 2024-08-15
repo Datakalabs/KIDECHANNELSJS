@@ -1,13 +1,20 @@
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../secrets";
 import { refreshAndGetTokens } from "./authentication";
-import { fetchGroups, fetchCommunications, getSync } from "../src/utils";
+import {
+    fetchGroups,
+    fetchCommunications,
+    getSync,
+    showLoader,
+    hideLoader,
+} from "../src/utils";
 import { renderGroupListInSidebar } from "./menuSidebar";
 
 const { tokens, userSub } = await refreshAndGetTokens();
 
 let clientId = userSub;
 (async function($) {
+    showLoader();
     try {
         const allCommunications = await fetchCommunications({ clientId });
 
@@ -26,70 +33,72 @@ let clientId = userSub;
         const allGroups = await fetchGroups({ clientId });
         renderGroupListInSidebar({ allGroups });
         window.setCommunicationsCount({ allCommunications });
-
-        async function unlinkGoogle(event) {
-            event.preventDefault();
-            try {
-                const { data } = await axios.post(
-                    `${URL_KIDECHANNELS}/google/user-delete`,
-                    {
-                        email: tokens.idToken.payload.email,
-                    },
-                    {
-                        headers: {
-                            Authorization: tokens.idToken,
-                        },
-                    }
-                );
-                console.log(data);
-                if (data) {
-                    location.reload();
-                }
-            } catch (error) {
-                console.error("Error to handle form:", error);
-            }
-        }
-
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            try {
-                const { data } = await axios.get(
-                    `${URL_KIDECHANNELS}/google-auth-webhook`,
-                    {
-                        headers: {
-                            Authorization: tokens.idToken,
-                        },
-                    }
-                );
-                if (data.message) {
-                    openAuthorizationWindow(data.message);
-                } else {
-                    console.error(
-                        "URL de Gmail no encontrada en la respuesta",
-                        data
-                    );
-                }
-            } catch (error) {
-                console.error("Error to handle form:", error);
-            }
-        }
-
-        function openAuthorizationWindow(url) {
-            console.log(url);
-            const nuevaVentana = window.open(
-                url,
-                "Authorizacion",
-                "width=800,height=600,_blank"
-            );
-
-            const chequeoVentana = setInterval(async () => {
-                if (nuevaVentana.closed) {
-                    clearInterval(chequeoVentana);
-                    location.reload();
-                }
-            }, 1000);
-        }
     } catch (error) {
         console.log(error);
+    } finally {
+        hideLoader();
+    }
+
+    async function unlinkGoogle(event) {
+        event.preventDefault();
+        try {
+            const { data } = await axios.post(
+                `${URL_KIDECHANNELS}/google/user-delete`,
+                {
+                    email: tokens.idToken.payload.email,
+                },
+                {
+                    headers: {
+                        Authorization: tokens.idToken,
+                    },
+                }
+            );
+            console.log(data);
+            if (data) {
+                location.reload();
+            }
+        } catch (error) {
+            console.error("Error to handle form:", error);
+        }
+    }
+
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+        try {
+            const { data } = await axios.get(
+                `${URL_KIDECHANNELS}/google-auth-webhook`,
+                {
+                    headers: {
+                        Authorization: tokens.idToken,
+                    },
+                }
+            );
+            if (data.message) {
+                openAuthorizationWindow(data.message);
+            } else {
+                console.error(
+                    "URL de Gmail no encontrada en la respuesta",
+                    data
+                );
+            }
+        } catch (error) {
+            console.error("Error to handle form:", error);
+        }
+    }
+
+    function openAuthorizationWindow(url) {
+        console.log(url);
+        const nuevaVentana = window.open(
+            url,
+            "Authorizacion",
+            "width=800,height=600,_blank"
+        );
+
+        const chequeoVentana = setInterval(async () => {
+            if (nuevaVentana.closed) {
+                clearInterval(chequeoVentana);
+                location.reload();
+            }
+        }, 1000);
     }
 })();

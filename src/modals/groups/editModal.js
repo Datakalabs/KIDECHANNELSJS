@@ -9,6 +9,8 @@ import {
     fetchCommunications,
     fetchContacts,
     getDefaultCategoriesConfiguration,
+    hideLoader,
+    showLoader,
 } from "../../utils";
 
 import { client } from "../../utils/amplifyConfig";
@@ -87,6 +89,7 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     saveBtn.addEventListener("click", async function(event) {
         event.preventDefault();
         try {
+            showLoader();
             let elementRepeted = [];
             const allContacts = await fetchContacts({ clientId });
 
@@ -295,6 +298,8 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
             alert(
                 "Ocurrió un error durante el guardado. Por favor, intenta nuevamente."
             );
+        } finally {
+            hideLoader();
         }
     });
 
@@ -304,7 +309,7 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     });
 
     const modalBody = document.createElement("div");
-    modalBody.className = "modal-body modal-body-height";
+    modalBody.className = "modal-body modal-body-height loading-blur";
     modalBody.appendChild(modalTittle);
     modalBody.appendChild(groupForm);
 

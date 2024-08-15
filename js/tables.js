@@ -14,6 +14,8 @@ import {
     createButtonContainer,
     createDiv,
     updateDataTable,
+    showLoader,
+    hideLoader,
 } from "../src/utils";
 import {
     renderTagListInSidebar,
@@ -21,8 +23,9 @@ import {
 } from "./menuSidebar";
 
 (async function($) {
+    showLoader();
     // USE STRICT
-    "use strict";
+    ("use strict");
     try {
         let selectedName = window.location.search
             .split("?")[2]
@@ -48,7 +51,7 @@ import {
             });
         }
         // Función para renderizar las comunicaciones y categorías
-        async function renderCommunications() {
+        async function renderCommunications({ reRender }) {
             try {
                 allGroups = await fetchGroups({ clientId });
                 allTags = await fetchTags({ tokens });
@@ -56,14 +59,16 @@ import {
                 window.setCommunicationsCount({
                     allCommunications: allCommunicationsCount,
                 });
-                if (window.location.pathname.includes("/tables.html")) {
-                    setInterval(async () => {
-                        await fetchCommunicationsToRender();
-                        window.setCommunicationsCount({
-                            allCommunications: allCommunicationsCount,
-                        });
-                        renderTable();
-                    }, 30000);
+                if (!reRender) {
+                    if (window.location.pathname.includes("/tables.html")) {
+                        setInterval(async () => {
+                            await fetchCommunicationsToRender();
+                            window.setCommunicationsCount({
+                                allCommunications: allCommunicationsCount,
+                            });
+                            renderTable();
+                        }, 30000);
+                    }
                 }
 
                 renderGroupListInSidebar({ allGroups });
@@ -71,6 +76,8 @@ import {
                 renderTable();
             } catch (error) {
                 console.error("Error rendering communications:", error);
+            } finally {
+                hideLoader();
             }
         }
 
@@ -253,7 +260,8 @@ import {
                             ) {
                                 const currentValue = target.textContent;
                                 const row = target.parentElement;
-                                const commId = table.row(row).data()[9];
+                                const dataRow = table.row(row).data();
+                                const commId = dataRow[dataRow.length - 1];
                                 const select = document.createElement("select");
                                 select.className = "badge";
                                 defaultCategories.forEach((c) => {
@@ -287,6 +295,7 @@ import {
                                                     clientId,
                                                     id: commId,
                                                     category: newValue,
+                                                    status: "Processing",
                                                 },
                                             },
                                         });

@@ -10,6 +10,8 @@ import {
     fetchTriggerOptions,
     fetchCommunications,
     fetchTags,
+    showLoader,
+    hideLoader,
 } from "../src/utils";
 import { refreshAndGetTokens } from "./authentication.js";
 import {
@@ -23,6 +25,7 @@ let clientId = userSub;
 (async function($) {
     // USE STRICT
     "use strict";
+    showLoader()
     try {
         const quoteSelect = document.getElementById("quoteOption");
         const triggerSelect = document.getElementById("triggerOption");
@@ -228,5 +231,7 @@ let clientId = userSub;
         openEditGroupModal({ allGroups, clientId });
     } catch (error) {
         console.log(error);
+    }finally{
+        hideLoader()
     }
 })(jQuery);

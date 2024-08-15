@@ -1,12 +1,19 @@
 import { getUserInfo } from "./authentication";
 import { openEditModal } from "../src/modals/contacts/editModal";
-import { fetchContacts, fetchGroups, fetchCommunications } from "../src/utils";
+import {
+    fetchContacts,
+    fetchGroups,
+    fetchCommunications,
+    showLoader,
+    hideLoader,
+} from "../src/utils";
 import { openAddModal } from "../src/modals/contacts/addModal";
 import { renderGroupListInSidebar } from "./menuSidebar";
 
 (async function($) {
     // USE STRICT
     "use strict";
+    showLoader();
     try {
         let userInfo = await getUserInfo();
         let clientId = userInfo.userData.userId;
@@ -22,6 +29,8 @@ import { renderGroupListInSidebar } from "./menuSidebar";
                 renderTable(allContacts);
             } catch (error) {
                 console.error("Error rendering contacts:", error);
+            } finally {
+                hideLoader();
             }
         }
 

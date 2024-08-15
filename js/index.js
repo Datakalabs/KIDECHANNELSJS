@@ -16,6 +16,8 @@ import {
     createButtonContainer,
     createDiv,
     updateDataTable,
+    showLoader,
+    hideLoader,
 } from "../src/utils";
 import {
     renderTagListInSidebar,
@@ -23,6 +25,7 @@ import {
 } from "./menuSidebar";
 
 (function($) {
+    showLoader();
     try {
         const monthNames = [
             "Enero",
@@ -108,7 +111,6 @@ import {
         // Solo si recentReport existe
         if (recentReport) {
             const height = window.getComputedStyle(recentReport).height;
-            console.log(height);
             taskProgress.style.height = height;
         }
     }
@@ -162,24 +164,25 @@ import {
                         allCommunications,
                         allCommsCount
                     );
+                    if (
+                        window.location.pathname === "/index.html" ||
+                        window.location.pathname === "/"
+                    ) {
+                        setInterval(async () => {
+                            allCommunications = await fetchCommunications({
+                                clientId,
+                            });
+                            renderTable();
+                        }, 30000);
+                    }
                 }
                 renderGroupListInSidebar({ allGroups });
                 alreadySync && renderTagListInSidebar({ allTags });
                 renderTable();
-
-                if (
-                    window.location.pathname === "/index.html" ||
-                    window.location.pathname === "/"
-                ) {
-                    setInterval(async () => {
-                        allCommunications = await fetchCommunications({
-                            clientId,
-                        });
-                        renderTable();
-                    }, 30000);
-                }
             } catch (error) {
                 console.error("Error rendering communications:", error);
+            } finally {
+                hideLoader();
             }
         }
 
@@ -596,12 +599,19 @@ import {
                                         node,
                                         config
                                     ) {
-                                        allCommunications = await fetchCommunications(
-                                            {
-                                                clientId,
-                                            }
-                                        );
-                                        renderTable();
+                                        showLoader();
+                                        try {
+                                            allCommunications = await fetchCommunications(
+                                                {
+                                                    clientId,
+                                                }
+                                            );
+                                            renderTable();
+                                        } catch (error) {
+                                            console.log(error);
+                                        } finally {
+                                            hideLoader();
+                                        }
                                     },
                                 },
                                 {
@@ -638,7 +648,8 @@ import {
                             ) {
                                 const currentValue = target.textContent;
                                 const row = target.parentElement;
-                                const commId = table.row(row).data()[9];
+                                const dataRow = table.row(row).data();
+                                const commId = dataRow[dataRow.length - 1];
                                 const select = document.createElement("select");
                                 select.className = "badge";
                                 defaultCategories.forEach((c) => {

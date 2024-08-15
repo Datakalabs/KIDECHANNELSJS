@@ -14812,3 +14812,29 @@ section {
     color: #a9a9a9; /* Gris más oscuro para el texto */
     opacity: 0.6; /* Para un efecto de deshabilitado */
 }
+
+.modal-body-height {
+    height: 50vh; /* Ajusta la altura por defecto según lo necesites */
+}
+
+.div-buttons-modal {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.div-form-modal {
+    height: 35vh;
+    overflow-y: auto; /* Permite el desplazamiento vertical */
+    overflow-x: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.div-tittle-modal {
+    height: 5vh;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: 600;
+    color: #808080;
+}

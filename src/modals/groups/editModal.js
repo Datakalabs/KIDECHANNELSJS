@@ -14,7 +14,11 @@ import {
 import { client } from "../../utils/amplifyConfig";
 export const openEditGroupModal = async ({ allGroups, clientId }) => {
     const editGroupsBtn = document.querySelector(".edit_groups");
+    const modalTittle = document.createElement("div");
+    modalTittle.className = "div-tittle-modal";
+    modalTittle.textContent = "Custom Group List";
     const groupForm = document.createElement("form");
+    groupForm.className = "div-form-modal";
     let newGroups = [];
     let oldGroups = [];
     let deletedGroups = [];
@@ -22,17 +26,17 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     const icon = document.createElement("i");
 
     addGroupBtn.id = "addGroup";
-    addGroupBtn.className = "btn btn-success";
-    addGroupBtn.textContent = "Add";
+    addGroupBtn.className = "btn btn-success btn-block";
     icon.classList.add("fas", "fa-plus");
+    addGroupBtn.appendChild(icon);
 
     const saveBtn = document.createElement("button");
     saveBtn.id = "saveBtn";
-    saveBtn.className = "btn btn-primary";
+    saveBtn.className = "btn btn-primary btn-block";
     saveBtn.textContent = "Save";
     const cancelBtn = document.createElement("button");
     cancelBtn.id = "cancelCategory";
-    cancelBtn.className = "btn btn-secondary";
+    cancelBtn.className = "btn btn-secondary btn-block";
     cancelBtn.textContent = "Cancel";
     editGroupsBtn.addEventListener("click", function() {
         $("#myModal").modal("show");
@@ -41,11 +45,11 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     let count = 1;
     addGroupBtn.addEventListener("click", function() {
         const newGroup = document.createElement("div");
-        newGroup.className = "form-group row";
+        newGroup.className = "form-group row justify-content-between";
         newGroup.dataset.key = count;
 
         const colorPickerWrapper = document.createElement("div");
-        colorPickerWrapper.className = "col-2";
+        colorPickerWrapper.className = "col-2 mt-1";
         const colorPicker = document.createElement("input");
         colorPicker.type = "color";
         colorPicker.className = "form-control";
@@ -53,19 +57,19 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
         colorPickerWrapper.appendChild(colorPicker);
 
         const inputWrapper = document.createElement("div");
-        inputWrapper.className = "col-7";
+        inputWrapper.className = "col-8";
         const input = document.createElement("input");
         input.type = "text";
-        input.className = "form-control";
+        input.className = "form-control text-center";
         input.id = `group-${count}`;
         inputWrapper.appendChild(input);
 
         const deleteBtnWrapper = document.createElement("div");
-        deleteBtnWrapper.className = "col-2";
+        deleteBtnWrapper.className = "col-1";
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "btn";
         deleteBtn.innerHTML =
-            '<i class="fa fa-times" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
+            '<i class="fa fa-trash" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
         deleteBtn.addEventListener("click", function() {
             groupForm.removeChild(newGroup);
             newGroups = newGroups.filter((e) => e.id !== newGroup.dataset.key);
@@ -300,19 +304,22 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     });
 
     const modalBody = document.createElement("div");
-    modalBody.className = "modal-body m-t-20 m-b-10 m-l-40 p-l-40";
+    modalBody.className = "modal-body modal-body-height";
+    modalBody.appendChild(modalTittle);
     modalBody.appendChild(groupForm);
 
     const buttonsWrapper = document.createElement("div");
-    buttonsWrapper.className = "row justify-content-center";
+    buttonsWrapper.className = "div-buttons-modal justify-content-between";
     const addBtnWrapper = document.createElement("div");
-    addBtnWrapper.className = "col-3";
+    addBtnWrapper.className = "col-md-3";
     addBtnWrapper.appendChild(addGroupBtn);
+    const spaceBtnWrapper = document.createElement("div");
+    spaceBtnWrapper.className = "col-md-3";
     const saveBtnWrapper = document.createElement("div");
-    saveBtnWrapper.className = "col-3";
+    saveBtnWrapper.className = "col-md-3";
     saveBtnWrapper.appendChild(saveBtn);
     const cancelBtnWrapper = document.createElement("div");
-    cancelBtnWrapper.className = "col-3";
+    cancelBtnWrapper.className = "col-md-3";
     cancelBtnWrapper.appendChild(cancelBtn);
     buttonsWrapper.appendChild(cancelBtnWrapper);
     buttonsWrapper.appendChild(addBtnWrapper);
@@ -343,11 +350,11 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
     allGroups.forEach(function(group) {
         if (group.groupName !== "Ungroup") {
             const newGroup = document.createElement("div");
-            newGroup.className = "form-group row";
+            newGroup.className = "form-group row justify-content-between";
             newGroup.dataset.key = group.id;
 
             const colorPickerWrapper = document.createElement("div");
-            colorPickerWrapper.className = "col-2";
+            colorPickerWrapper.className = "col-2 mt-1";
             const colorPicker = document.createElement("input");
             colorPicker.type = "color";
             colorPicker.className = "form-control";
@@ -356,20 +363,20 @@ export const openEditGroupModal = async ({ allGroups, clientId }) => {
             colorPickerWrapper.appendChild(colorPicker);
 
             const inputWrapper = document.createElement("div");
-            inputWrapper.className = "col-7";
+            inputWrapper.className = "col-8";
             const input = document.createElement("input");
             input.type = "text";
-            input.className = "form-control";
+            input.className = "form-control text-center";
             input.id = `group-${group.id}`;
             input.value = group.groupName;
             inputWrapper.appendChild(input);
 
             const deleteBtnWrapper = document.createElement("div");
-            deleteBtnWrapper.className = "col-2";
+            deleteBtnWrapper.className = "col-1";
             const deleteBtn = document.createElement("button");
             deleteBtn.className = "btn";
             deleteBtn.innerHTML =
-                '<i class="fa fa-times" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
+                '<i class="fa fa-trash" style="color: red;" data-toggle="tooltip" data-placement="top" title="Borrar categoría"></i>';
             deleteBtn.addEventListener("click", function() {
                 groupForm.removeChild(newGroup);
                 deletedGroups.push({

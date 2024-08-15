@@ -4,13 +4,13 @@ import {
     fetchGroups,
     fetchCommunications,
     fetchTags,
-} from "../src/utils/fetchFunctions";
+    modifyTag,
+} from "../src/utils";
 import { openAddTagModal } from "../src/modals/tags/addModal";
 import {
     renderGroupListInSidebar,
     renderTagListInSidebar,
 } from "./menuSidebar";
-import { modifyTag } from "../src/utils/postFunctions";
 
 (async function($) {
     // USE STRICT

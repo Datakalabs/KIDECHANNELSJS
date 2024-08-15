@@ -1,9 +1,8 @@
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../secrets";
 import { refreshAndGetTokens } from "./authentication";
-import { fetchGroups, fetchCommunications } from "../src/utils";
+import { fetchGroups, fetchCommunications, getSync } from "../src/utils";
 import { renderGroupListInSidebar } from "./menuSidebar";
-import { getSync } from "../src/utils/fetchFunctions";
 
 const { tokens, userSub } = await refreshAndGetTokens();
 

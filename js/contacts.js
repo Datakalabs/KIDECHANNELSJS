@@ -1,10 +1,6 @@
 import { getUserInfo } from "./authentication";
 import { openEditModal } from "../src/modals/contacts/editModal";
-import {
-    fetchContacts,
-    fetchGroups,
-    fetchCommunications,
-} from "../src/utils/fetchFunctions";
+import { fetchContacts, fetchGroups, fetchCommunications } from "../src/utils";
 import { openAddModal } from "../src/modals/contacts/addModal";
 import { renderGroupListInSidebar } from "./menuSidebar";
 

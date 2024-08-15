@@ -1,18 +1,16 @@
 import { updateGroup } from "../src/graphql/mutations.js";
 import { openEditGroupModal } from "../src/modals/groups/editModal.js";
-import { client } from "../src/utils/amplifyConfig.js";
 import {
+    client,
+    fetchGroups,
     defaultCategories,
     getDefaultCategoriesConfiguration,
-} from "../src/utils/defaultCategories.js";
-import {
-    fetchGroups,
     fetchPreQuoteOptions,
     fetchRetargetingOptions,
     fetchTriggerOptions,
     fetchCommunications,
     fetchTags,
-} from "../src/utils/fetchFunctions.js";
+} from "../src/utils";
 import { refreshAndGetTokens } from "./authentication.js";
 import {
     renderGroupListInSidebar,

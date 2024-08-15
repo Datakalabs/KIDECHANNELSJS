@@ -102,6 +102,22 @@ import {
     }
 })(jQuery);
 (async function($) {
+    function adjustTaskProgressHeight() {
+        const taskProgress = document.querySelector(".task-progress");
+        const recentReport = document.querySelector(".recent-report2");
+        // Solo si recentReport existe
+        if (recentReport) {
+            const height = window.getComputedStyle(recentReport).height;
+            console.log(height);
+            taskProgress.style.height = height;
+        }
+    }
+    document.addEventListener("DOMContentLoaded", adjustTaskProgressHeight);
+    window.addEventListener("resize", () => {
+        setTimeout(() => adjustTaskProgressHeight(), 100);
+    });
+
+    // Ejecutar la función al cargar la página y al redimensionar la ventana
     // USE STRICT
     ("use strict");
     try {
@@ -464,6 +480,7 @@ import {
 
             // Inicializar la barra de progreso de Bootstrap
             $(barDiv).progressbar();
+            setTimeout(() => adjustTaskProgressHeight(), 100);
         }
 
         // Función para renderizar la tabla de comunicaciones

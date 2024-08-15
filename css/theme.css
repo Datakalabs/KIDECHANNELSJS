@@ -3979,6 +3979,7 @@ section {
     padding-right: 55px;
     padding-bottom: 74px; */
     margin-bottom: 40px;
+    overflow-y: auto;
 }
 
 .task-progress .title-3 {

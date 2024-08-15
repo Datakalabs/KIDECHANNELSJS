@@ -40,20 +40,20 @@ export async function openEditModal({
                             .val(communication.fromId)
                     )
             )
-            .append(
-                $("<div>")
-                    .addClass("form-group1 col-md-6")
-                    .attr("id", "toId")
-                    .append($("<label>").text("To:"))
-                    .append(
-                        $("<input>")
-                            .attr("type", "text")
-                            .addClass("form-control")
-                            .prop("disabled", true)
-                            .attr("name", "toId")
-                            .val(communication.toId)
-                    )
-            )
+            // .append(
+            //     $("<div>")
+            //         .addClass("form-group1 col-md-6")
+            //         .attr("id", "toId")
+            //         .append($("<label>").text("To:"))
+            //         .append(
+            //             $("<input>")
+            //                 .attr("type", "text")
+            //                 .addClass("form-control")
+            //                 .prop("disabled", true)
+            //                 .attr("name", "toId")
+            //                 .val(communication.toId)
+            //         )
+            // )
             .append(
                 $("<div>")
                     .addClass("form-group1 col-md-6")
@@ -91,28 +91,7 @@ export async function openEditModal({
                             )
                     )
             )
-    );
-
-    form.append(
-        $("<div>")
-            .addClass("form-row")
             .append(
-                $("<div>")
-                    .addClass("form-group1 col-md-6")
-                    .append(
-                        $("<label>").text("Category:"),
-                        $("<select>")
-                            .addClass("form-control")
-                            .attr("id", "category")
-                            .append(
-                                defaultCategories.map((category) =>
-                                    $("<option>")
-                                        .text(category.categoryName)
-                                        .val(category.categoryName)
-                                )
-                            )
-                            .val(selectedCategory.categoryName)
-                    ),
                 $("<div>")
                     .addClass("form-group1 col-md-6")
                     .append(
@@ -133,6 +112,47 @@ export async function openEditModal({
                     )
             )
     );
+
+    // form.append(
+    //     $("<div>")
+    //         .addClass("form-row")
+    //         .append(
+    //             $("<div>")
+    //                 .addClass("form-group1 col-md-6")
+    //                 .append(
+    //                     $("<label>").text("Category:"),
+    //                     $("<select>")
+    //                         .addClass("form-control")
+    //                         .attr("id", "category")
+    //                         .append(
+    //                             defaultCategories.map((category) =>
+    //                                 $("<option>")
+    //                                     .text(category.categoryName)
+    //                                     .val(category.categoryName)
+    //                             )
+    //                         )
+    //                         .val(selectedCategory.categoryName)
+    //                 ),
+    //             $("<div>")
+    //                 .addClass("form-group1 col-md-6")
+    //                 .append(
+    //                     $("<label>").text("Group:"),
+    //                     $("<input>")
+    //                         .addClass("form-control")
+    //                         .attr("id", "groupId")
+    //                         .attr("type", "text")
+    //                         .addClass("form-control")
+    //                         .prop("disabled", true)
+    //                         .attr("name", "groupId")
+
+    //                         .val(
+    //                             allGroups.find(
+    //                                 (g) => g.id === communication.groupId
+    //                             ).groupName
+    //                         )
+    //                 )
+    //         )
+    // );
 
     form.append(
         $("<div>")

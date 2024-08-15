@@ -10,6 +10,7 @@ import {
     renderGroupListInSidebar,
     renderTagListInSidebar,
 } from "./menuSidebar";
+import { modifyTag } from "../src/utils/postFunctions";
 
 (async function($) {
     // USE STRICT
@@ -75,6 +76,47 @@ import {
                                 },
                             ],
                         },
+                    },
+                    drawCallback: function() {
+                        // Hacer la columna "Name" editable
+                        const tableBody = document.querySelector(
+                            "#tabla tbody"
+                        );
+                        tableBody.addEventListener("click", function(event) {
+                            const target = event.target;
+                            if (
+                                target.tagName === "TD" &&
+                                target.cellIndex === 1 //col name
+                            ) {
+                                const currentValue = target.textContent;
+                                target.innerHTML = `<input type="text" value="${currentValue}" />`;
+                                const input = target.querySelector("input");
+                                input.focus();
+                                const row = target.parentElement; // La fila en la que se encuentra la celda
+                                const previousCell = row.cells[0];
+
+                                // En blur guardo el valor
+                                input.addEventListener(
+                                    "blur",
+                                    async function() {
+                                        const newValue = input.value;
+                                        target.innerHTML = newValue; // Actualizo el contenido de la celda
+                                        await modifyTag({
+                                            tokens,
+                                            labelId: previousCell.textContent,
+                                            newLabelName: newValue,
+                                        });
+                                    }
+                                );
+
+                                // Con esto guardo el valor cuando se presione Enter
+                                input.addEventListener("keydown", function(e) {
+                                    if (e.key === "Enter") {
+                                        input.blur();
+                                    }
+                                });
+                            }
+                        });
                     },
                 });
                 initializeTableEvents(table);

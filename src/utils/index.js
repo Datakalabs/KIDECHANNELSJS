@@ -8,8 +8,16 @@ export {
     fetchTags,
     getSync,
 } from "./fetchFunctions";
-export { getDefaultCategoriesConfiguration } from "./defaultCategories";
-export { createBadge } from "./tableFunctions";
+export {
+    getDefaultCategoriesConfiguration,
+    defaultCategories,
+} from "./defaultCategories";
+export {
+    createBadge,
+    createButtonContainer,
+    createDiv,
+    updateDataTable,
+} from "./tableFunctions";
 export {
     createTag,
     deleteTag,

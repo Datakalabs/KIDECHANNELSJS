@@ -508,7 +508,7 @@ import { executeResponse } from "../src/utils/postFunctions";
                 var buttonContainer = createDiv(`
                     <button  class="edit btn btn-primary" style="margin-right: 5px;"><i class="fas fa-pencil-alt"></i></button>
                   ${
-                      row[4] !== "Answered"
+                      row[5] !== "Answered"
                           ? '<button id="validate" class="validate btn btn-success" style="background-color: #86dfc4e7;"><i class="fas fa-check"></i></button>'
                           : ""
                   }

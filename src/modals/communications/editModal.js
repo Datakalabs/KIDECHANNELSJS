@@ -356,13 +356,12 @@ export async function openEditModal({
                     : "Processing",
         };
         try {
-            // await client.graphql({
-            //     query: updateCommunication,
-            //     variables: {
-            //         input: formData,
-            //     },
-            // });
-            console.log(formData);
+            await client.graphql({
+                query: updateCommunication,
+                variables: {
+                    input: formData,
+                },
+            });
             $("#actionModal").modal("hide");
             await renderCommunications({ reRender: true });
             return;

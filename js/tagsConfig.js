@@ -93,7 +93,7 @@ import { modifyTag } from "../src/utils/postFunctions";
                                 const input = target.querySelector("input");
                                 input.focus();
                                 const row = target.parentElement; // La fila en la que se encuentra la celda
-                                const previousCell = row.cells[0];
+                                const previousCell = table.row(row).data()[0];
 
                                 // En blur guardo el valor
                                 input.addEventListener(

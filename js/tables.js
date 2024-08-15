@@ -1,16 +1,24 @@
 import axios from "axios";
 import { refreshAndGetTokens } from "./authentication";
-import { client } from "../src/utils/amplifyConfig";
 import { openThreadModal } from "../src/modals/communications/threadModal";
 import { openEditModal } from "../src/modals/communications/editModal";
-import { normalizeDate } from "../src/utils/normalizeDateTime";
-import { defaultCategories } from "../src/utils/defaultCategories";
-import { fetchCommunications, fetchGroups, fetchTags } from "../src/utils";
+import {
+    client,
+    createBadge,
+    fetchCommunications,
+    fetchGroups,
+    fetchTags,
+    defaultCategories,
+    normalizeDate,
+    executeResponse,
+    createButtonContainer,
+    createDiv,
+    updateDataTable,
+} from "../src/utils";
 import {
     renderTagListInSidebar,
     renderGroupListInSidebar,
 } from "./menuSidebar";
-import { executeResponse } from "../src/utils/postFunctions";
 
 (async function($) {
     // USE STRICT
@@ -107,7 +115,7 @@ import { executeResponse } from "../src/utils/postFunctions";
                 return values;
             });
             dataSet.forEach((row) => {
-                row[1] = createBadge(row[1]);
+                row[1] = createBadge(row[1], false);
                 // row[3] = createDiv(row[3]);
 
                 // row.push(createButtonContainer("view1", "eye"));
@@ -233,45 +241,71 @@ import { executeResponse } from "../src/utils/postFunctions";
                             ],
                         },
                     },
+                    drawCallback: function() {
+                        const tableBody = document.querySelector(
+                            "#tabla tbody"
+                        );
+                        tableBody.addEventListener("click", function(event) {
+                            const target = event.target;
+                            if (
+                                target.tagName === "TD" &&
+                                target.cellIndex === 1
+                            ) {
+                                const currentValue = target.textContent;
+                                const row = target.parentElement;
+                                const commId = table.row(row).data()[9];
+                                const select = document.createElement("select");
+                                select.className = "badge";
+                                defaultCategories.forEach((c) => {
+                                    const option = document.createElement(
+                                        "option"
+                                    );
+                                    option.value = c.categoryName;
+                                    option.textContent = c.categoryName;
+                                    if (c.categoryName === currentValue) {
+                                        option.selected = true;
+                                    }
+                                    select.appendChild(option);
+                                });
+
+                                target.innerHTML = "";
+                                target.appendChild(select);
+                                select.focus();
+                                select.addEventListener(
+                                    "blur",
+                                    async function() {
+                                        const newValue = select.value;
+
+                                        target.innerHTML = createBadge(
+                                            newValue,
+                                            true
+                                        );
+                                        await client.graphql({
+                                            query: updateCommunication,
+                                            variables: {
+                                                input: {
+                                                    clientId,
+                                                    id: commId,
+                                                    category: newValue,
+                                                },
+                                            },
+                                        });
+                                    }
+                                );
+
+                                select.addEventListener("keydown", function(e) {
+                                    if (e.key === "Enter") {
+                                        select.blur();
+                                    }
+                                });
+                            }
+                        });
+                    },
                 });
                 initializeTableEvents(table);
             }
         }
 
-        function updateDataTable(dataTable, data) {
-            dataTable.clear();
-            dataTable.rows.add(data);
-            dataTable.draw(false);
-        }
-
-        function createBadge(category) {
-            const categ = defaultCategories.filter(
-                (c) => c.categoryName === category
-            )[0];
-
-            const div = document.createElement("div");
-            div.innerHTML = `<span class="badge ${categ.badgeClass}">${categ.categoryName}</span>`;
-            return div;
-        }
-
-        // Función para crear un contenedor de botones
-        function createButtonContainer(className, icon, full) {
-            const container = document.createElement("div");
-            container.className = `${className} d-flex justify-content-center`;
-            container.innerHTML = `<button class="btn ${
-                full ? "btn-primary" : "btn-outline-primary"
-            }" style="margin-right: 5px;"><i class="fas fa-${icon}"></i></button>`;
-            return container;
-        }
-
-        // Función para crear una div con contenido
-        function createDiv(content) {
-            const div = document.createElement("div");
-            div.innerHTML = content;
-            return div;
-        }
-
-        // Función para inicializar eventos de la tabla
         function initializeTableEvents(table) {
             table.on("click", "tbody .edit", async function() {
                 const data = table.row($(this).closest("tr")).data();

@@ -1,3 +1,5 @@
+import { defaultCategories } from "./defaultCategories";
+
 // Función para crear un badge
 export function createBadge(category, text) {
     const categ = defaultCategories.filter(

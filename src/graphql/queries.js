@@ -243,6 +243,7 @@ export const getCommunication = /* GraphQL */ `
             responseAi
             messageSubject
             messageBody
+            messageBodyMimeType
             messagSummary
             messageAttachment
             responseBody
@@ -289,6 +290,7 @@ export const listCommunications = /* GraphQL */ `
                 responseAi
                 messageSubject
                 messageBody
+                messageBodyMimeType
                 messagSummary
                 messageAttachment
                 responseBody

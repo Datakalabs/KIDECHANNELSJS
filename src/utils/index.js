@@ -26,7 +26,11 @@ export {
 } from "./postFunctions";
 export { client } from "./amplifyConfig";
 export { getColorObj } from "./groupsUtils";
-export { awsDateTimeFormat, normalizeDate } from "./communicationUtils";
+export {
+    awsDateTimeFormat,
+    normalizeDate,
+    renderBody,
+} from "./communicationUtils";
 
 export function showLoader() {
     document

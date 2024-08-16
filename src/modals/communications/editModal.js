@@ -3,7 +3,12 @@ import { defaultCategories } from "../../utils/defaultCategories";
 import { updateCommunication } from "../../graphql/mutations";
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../../../secrets";
-import { hideLoader, showLoader, awsDateTimeFormat } from "../../utils";
+import {
+    hideLoader,
+    showLoader,
+    awsDateTimeFormat,
+    renderBody,
+} from "../../utils";
 
 export async function openEditModal({
     data,
@@ -20,6 +25,7 @@ export async function openEditModal({
     let selectedCategory = defaultCategories.filter(
         (category) => category.categoryName === communication.category
     );
+    console.log(communication);
     selectedCategory = selectedCategory[0];
     $("#actionModal").remove();
     let form = $("<form>").attr("id", "actionForm");
@@ -162,10 +168,7 @@ export async function openEditModal({
             .append(
                 $("<input>")
                     .attr("type", "text")
-                    .attr(
-                        "disabled",
-                        communication.status === "Answered" ? true : false
-                    )
+                    .attr("disabled", communication.status === "Answered")
                     .addClass("form-control")
                     .val(communication.responseAi)
             )
@@ -229,11 +232,16 @@ export async function openEditModal({
             .attr("id", "messageBody")
             .append($("<label>").text("Message Body:"))
             .append(
-                $("<textarea>")
+                $("<div>")
                     .addClass("form-control")
                     .prop("disabled", true)
                     .attr("name", "messageBody")
-                    .val(communication.messageBody)
+                    .html(
+                        renderBody({
+                            body: communication.messageBody,
+                            mimeType: communication.messageBodyMimeType,
+                        })
+                    )
             )
     ); // Crea el modal con el formulario
     // form.append(
@@ -246,7 +254,7 @@ export async function openEditModal({
     //                 .attr("type", "text")
     //                 .attr(
     //                     "disabled",
-    //                     communication.status === "Answered" ? true : false
+    //                     communication.status === "Answered"
     //                 )
     //                 .addClass("form-control")
     //                 .val(communication.responseSubject)

@@ -7,8 +7,7 @@ import {
     listTags,
     listTriggerOptions,
 } from "../graphql/queries";
-import { client } from "./amplifyConfig";
-import { normalizeDate } from "./normalizeDateTime";
+import { normalizeDate, client } from "./index";
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../../secrets";
 

@@ -1,10 +1,9 @@
 import { client } from "../../utils/amplifyConfig";
 import { defaultCategories } from "../../utils/defaultCategories";
 import { updateCommunication } from "../../graphql/mutations";
-import { awsDateTimeFormat } from "../../../src/utils/normalizeDateTime";
 import axios from "axios";
 import { URL_KIDECHANNELS } from "../../../secrets";
-import { hideLoader, showLoader } from "../../utils";
+import { hideLoader, showLoader, awsDateTimeFormat } from "../../utils";
 
 export async function openEditModal({
     data,

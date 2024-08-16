@@ -1,5 +1,5 @@
-const { login, getUserInfo } = require("../authentication");
-
+import { login, getUserInfo } from "../authentication";
+import { hideLoader, showLoader } from "../../src/utils";
 (async () => {
     document.addEventListener("DOMContentLoaded", async () => {
         const loginForm = document.getElementById("login-form");
@@ -12,7 +12,7 @@ const { login, getUserInfo } = require("../authentication");
             if (loginForm) {
                 loginForm.addEventListener("submit", async (e) => {
                     e.preventDefault();
-
+                    showLoader();
                     const username = document.getElementById("username").value;
                     const password = document.getElementById("password").value;
                     try {
@@ -23,6 +23,8 @@ const { login, getUserInfo } = require("../authentication");
                     } catch (error) {
                         console.log(error);
                         window.alert(error.message);
+                    } finally {
+                        hideLoader();
                     }
                 });
             }

@@ -1,42 +1,48 @@
-import DOMPurify from "dompurify"; // Asegúrate de instalar y importar DOMPurify
+import DOMPurify from "dompurify";
 
-const decodeHtml = (html) => {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
+// Función para reemplazar enlaces de imágenes por etiquetas <img>
+const replaceLinksWithImages = (html) => {
+    // Expresión regular para encontrar URLs entre < y >
+
+    const imageRegex = /&lt;https:\/\/[^\s;]+;/gi;
+    console.log(html, typeof html);
+    // Reemplaza URLs con etiquetas <img>
+    const final = html.replace(imageRegex, (url) => {
+        // Eliminar los caracteres de ángulo (< y >) de la URL
+        const cleanUrl = url.slice(4, -4);
+        return `<img src="${cleanUrl}" alt="Image" />`;
+    });
+
+    return final;
 };
 
-const replaceLinksWithImages = (html) => {
-    // Asegúrate de decodificar entidades HTML
-    html = decodeHtml(html);
-
-    // Reemplaza los enlaces por imágenes si la URL apunta a una imagen
-    return html.replace(/<a\s+href="([^"]+)">([^<]*)<\/a>/gi, (match, url) => {
-        const isImage = /\.(png|jpg|jpeg|gif|bmp|webp)$/i.test(url);
-        if (isImage) {
-            return `<img src="${url}" alt="Image" />`;
-        }
-        return match;
-    });
+const replaceNewLinesWithBreaks = (text) => {
+    // Reemplaza saltos de línea que estén entre contenido con <br>
+    return text.replace(/([^\s])\n([^\s])/g, "$1<br>$2");
 };
 
 export const renderBody = ({ body, mimeType }) => {
     let content = "";
 
     if (mimeType === "text/html") {
-        content = replaceLinksWithImages(body);
+        const sanitizedHtml = DOMPurify.sanitize(body);
+        const formattedHtml = replaceNewLinesWithBreaks(sanitizedHtml);
+        content = replaceLinksWithImages(formattedHtml);
     } else if (mimeType === "text/plain") {
-        // Convierte texto plano a HTML y luego reemplaza enlaces con imágenes
+        // Convirtiendo texto plano a HTML para aplicar reemplazos
         const html = $("<div>")
             .text(body)
             .html();
-        content = replaceLinksWithImages(html);
+        const sanitizedHtml = DOMPurify.sanitize(html);
+        const formattedHtml = replaceNewLinesWithBreaks(sanitizedHtml);
+        content = replaceLinksWithImages(formattedHtml);
     } else {
         console.warn("Unsupported mimeType:", mimeType);
     }
 
     return content;
 };
+
 export const normalizeDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();

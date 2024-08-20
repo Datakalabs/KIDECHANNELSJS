@@ -234,8 +234,9 @@ export async function openEditModal({
             .append(
                 $("<div>")
                     .addClass("form-control")
-                    .prop("disabled", true)
+                    .css("white-space", "pre-wrap") // Mantener espacios en blanco y saltos de línea
                     .attr("name", "messageBody")
+                    .attr("id", "messageBodyDiv")
                     .html(
                         renderBody({
                             body: communication.messageBody,
@@ -243,7 +244,9 @@ export async function openEditModal({
                         })
                     )
             )
-    ); // Crea el modal con el formulario
+    );
+
+    // Crea el modal con el formulario
     // form.append(
     //     $("<div>")
     //         .addClass("form-group1")

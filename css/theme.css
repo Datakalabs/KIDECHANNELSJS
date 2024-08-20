@@ -14912,9 +14912,13 @@ section {
     }
 }
 #messageBody {
-    background-color: #f9f9f9;
-    overflow-y: auto;
-    height: 200px;
+    height: 250px;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+#messageBodyDiv {
+    overflow-y: scroll;
+    height: 220px;
 }
 
 #messageBody img {
